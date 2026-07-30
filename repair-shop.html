@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電腦維修管理系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef2f7;
+    --surface: #f8fafc;
+    --card: #ffffff;
+    --border: #dce4ef;
+    --accent: #1a6fdb;
+    --accent2: #0eab6e;
+    --warn: #e85d2f;
+    --text: #1e293b;
+    --muted: #7a8fa8;
+    --font-mono: 'Share Tech Mono', monospace;
+    --font-main: 'Noto Sans TC', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(26,111,219,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,111,219,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 36px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+
+  header p {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .status-bar {
+    margin-left: auto;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 28px;
+    background: var(--surface);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, rgba(26,111,219,0.12), rgba(14,171,110,0.08));
+    color: var(--accent);
+    border: 1px solid rgba(26,111,219,0.3);
+  }
+
+  .tab:hover:not(.active) { color: var(--text); background: rgba(0,0,0,0.04); }
+
+  /* Panel */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    width: 3px; height: 14px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2));
+    border-radius: 2px;
+  }
+
+  /* Form */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-grid .full { grid-column: 1 / -1; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+  }
+
+  input, textarea, select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: var(--font-main);
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  select option { background: var(--surface); }
+
+  /* Buttons */
+  .btn {
+    padding: 11px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0a0e1a;
+  }
+
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,212,255,0.3); }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-danger {
+    background: rgba(255,107,53,0.15);
+    border: 1px solid rgba(255,107,53,0.4);
+    color: var(--warn);
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .btn-danger:hover { background: rgba(255,107,53,0.25); }
+
+  .btn-add {
+    background: rgba(0,255,157,0.1);
+    border: 1px solid rgba(0,255,157,0.3);
+    color: var(--accent2);
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .btn-add:hover { background: rgba(0,255,157,0.2); }
+
+  /* Search bar */
+  .search-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .search-row input { flex: 1; }
+
+  /* Customer list */
+  .customer-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .customer-item {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .customer-item:hover {
+    border-color: var(--accent);
+    background: rgba(26,111,219,0.04);
+    transform: translateX(4px);
+  }
+
+  .avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(26,111,219,0.15), rgba(14,171,110,0.15));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900;
+    font-size: 16px;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .customer-info { flex: 1; }
+  .customer-name { font-weight: 700; font-size: 15px; }
+  .customer-phone { font-size: 12px; color: var(--muted); font-family: var(--font-mono); margin-top: 2px; }
+
+  .customer-meta {
+    text-align: right;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .repair-count {
+    display: inline-block;
+    background: rgba(0,212,255,0.15);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  /* Repair records */
+  .repair-record {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .repair-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .repair-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  .repair-price {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--accent2);
+    font-family: var(--font-mono);
+  }
+
+  .repair-price::before { content: 'NT$ '; font-size: 12px; font-weight: 400; color: var(--muted); }
+
+  .repair-items { font-size: 14px; color: var(--text); margin-bottom: 6px; }
+  .repair-note { font-size: 12px; color: var(--muted); }
+
+  .status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  .status-done { background: rgba(0,255,157,0.15); color: var(--accent2); border: 1px solid rgba(0,255,157,0.3); }
+  .status-pending { background: rgba(255,107,53,0.15); color: var(--warn); border: 1px solid rgba(255,107,53,0.3); }
+
+  /* Detail modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    animation: slideUp 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .modal-customer h2 { font-size: 22px; font-weight: 900; }
+  .modal-customer p { font-size: 13px; color: var(--muted); font-family: var(--font-mono); margin-top: 4px; }
+
+  .btn-close {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .btn-close:hover { color: var(--text); border-color: var(--accent); }
+
+  /* Add repair form inside modal */
+  .add-repair-form {
+    background: #f4f8ff;
+    border: 1px solid rgba(26,111,219,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .add-repair-form.open { display: block; animation: fadeIn 0.25s ease; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #ffffff;
+    border: 1px solid var(--accent2);
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 14px;
+    color: var(--accent2);
+    font-family: var(--font-mono);
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Stats header */
+  .stats-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .stats-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .period-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .period-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0 !important;
+    white-space: nowrap;
+  }
+
+  .period-wrap select {
+    width: auto;
+    padding: 7px 14px;
+    font-size: 13px;
+    border-color: rgba(26,111,219,0.35);
+    background: rgba(26,111,219,0.07);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    cursor: pointer;
+    min-width: 130px;
+  }
+
+  .period-wrap select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+  }
+
+  /* Stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;
+    transition: border-color 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .stat-card-accent {
+    border-color: rgba(220, 170, 20, 0.4);
+    background: rgba(255, 200, 60, 0.07);
+  }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 900;
+    font-family: var(--font-mono);
+    color: var(--accent);
+  }
+
+  .stat-num-gold {
+    color: #ffc83c;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+
+  .empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .empty .icon { font-size: 40px; margin-bottom: 12px; }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .form-grid .full { grid-column: 1; }
+    .stats-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  }
+
+  /* Print Styles */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    body * { visibility: hidden; }
+    #printReceiptArea, #printReceiptArea * { visibility: visible; }
+    #printReceiptArea {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      font-family: sans-serif;
+      color: #000;
+      background: #fff;
+    }
+    .no-print { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="logo">🖥️</div>
+    <div>
+      <h1>電腦維修管理系統</h1>
+      <p>REPAIR SHOP MANAGEMENT v1.0</p>
+    </div>
+    <div class="status-bar" id="clockDisplay"></div>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-header">
+    <div class="stats-title">📊 營業統計</div>
+    <div class="period-wrap">
+      <label class="period-label">時間範圍</label>
+      <select id="periodSelect" onchange="updateStats()">
+        <option value="today">今日</option>
+        <option value="month">當月</option>
+        <option value="3months">近三個月</option>
+        <option value="6months">半年內</option>
+        <option value="year">去年一整年</option>
+      </select>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card stat-card-accent">
+      <div class="stat-num stat-num-gold" id="statAllCustomers">0</div>
+      <div class="stat-label">累積客戶數</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statCustomers">0</div>
+      <div class="stat-label" id="statCustomersLabel">今日客戶數</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statRepairs">0</div>
+      <div class="stat-label" id="statRepairsLabel">今日維修紀錄</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statRevenue">0</div>
+      <div class="stat-label" id="statRevenueLabel">今日營業額 (NT$)</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('search')">🔍 查詢客戶</button>
+    <button class="tab" onclick="switchTab('add')">➕ 新增客戶</button>
+  </div>
+
+  <!-- Search Panel -->
+  <div class="panel active" id="panel-search">
+    <div class="card">
+      <div class="card-title">查詢客戶</div>
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="輸入姓名或電話，按 Enter 搜尋…" onkeydown="searchCustomers(event)">
+        <button class="btn btn-secondary" onclick="renderCustomerList(getCustomers())">顯示全部</button>
+      </div>
+      <div class="customer-list" id="customerList">
+        <div class="empty"><div class="icon">🔧</div>尚無客戶資料，請先新增客戶</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Customer Panel -->
+  <div class="panel" id="panel-add">
+    <div class="card">
+      <div class="card-title">新增客戶 ＋ 首次維修</div>
+      <div class="form-grid">
+        <div>
+          <label>客戶姓名 *</label>
+          <input type="text" id="newName" placeholder="王小明">
+        </div>
+        <div>
+          <label>聯絡電話 *</label>
+          <input type="text" id="newPhone" placeholder="0912-345-678">
+        </div>
+        <div>
+          <label>維修日期 *</label>
+          <input type="date" id="newDate">
+        </div>
+        <div>
+          <label>預計取回日期</label>
+          <input type="date" id="newReturnDate">
+        </div>
+        <div>
+          <label>維修費用 (NT$) *</label>
+          <input type="number" id="newPrice" placeholder="500" min="0">
+        </div>
+        <div>
+          <label>維修狀態</label>
+          <select id="newStatus">
+            <option value="done">✅ 已完成</option>
+            <option value="pending">⏳ 待取件</option>
+          </select>
+        </div>
+        <div class="full">
+          <label>維修項目 *</label>
+          <input type="text" id="newItems" placeholder="例：更換硬碟、重灌系統、清灰塵">
+        </div>
+        <div class="full">
+          <label>備註</label>
+          <textarea id="newNote" placeholder="額外備註（選填）"></textarea>
+        </div>
+      </div>
+      <div style="margin-top:20px; display:flex; gap:10px;">
+        <button class="btn btn-primary" onclick="addCustomer()">✅ 儲存客戶</button>
+        <button class="btn btn-secondary" style="background:#0eab6e; color:#fff; border:none;" onclick="addCustomerAndPrint()">🖨️ 儲存並列印維修單</button>
+        <button class="btn btn-secondary" onclick="clearForm()">清除</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Detail Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-customer">
+        <h2 id="modalName"></h2>
+        <p id="modalPhone"></p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-danger" style="padding:7px 14px;font-size:12px;" onclick="deleteCustomer()">🗑 刪除客戶</button>
+        <button class="btn-close" onclick="closeModalDirect()">✕</button>
+      </div>
+    </div>
+
+    <button class="btn btn-add" id="toggleAddRepairBtn" style="margin-bottom:16px;" onclick="toggleAddRepair()">➕ 新增維修紀錄</button>
+
+    <!-- Add / Edit repair form inside modal -->
+    <div class="add-repair-form" id="addRepairForm">
+      <input type="hidden" id="editingRepairId" value="">
+      <div class="form-grid">
+        <div>
+          <label>維修日期 *</label>
+          <input type="date" id="repairDate">
+        </div>
+        <div>
+          <label>預計取回日期</label>
+          <input type="date" id="repairReturnDate">
+        </div>
+        <div>
+          <label>維修費用 (NT$) *</label>
+          <input type="number" id="repairPrice" placeholder="500" min="0">
+        </div>
+        <div>
+          <label>維修狀態</label>
+          <select id="repairStatus">
+            <option value="done">✅ 已完成</option>
+            <option value="pending">⏳ 待取件</option>
+          </select>
+        </div>
+        <div class="full">
+          <label>維修項目 *</label>
+          <input type="text" id="repairItems" placeholder="例：鍵盤維修、更換風扇">
+        </div>
+        <div class="full">
+          <label>備註</label>
+          <textarea id="repairNote" placeholder="額外備註（選填）" style="min-height:60px;"></textarea>
+        </div>
+      </div>
+      <div style="margin-top:14px; display:flex; gap:10px;">
+        <button class="btn btn-primary" id="saveRepairBtn" onclick="saveRepair()">儲存紀錄</button>
+        <button class="btn btn-secondary" onclick="toggleAddRepair()">取消</button>
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-bottom:14px;">維修歷史紀錄</div>
+    <div id="modalRepairs"></div>
+  </div>
+</div>
+
+<!-- Print Receipt Area (Hidden during normal view) -->
+<div id="printReceiptArea"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Storage helpers ──
+function getCustomers() {
+  try { return JSON.parse(localStorage.getItem('repairCustomers') || '[]'); } catch { return []; }
+}
+function saveCustomers(data) {
+  localStorage.setItem('repairCustomers', JSON.stringify(data));
+}
+
+// ── Clock ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clockDisplay').innerHTML =
+    now.toLocaleDateString('zh-TW') + '<br>' + now.toLocaleTimeString('zh-TW');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── Tabs ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ── Stats ──
+const periodLabels = {
+  today:    '今日',
+  month:    '當月',
+  '3months':'近三個月',
+  '6months':'半年內',
+  year:     '去年一整年'
+};
+
+function getDateRange(period) {
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+  let start, end;
+  if (period === 'today') {
+    start = end = todayStr;
+  } else if (period === 'month') {
+    start = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+    end = todayStr;
+  } else if (period === '3months') {
+    const d = new Date(now); d.setMonth(d.getMonth() - 3);
+    start = d.toISOString().split('T')[0]; end = todayStr;
+  } else if (period === '6months') {
+    const d = new Date(now); d.setMonth(d.getMonth() - 6);
+    start = d.toISOString().split('T')[0]; end = todayStr;
+  } else if (period === 'year') {
+    const y = now.getFullYear() - 1;
+    start = `${y}-01-01`; end = `${y}-12-31`;
+  }
+  return { start, end };
+}
+
+function updateStats() {
+  const period = document.getElementById('periodSelect').value;
+  const { start, end } = getDateRange(period);
+  const cs = getCustomers();
+  const label = periodLabels[period];
+
+  const activeCustomers = cs.filter(c =>
+    (c.repairs || []).some(r => r.date >= start && r.date <= end)
+  );
+
+  const repairsInRange = cs.flatMap(c =>
+    (c.repairs || []).filter(r => r.date >= start && r.date <= end)
+  );
+
+  const revenue = repairsInRange.reduce((s, r) => s + (parseInt(r.price) || 0), 0);
+
+  document.getElementById('statCustomers').textContent = activeCustomers.length;
+  document.getElementById('statCustomersLabel').textContent = label + ' 客戶數';
+  document.getElementById('statRepairs').textContent = repairsInRange.length;
+  document.getElementById('statRepairsLabel').textContent = label + ' 維修紀錄';
+  document.getElementById('statRevenue').textContent = revenue.toLocaleString();
+  document.getElementById('statRevenueLabel').textContent = label + ' 營業額 (NT$)';
+
+  document.getElementById('statAllCustomers').textContent = cs.length;
+}
+
+// ── Add customer ──
+function addCustomer() {
+  return saveNewCustomer();
+}
+
+function saveNewCustomer() {
+  const name = document.getElementById('newName').value.trim();
+  const phone = document.getElementById('newPhone').value.trim();
+  const date = document.getElementById('newDate').value;
+  const returnDate = document.getElementById('newReturnDate').value;
+  const price = document.getElementById('newPrice').value;
+  const items = document.getElementById('newItems').value.trim();
+  const note = document.getElementById('newNote').value.trim();
+  const status = document.getElementById('newStatus').value;
+
+  if (!name || !phone || !date || !price || !items) { showToast('⚠ 請填寫所有必填欄位'); return null; }
+
+  const customers = getCustomers();
+  const exists = customers.find(c => c.phone === phone);
+  if (exists) { showToast('⚠ 此電話已有客戶，請用查詢頁面新增維修記錄'); return null; }
+
+  const repairObj = { id: Date.now().toString(), date, returnDate, price: parseInt(price), items, note, status };
+  const newCustomer = {
+    id: Date.now().toString(),
+    name, phone,
+    repairs: [repairObj]
+  };
+
+  customers.push(newCustomer);
+  saveCustomers(customers);
+  clearForm();
+  updateStats();
+  showToast('✅ 客戶已儲存！');
+  return { customer: newCustomer, repair: repairObj };
+}
+
+function addCustomerAndPrint() {
+  const res = saveNewCustomer();
+  if (res) {
+    printRepairReceipt(res.customer, res.repair);
+  }
+}
+
+function clearForm() {
+  ['newName','newPhone','newDate','newReturnDate','newPrice','newItems','newNote'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('newDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('newStatus').value = 'done';
+}
+
+document.getElementById('newDate').value = new Date().toISOString().split('T')[0];
+
+// ── Print Helper ──
+function generateReceiptHTML(titleTag, customer, repair, printTime) {
+  const displayReturnDate = repair.returnDate ? repair.returnDate : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+  return `
+    <div style="border: 2px solid #222; padding: 22px 28px; border-radius: 8px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #333; padding-bottom: 12px; margin-bottom: 16px;">
+          <h2 style="font-size: 24px; font-weight: bold; margin: 0; letter-spacing: 1px;">電腦維修單 <span style="font-size: 17px; color: #333;">(${titleTag})</span></h2>
+          <span style="font-size: 13px; color: #555;">印表時間：${printTime}</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 15px; background: #fafafa; padding: 8px 12px; border-radius: 4px;">
+          <div><strong>客戶姓名：</strong>${customer.name}</div>
+          <div><strong>聯絡電話：</strong>${customer.phone}</div>
+          <div><strong>維修日期：</strong>${repair.date}</div>
+          <div><strong>預計取回：</strong><span style="display: inline-block; border-bottom: 1px solid #333; min-width: 110px; text-align: center;">${displayReturnDate}</span></div>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 15px;">
+          <thead>
+            <tr style="background: #e9ecef;">
+              <th style="border: 1px solid #333; padding: 9px; text-align: left;">維修項目</th>
+              <th style="border: 1px solid #333; padding: 9px; text-align: center; width: 100px;">狀態</th>
+              <th style="border: 1px solid #333; padding: 9px; text-align: right; width: 130px;">金額 (NT$)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border: 1px solid #333; padding: 10px;">${repair.items}</td>
+              <td style="border: 1px solid #333; padding: 10px; text-align: center;">${repair.status === 'done' ? '已完成' : '待取件'}</td>
+              <td style="border: 1px solid #333; padding: 10px; text-align: right; font-weight: bold;">NT$ ${(repair.price || 0).toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-bottom: 16px; font-size: 14px; background: #fafafa; padding: 10px 14px; border: 1px solid #ccc; border-radius: 4px; min-height: 80px; box-sizing: border-box;">
+          <strong>備註事項：</strong>${repair.note ? repair.note : ''}
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid #bbb; padding-top: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div style="line-height: 1.6;">
+          <p style="margin:0; font-weight: bold; color: #222;">店家電話：(02) 2345-6789 ｜ 地址：台北市維修路88號</p>
+          <p style="margin:4px 0 0 0; color: #555;">★ 憑客戶存留單取件，感謝您的惠顧！客服專線同店家電話。</p>
+        </div>
+        <div style="border: 2px dashed #444; width: 105px; height: 105px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; color: #666; border-radius: 6px; background: #fff; flex-shrink: 0;">
+          公司蓋章處
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function printRepairReceipt(customer, repair) {
+  const receiptArea = document.getElementById('printReceiptArea');
+  const printTime = new Date().toLocaleString('zh-TW');
+  
+  receiptArea.innerHTML = `
+    <div style="width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 25px 35px; box-sizing: border-box;">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 47%;">
+        ${generateReceiptHTML('公司存留單', customer, repair, printTime)}
+      </div>
+      
+      <div style="height: 6%; display: flex; align-items: center; justify-content: center; position: relative;">
+        <div style="width: 100%; border-top: 2px dashed #666;"></div>
+        <span style="position: absolute; background: #fff; padding: 0 15px; font-size: 14px; color: #555; font-weight: bold;">✂️ 撕剪線 （置中）</span>
+      </div>
+
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 47%;">
+        ${generateReceiptHTML('客戶存留單', customer, repair, printTime)}
+      </div>
+    </div>
+  `;
+  window.print();
+}
+
+function printSingleRepair(repairId) {
+  const customers = getCustomers();
+  const c = customers.find(x => x.id === currentCustomerId);
+  if (!c) return;
+  const r = (c.repairs || []).find(x => x.id === repairId);
+  if (!r) return;
+  printRepairReceipt(c, r);
+}
+
+// ── Search ──
+function searchCustomers(e) {
+  if (e && e.type === 'keydown' && e.key !== 'Enter') return;
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (!q) { renderCustomerList(getCustomers()); return; }
+  const results = getCustomers().filter(c =>
+    c.name.toLowerCase().includes(q) || c.phone.includes(q)
+  );
+  renderCustomerList(results);
+}
+
+function renderCustomerList(customers) {
+  const el = document.getElementById('customerList');
+  if (!customers.length) {
+    el.innerHTML = '<div class="empty"><div class="icon">🔍</div>找不到符合的客戶</div>';
+    return;
+  }
+  el.innerHTML = customers.map(c => {
+    const repairCount = (c.repairs || []).length;
+    const lastDate = repairCount ? c.repairs[repairCount-1].date : '—';
+    return `
+    <div class="customer-item" onclick="openCustomer('${c.id}')">
+      <div class="avatar">${c.name.charAt(0)}</div>
+      <div class="customer-info">
+        <div class="customer-name">${c.name}</div>
+        <div class="customer-phone">${c.phone}</div>
+      </div>
+      <div class="customer-meta">
+        <div class="repair-count">${repairCount} 次維修</div>
+        <div>最近：${lastDate}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Customer detail modal ──
+let currentCustomerId = null;
+
+function openCustomer(id) {
+  const customers = getCustomers();
+  const c = customers.find(x => x.id === id);
+  if (!c) return;
+  currentCustomerId = id;
+  document.getElementById('modalName').textContent = c.name;
+  document.getElementById('modalPhone').textContent = '📞 ' + c.phone;
+  resetRepairForm();
+  renderRepairs(c);
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function resetRepairForm() {
+  document.getElementById('editingRepairId').value = '';
+  document.getElementById('repairDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('repairReturnDate').value = '';
+  document.getElementById('repairPrice').value = '';
+  document.getElementById('repairItems').value = '';
+  document.getElementById('repairNote').value = '';
+  document.getElementById('repairStatus').value = 'done';
+  document.getElementById('saveRepairBtn').textContent = '儲存紀錄';
+  document.getElementById('addRepairForm').classList.remove('open');
+}
+
+function renderRepairs(c) {
+  const el = document.getElementById('modalRepairs');
+  const repairs = [...(c.repairs || [])].reverse();
+  if (!repairs.length) { el.innerHTML = '<div class="empty"><div class="icon">📋</div>尚無維修紀錄</div>'; return; }
+  el.innerHTML = repairs.map((r) => `
+    <div class="repair-record">
+      <div class="repair-header">
+        <div>
+          <div class="repair-date">📅 維修日期：${r.date}${r.returnDate ? ` ｜ 📦 預計取回：${r.returnDate}` : ''}</div>
+          <span class="status-badge ${r.status === 'done' ? 'status-done' : 'status-pending'}">
+            ${r.status === 'done' ? '✅ 已完成' : '⏳ 待取件'}
+          </span>
+        </div>
+        <div style="text-align:right;">
+          <div class="repair-price">${(r.price||0).toLocaleString()}</div>
+          <div style="margin-top:6px; display:flex; gap:6px; justify-content:flex-end;">
+            <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="printSingleRepair('${r.id}')">🖨️ 列印</button>
+            <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px; color:var(--accent);" onclick="editRepair('${r.id}')">✏️ 編輯</button>
+            <button class="btn btn-danger" style="padding:4px 10px; font-size:12px;" onclick="deleteRepair('${r.id}')">刪除</button>
+          </div>
+        </div>
+      </div>
+      <div class="repair-items">🔧 ${r.items}</div>
+      ${r.note ? `<div class="repair-note">📝 ${r.note}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function toggleAddRepair() {
+  const form = document.getElementById('addRepairForm');
+  if (form.classList.contains('open')) {
+    resetRepairForm();
+  } else {
+    resetRepairForm();
+    form.classList.add('open');
+  }
+}
+
+function editRepair(repairId) {
+  const customers = getCustomers();
+  const c = customers.find(x => x.id === currentCustomerId);
+  if (!c) return;
+  const r = (c.repairs || []).find(x => x.id === repairId);
+  if (!r) return;
+
+  document.getElementById('editingRepairId').value = r.id;
+  document.getElementById('repairDate').value = r.date;
+  document.getElementById('repairReturnDate').value = r.returnDate || '';
+  document.getElementById('repairPrice').value = r.price;
+  document.getElementById('repairItems').value = r.items;
+  document.getElementById('repairNote').value = r.note || '';
+  document.getElementById('repairStatus').value = r.status || 'done';
+  document.getElementById('saveRepairBtn').textContent = '✅ 更新紀錄';
+  
+  const form = document.getElementById('addRepairForm');
+  form.classList.add('open');
+  form.scrollIntoView({ behavior: 'smooth' });
+}
+
+function saveRepair() {
+  const editingId = document.getElementById('editingRepairId').value;
+  const date = document.getElementById('repairDate').value;
+  const returnDate = document.getElementById('repairReturnDate').value;
+  const price = document.getElementById('repairPrice').value;
+  const items = document.getElementById('repairItems').value.trim();
+  const note = document.getElementById('repairNote').value.trim();
+  const status = document.getElementById('repairStatus').value;
+
+  if (!date || !price || !items) { showToast('⚠ 請填寫日期、項目和費用'); return; }
+
+  const customers = getCustomers();
+  const c = customers.find(x => x.id === currentCustomerId);
+  if (!c) return;
+
+  c.repairs = c.repairs || [];
+
+  if (editingId) {
+    // Edit existing repair
+    const rIdx = c.repairs.findIndex(r => r.id === editingId);
+    if (rIdx !== -1) {
+      c.repairs[rIdx] = { id: editingId, date, returnDate, price: parseInt(price), items, note, status };
+      showToast('✅ 維修紀錄已更新！');
+    }
+  } else {
+    // Add new repair
+    c.repairs.push({ id: Date.now().toString(), date, returnDate, price: parseInt(price), items, note, status });
+    showToast('✅ 維修紀錄已新增！');
+  }
+
+  saveCustomers(customers);
+  updateStats();
+  renderRepairs(c);
+  resetRepairForm();
+}
+
+function deleteRepair(repairId) {
+  if (!confirm('確定要刪除這筆維修紀錄嗎？')) return;
+  const customers = getCustomers();
+  const c = customers.find(x => x.id === currentCustomerId);
+  if (!c) return;
+  c.repairs = c.repairs.filter(r => r.id !== repairId);
+  saveCustomers(customers);
+  updateStats();
+  renderRepairs(c);
+  showToast('🗑 紀錄已刪除');
+}
+
+function deleteCustomer() {
+  const customers = getCustomers();
+  const c = customers.find(x => x.id === currentCustomerId);
+  if (!c) return;
+  if (!confirm(`確定要刪除「${c.name}」的所有資料嗎？\n此操作無法復原。`)) return;
+  const updated = customers.filter(x => x.id !== currentCustomerId);
+  saveCustomers(updated);
+  updateStats();
+  renderCustomerList(updated);
+  closeModalDirect();
+  showToast('🗑 客戶資料已刪除');
+}
+
+function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── Init ──
+updateStats();
+document.getElementById('customerList').innerHTML = '<div class="empty"><div class="icon">🔍</div>請輸入姓名或電話搜尋，或點「顯示全部」</div>';
+</script>
+</body>
+</html>
