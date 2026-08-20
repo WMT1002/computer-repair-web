@@ -230,6 +230,32 @@ const ReceiptSlip: React.FC<ReceiptSlipProps> = ({ title, customer, repair, shop
         </div>
       </div>
 
+      {/* Side Panels Confirmation Row */}
+      <div className="flex items-center justify-between text-xs sm:text-sm border border-slate-400 px-3.5 py-1.5 bg-slate-50/80 rounded-lg">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-slate-900 font-mono">機殼側板附帶：</span>
+        </div>
+        <div className="flex items-center gap-6 font-mono text-xs sm:text-sm">
+          <span className="inline-flex items-center gap-1.5 font-bold">
+            <span className={`inline-flex items-center justify-center w-4 h-4 border border-slate-900 rounded-sm text-xs font-black ${repair.hasLeftPanel ? 'bg-slate-900 text-white' : 'bg-white text-transparent'}`}>
+              ✓
+            </span>
+            <span className={repair.hasLeftPanel ? 'text-slate-950 font-black' : 'text-slate-500 font-normal'}>
+              左側板 {repair.hasLeftPanel ? '【有】' : '【無】'}
+            </span>
+          </span>
+
+          <span className="inline-flex items-center gap-1.5 font-bold">
+            <span className={`inline-flex items-center justify-center w-4 h-4 border border-slate-900 rounded-sm text-xs font-black ${repair.hasRightPanel ? 'bg-slate-900 text-white' : 'bg-white text-transparent'}`}>
+              ✓
+            </span>
+            <span className={repair.hasRightPanel ? 'text-slate-950 font-black' : 'text-slate-500 font-normal'}>
+              右側板 {repair.hasRightPanel ? '【有】' : '【無】'}
+            </span>
+          </span>
+        </div>
+      </div>
+
       {/* Repair Detail Table (Section 3 - Enlarged) */}
       <table className="w-full text-left text-sm border-collapse border border-slate-900">
         <thead>
