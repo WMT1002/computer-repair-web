@@ -49,10 +49,11 @@ html.light-mode body::before {
 /* Light Mode Overrides for Slate Dark Background & Text Utilities */
 html.light-mode .bg-slate-900\/80,
 html.light-mode .bg-slate-900\/90,
+html.light-mode .bg-slate-900\/70,
 html.light-mode .bg-slate-900\/60,
 html.light-mode .bg-slate-900\/40,
 html.light-mode .bg-slate-900 {
-  background-color: #ffffff !important;
+  background-color: #f8fafc !important;
   color: #0f172a !important;
 }
 
