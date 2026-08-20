@@ -218,37 +218,45 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 </div>
               </div>
 
-              {/* 機殼側板勾選 (左側板 / 右側板) */}
-              <div className="p-3 bg-slate-800/80 rounded-lg border border-slate-700 space-y-2">
-                <div className="text-xs font-bold text-slate-300 flex items-center justify-between">
-                  <span>機殼側板狀態（配件確認）：</span>
-                  <span className="text-[11px] text-slate-400 font-normal">可勾選/可不勾選</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <label className={`flex items-center gap-2 p-2 rounded border cursor-pointer ${
-                    hasLeftPanel ? 'bg-sky-500/20 border-sky-500/50 text-sky-200' : 'bg-slate-900 border-slate-700 text-slate-400'
-                  }`}>
-                    <input
-                      type="checkbox"
-                      checked={hasLeftPanel}
-                      onChange={(e) => setHasLeftPanel(e.target.checked)}
-                      className="rounded accent-sky-500 cursor-pointer"
-                    />
-                    <span>左側板 {hasLeftPanel ? '(✓有)' : '(無)'}</span>
-                  </label>
+              {/* 側板勾選 (左側板 / 右側板) */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer select-none transition ${
+                  hasLeftPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasLeftPanel}
+                    onChange={(e) => setHasLeftPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1">
+                    <span>左側板</span>
+                    <span className={`text-[10px] px-1 py-0.2 rounded border ${
+                      hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasLeftPanel ? '✓ 有' : '無'}
+                    </span>
+                  </div>
+                </label>
 
-                  <label className={`flex items-center gap-2 p-2 rounded border cursor-pointer ${
-                    hasRightPanel ? 'bg-teal-500/20 border-teal-500/50 text-teal-200' : 'bg-slate-900 border-slate-700 text-slate-400'
-                  }`}>
-                    <input
-                      type="checkbox"
-                      checked={hasRightPanel}
-                      onChange={(e) => setHasRightPanel(e.target.checked)}
-                      className="rounded accent-teal-500 cursor-pointer"
-                    />
-                    <span>右側板 {hasRightPanel ? '(✓有)' : '(無)'}</span>
-                  </label>
-                </div>
+                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer select-none transition ${
+                  hasRightPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasRightPanel}
+                    onChange={(e) => setHasRightPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1">
+                    <span>右側板</span>
+                    <span className={`text-[10px] px-1 py-0.2 rounded border ${
+                      hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasRightPanel ? '✓ 有' : '無'}
+                    </span>
+                  </div>
+                </label>
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
@@ -314,15 +322,14 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   
                   {/* Side panels badges */}
                   {(repair.hasLeftPanel || repair.hasRightPanel) && (
-                    <div className="flex items-center gap-2 mt-2 flex-wrap text-[11px]">
-                      <span className="text-slate-400">機殼配件：</span>
+                    <div className="flex items-center gap-1.5 mt-2 flex-wrap text-[11px]">
                       {repair.hasLeftPanel && (
-                        <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 font-mono">
+                        <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 font-mono">
                           ✓ 左側板
                         </span>
                       )}
                       {repair.hasRightPanel && (
-                        <span className="px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30 font-mono">
+                        <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 font-mono">
                           ✓ 右側板
                         </span>
                       )}

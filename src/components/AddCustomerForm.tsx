@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Customer, RepairStatus, PriceItem } from '../types';
-import { UserPlus, Save, DollarSign, Calendar, Wrench, Phone, User, FileText, Printer, ArrowLeft, Tag, Layers } from 'lucide-react';
+import { UserPlus, Save, DollarSign, Calendar, Wrench, Phone, User, FileText, Printer, ArrowLeft, Tag } from 'lucide-react';
 
 interface AddCustomerFormProps {
   onAddCustomer: (newCustomer: Customer, shouldPrint?: boolean) => void;
@@ -236,77 +236,59 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
             </div>
           </div>
 
-          {/* 機殼側板勾選區塊 (左側板 / 右側板) */}
-          <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-700/80 space-y-2.5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-              <label className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-sky-400" />
-                機殼側板狀態（隨機附帶配件）
-              </label>
-              <span className="text-[11px] text-slate-400">
-                可勾選也可以不勾選，將自動同步顯示並列印於留存單
-              </span>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              {/* 左側板 */}
-              <label
-                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
-                  hasLeftPanel
-                    ? 'bg-sky-500/15 border-sky-500/50 text-sky-200 shadow-sm'
-                    : 'bg-slate-900/90 border-slate-700/70 text-slate-300 hover:border-slate-600'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={hasLeftPanel}
-                  onChange={(e) => setHasLeftPanel(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-700 text-sky-500 focus:ring-sky-400 focus:ring-offset-slate-900 cursor-pointer accent-sky-500"
-                />
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold flex items-center gap-1.5">
-                    左側板
-                    {hasLeftPanel ? (
-                      <span className="text-xs text-sky-400 font-bold bg-sky-500/20 px-1.5 py-0.2 rounded">
-                        ✓ 已附帶
-                      </span>
-                    ) : (
-                      <span className="text-[11px] text-slate-500 font-normal">(未勾選/無)</span>
-                    )}
-                  </span>
-                  <span className="text-[11px] text-slate-400">主機左側外殼面板</span>
-                </div>
-              </label>
+          {/* 機殼側板勾選 (左側板 / 右側板) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* 左側板 */}
+            <label
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer select-none transition-all ${
+                hasLeftPanel
+                  ? 'bg-slate-700/80 border-slate-500 text-slate-100 shadow-sm'
+                  : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={hasLeftPanel}
+                onChange={(e) => setHasLeftPanel(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-500 focus:ring-offset-slate-900 cursor-pointer accent-slate-600"
+              />
+              <div className="flex items-center justify-between flex-1">
+                <span className="text-sm font-semibold">左側板</span>
+                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
+                  hasLeftPanel 
+                    ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' 
+                    : 'bg-slate-950/40 text-slate-500 border-slate-800'
+                }`}>
+                  {hasLeftPanel ? '✓ 已勾選 (有)' : '未勾選 (無)'}
+                </span>
+              </div>
+            </label>
 
-              {/* 右側板 */}
-              <label
-                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
-                  hasRightPanel
-                    ? 'bg-teal-500/15 border-teal-500/50 text-teal-200 shadow-sm'
-                    : 'bg-slate-900/90 border-slate-700/70 text-slate-300 hover:border-slate-600'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={hasRightPanel}
-                  onChange={(e) => setHasRightPanel(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-700 text-teal-500 focus:ring-teal-400 focus:ring-offset-slate-900 cursor-pointer accent-teal-500"
-                />
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold flex items-center gap-1.5">
-                    右側板
-                    {hasRightPanel ? (
-                      <span className="text-xs text-teal-400 font-bold bg-teal-500/20 px-1.5 py-0.2 rounded">
-                        ✓ 已附帶
-                      </span>
-                    ) : (
-                      <span className="text-[11px] text-slate-500 font-normal">(未勾選/無)</span>
-                    )}
-                  </span>
-                  <span className="text-[11px] text-slate-400">主機右側外殼面板</span>
-                </div>
-              </label>
-            </div>
+            {/* 右側板 */}
+            <label
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer select-none transition-all ${
+                hasRightPanel
+                  ? 'bg-slate-700/80 border-slate-500 text-slate-100 shadow-sm'
+                  : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={hasRightPanel}
+                onChange={(e) => setHasRightPanel(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-500 focus:ring-offset-slate-900 cursor-pointer accent-slate-600"
+              />
+              <div className="flex items-center justify-between flex-1">
+                <span className="text-sm font-semibold">右側板</span>
+                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
+                  hasRightPanel 
+                    ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' 
+                    : 'bg-slate-950/40 text-slate-500 border-slate-800'
+                }`}>
+                  {hasRightPanel ? '✓ 已勾選 (有)' : '未勾選 (無)'}
+                </span>
+              </div>
+            </label>
           </div>
         </div>
 

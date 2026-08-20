@@ -215,12 +215,12 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                       {(latestRepair.hasLeftPanel || latestRepair.hasRightPanel) && (
                         <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                           {latestRepair.hasLeftPanel && (
-                            <span className="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30 text-[10px] font-mono">
+                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono">
                               ✓ 左側板
                             </span>
                           )}
                           {latestRepair.hasRightPanel && (
-                            <span className="px-1.5 py-0.5 rounded bg-teal-500/15 text-teal-300 border border-teal-500/30 text-[10px] font-mono">
+                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono">
                               ✓ 右側板
                             </span>
                           )}

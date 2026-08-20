@@ -218,37 +218,45 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                 </div>
               </div>
 
-              {/* 機殼側板勾選 (左側板 / 右側板) */}
-              <div className="p-3.5 bg-slate-900/90 rounded-xl border border-slate-700/80 space-y-2">
-                <div className="text-xs font-bold text-slate-300 flex items-center justify-between">
-                  <span>機殼側板狀態（隨機附帶配件）：</span>
-                  <span className="text-[11px] text-slate-400 font-normal">可勾選/可不勾選</span>
-                </div>
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <label className={`flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition ${
-                    hasLeftPanel ? 'bg-sky-500/20 border-sky-500/50 text-sky-200' : 'bg-slate-900 border-slate-700 text-slate-400'
-                  }`}>
-                    <input
-                      type="checkbox"
-                      checked={hasLeftPanel}
-                      onChange={(e) => setHasLeftPanel(e.target.checked)}
-                      className="rounded accent-sky-500 cursor-pointer"
-                    />
-                    <span className="font-semibold">左側板 {hasLeftPanel ? '(✓已附帶)' : '(無)'}</span>
-                  </label>
+              {/* 側板勾選 (左側板 / 右側板) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <label className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border cursor-pointer select-none transition ${
+                  hasLeftPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasLeftPanel}
+                    onChange={(e) => setHasLeftPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1 text-xs">
+                    <span className="font-semibold">左側板</span>
+                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${
+                      hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasLeftPanel ? '✓ 已勾選' : '未勾選'}
+                    </span>
+                  </div>
+                </label>
 
-                  <label className={`flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition ${
-                    hasRightPanel ? 'bg-teal-500/20 border-teal-500/50 text-teal-200' : 'bg-slate-900 border-slate-700 text-slate-400'
-                  }`}>
-                    <input
-                      type="checkbox"
-                      checked={hasRightPanel}
-                      onChange={(e) => setHasRightPanel(e.target.checked)}
-                      className="rounded accent-teal-500 cursor-pointer"
-                    />
-                    <span className="font-semibold">右側板 {hasRightPanel ? '(✓已附帶)' : '(無)'}</span>
-                  </label>
-                </div>
+                <label className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border cursor-pointer select-none transition ${
+                  hasRightPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasRightPanel}
+                    onChange={(e) => setHasRightPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1 text-xs">
+                    <span className="font-semibold">右側板</span>
+                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${
+                      hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasRightPanel ? '✓ 已勾選' : '未勾選'}
+                    </span>
+                  </div>
+                </label>
               </div>
             </div>
           )}
