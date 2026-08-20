@@ -54,7 +54,7 @@
 | **前端核心** | React 18, TypeScript, Vite | 快速熱重載與強型別開發 |
 | **UI 與樣式** | Tailwind CSS, Lucide Icons | 現代科技風深淺色主題切換與圖示 |
 | **後端 / 資料庫** | Supabase (PostgreSQL, Auth, RLS) | 雲端資料庫、行級安全策略 (RLS)、使用者管理 |
-| **自動化部署** | GitHub Actions & GitHub Pages | 自動化 CI/CD 建置與靜態託管 |
+| **雲端部署** | Vercel | 高效能邊緣全球 CDN 託管、自動 CI/CD |
 
 ---
 
