@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Wrench,
   Clock,
   ShieldCheck,
   Cloud,
@@ -9,6 +8,7 @@ import {
   LogOut,
   Shield,
 } from 'lucide-react';
+import { FixFlowLogo } from './common/FixFlowLogo';
 import { useAuth } from '../contexts/AuthContext';
 import { getRoleLabel, getRoleStyle, isAdmin } from '../config/roles';
 
@@ -47,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const handleSignOut = async () => {
-    if (window.confirm('確定要登出電腦維修管理系統嗎？')) {
+    if (window.confirm('確定要登出 FixFlow 智慧電腦維修管理系統嗎？')) {
       await signOut();
     }
   };
@@ -61,13 +61,16 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between pb-6 mb-6 border-b border-[#334155] gap-4">
       {/* Brand Section */}
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#38bdf8] to-[#34d399] flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-sky-500/20 shrink-0">
-          <Wrench className="w-6 h-6 stroke-[2.5]" />
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 via-teal-400 to-emerald-400 p-2.5 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-sky-500/25 shrink-0 transition-transform hover:scale-105">
+          <FixFlowLogo className="w-full h-full text-slate-950" />
         </div>
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-2xl font-black tracking-wider text-slate-100">
-              電腦維修管理系統
+            <h1 className="text-2xl font-black tracking-wider text-slate-100 flex items-center gap-2">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-emerald-400 font-extrabold tracking-normal">
+                FixFlow
+              </span>
+              <span>智慧電腦維修管理系統</span>
             </h1>
             <span className="px-2 py-0.5 text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> 正式版
@@ -77,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
           <p className="text-xs text-slate-400 font-mono mt-1">
-            VITE + REACT + TYPESCRIPT + SUPABASE AUTH & CLOUD
+            FIXFLOW PRO • VITE + REACT + TYPESCRIPT + SUPABASE AUTH & CLOUD
           </p>
         </div>
       </div>

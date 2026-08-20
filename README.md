@@ -1,6 +1,6 @@
-# 🖥️ 電腦維修管理系統 (Computer Repair Shop Management System)
+# ⚡ FixFlow 智慧電腦維修管理系統 (FixFlow Intelligent Computer Repair System)
 
-一個基於 **React + TypeScript + Vite + Tailwind CSS + Supabase** 打造的現代化全功能電腦維修管理系統。支援客戶與維修紀錄管理、價目表管理、維修單 A4 雙聯列印、多維度營業數據分析、雲端即時同步與 Supabase 權限認證。
+一個基於 **React + TypeScript + Vite + Tailwind CSS + Supabase** 打造的現代化全功能智慧電腦維修管理系統。支援客戶與維修紀錄管理、價目表管理、維修單 A4 雙聯列印、多維度營業數據分析、雲端即時同步與 Supabase 權限認證。
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react)

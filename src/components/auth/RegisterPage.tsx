@@ -10,9 +10,9 @@ import {
   RefreshCcw,
   ShieldCheck,
   User,
-  Wrench,
   Sparkles,
 } from 'lucide-react';
+import { FixFlowLogo } from '../common/FixFlowLogo';
 import { supabase } from '../../utils/supabaseClient';
 
 interface RegisterPageProps {
@@ -179,11 +179,14 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
         {/* Left Visual Card */}
         <div className="hidden lg:flex flex-col justify-between p-10 bg-gradient-to-br from-slate-950 via-[#0d1f38] to-[#122847] border-r border-slate-700/60 relative overflow-hidden">
           <div className="relative z-10 flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-emerald-400 flex items-center justify-center text-slate-950 shadow-lg shadow-sky-500/25">
-              <Wrench className="w-6 h-6 stroke-[2.5]" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 via-teal-400 to-emerald-400 p-2.5 flex items-center justify-center text-slate-950 shadow-lg shadow-sky-500/25">
+              <FixFlowLogo className="w-full h-full text-slate-950" />
             </div>
             <div>
-              <div className="text-xl font-black tracking-wider text-white">電腦維修管理系統</div>
+              <div className="text-xl font-black tracking-wider text-white flex items-center gap-1.5">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">FixFlow</span>
+                <span>智慧維修系統</span>
+              </div>
               <div className="text-xs text-sky-300 font-mono">REPAIR CLOUD AUTH PLATFORM</div>
             </div>
           </div>
