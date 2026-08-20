@@ -49,11 +49,10 @@ html.light-mode body::before {
 /* Light Mode Overrides for Slate Dark Background & Text Utilities */
 html.light-mode .bg-slate-900\/80,
 html.light-mode .bg-slate-900\/90,
-html.light-mode .bg-slate-900\/70,
 html.light-mode .bg-slate-900\/60,
 html.light-mode .bg-slate-900\/40,
 html.light-mode .bg-slate-900 {
-  background-color: #f8fafc !important;
+  background-color: #ffffff !important;
   color: #0f172a !important;
 }
 
@@ -250,14 +249,10 @@ body::before {
     visibility: visible !important;
     page-break-after: avoid !important;
     page-break-inside: avoid !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
 
   .print-only-container * {
     visibility: visible !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
 }
 

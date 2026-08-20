@@ -210,23 +210,6 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                       <p className="text-slate-200 line-clamp-2 font-medium">
                         {latestRepair.item}
                       </p>
-
-                      {/* Side Panel badges */}
-                      {(latestRepair.hasLeftPanel || latestRepair.hasRightPanel) && (
-                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                          {latestRepair.hasLeftPanel && (
-                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono">
-                              ✓ 左側板
-                            </span>
-                          )}
-                          {latestRepair.hasRightPanel && (
-                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono">
-                              ✓ 右側板
-                            </span>
-                          )}
-                        </div>
-                      )}
-
                       {latestRepair.note && (
                         <p className="text-slate-400 text-[11px] mt-1 italic truncate">
                           備註：{latestRepair.note}

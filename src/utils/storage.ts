@@ -212,8 +212,6 @@ export async function fetchCloudCustomers(): Promise<Customer[] | null> {
           price: Number(r.price) || 0,
           status: r.status as 'pending' | 'completed',
           note: r.note || '',
-          hasLeftPanel: Boolean(r.has_left_panel),
-          hasRightPanel: Boolean(r.has_right_panel),
         }));
 
       return {
@@ -252,8 +250,6 @@ export async function syncCloudCustomers(customers: Customer[]): Promise<void> {
           price: r.price,
           status: r.status,
           note: r.note,
-          has_left_panel: Boolean(r.hasLeftPanel),
-          has_right_panel: Boolean(r.hasRightPanel),
         });
       }
     }
