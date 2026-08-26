@@ -51,6 +51,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
 }) => {
   const [searchName, setSearchName] = useState('');
   const [searchRepairId, setSearchRepairId] = useState('');
+  const [showAllRecords, setShowAllRecords] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending_pickup' | 'expiring' | 'expired'>('all');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
@@ -162,6 +163,9 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
     });
   }, [computedWarranties, searchName, searchRepairId, statusFilter]);
 
+  const hasSearchQuery = Boolean(searchName.trim() || searchRepairId.trim());
+  const isSearchActive = hasSearchQuery || showAllRecords || statusFilter !== 'all';
+
   const handleCopySn = (sn: string, id: string) => {
     navigator.clipboard.writeText(sn);
     setCopiedId(id);
@@ -220,9 +224,12 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
         {/* Top KPI Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-6">
           <div
-            onClick={() => setStatusFilter('all')}
+            onClick={() => {
+              setStatusFilter('all');
+              setShowAllRecords(true);
+            }}
             className={`p-3 rounded-xl border transition-all cursor-pointer ${
-              statusFilter === 'all'
+              statusFilter === 'all' && showAllRecords
                 ? 'bg-slate-800/90 border-cyan-500/60 ring-1 ring-cyan-500 shadow-md'
                 : 'bg-slate-900/60 border-slate-700/60 hover:bg-slate-800/60'
             }`}
@@ -238,7 +245,10 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
           </div>
 
           <div
-            onClick={() => setStatusFilter('active')}
+            onClick={() => {
+              setStatusFilter('active');
+              setShowAllRecords(false);
+            }}
             className={`p-3 rounded-xl border transition-all cursor-pointer ${
               statusFilter === 'active'
                 ? 'bg-emerald-950/40 border-emerald-500/60 ring-1 ring-emerald-500 shadow-md'
@@ -256,7 +266,10 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
           </div>
 
           <div
-            onClick={() => setStatusFilter('pending_pickup')}
+            onClick={() => {
+              setStatusFilter('pending_pickup');
+              setShowAllRecords(false);
+            }}
             className={`p-3 rounded-xl border transition-all cursor-pointer ${
               statusFilter === 'pending_pickup'
                 ? 'bg-amber-950/40 border-amber-500/60 ring-1 ring-amber-500 shadow-md'
@@ -274,7 +287,10 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
           </div>
 
           <div
-            onClick={() => setStatusFilter('expiring')}
+            onClick={() => {
+              setStatusFilter('expiring');
+              setShowAllRecords(false);
+            }}
             className={`p-3 rounded-xl border transition-all cursor-pointer ${
               statusFilter === 'expiring'
                 ? 'bg-orange-950/40 border-orange-500/60 ring-1 ring-orange-500 shadow-md'
@@ -292,7 +308,10 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
           </div>
 
           <div
-            onClick={() => setStatusFilter('expired')}
+            onClick={() => {
+              setStatusFilter('expired');
+              setShowAllRecords(false);
+            }}
             className={`p-3 rounded-xl border transition-all cursor-pointer col-span-2 sm:col-span-1 ${
               statusFilter === 'expired'
                 ? 'bg-rose-950/40 border-rose-500/60 ring-1 ring-rose-500 shadow-md'
@@ -316,6 +335,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            setShowAllRecords(true);
             (document.activeElement as HTMLElement)?.blur();
           }}
           className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3"
@@ -328,7 +348,10 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                 type="text"
                 placeholder="搜尋客戶姓名..."
                 value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
+                onChange={(e) => {
+                  setSearchName(e.target.value);
+                  if (e.target.value.trim()) setShowAllRecords(false);
+                }}
                 className="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
               />
             </div>
@@ -340,7 +363,10 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                 type="text"
                 placeholder="搜尋維修單號 (如 REP-2026-001)..."
                 value={searchRepairId}
-                onChange={(e) => setSearchRepairId(e.target.value)}
+                onChange={(e) => {
+                  setSearchRepairId(e.target.value);
+                  if (e.target.value.trim()) setShowAllRecords(false);
+                }}
                 className="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 font-mono transition"
               />
             </div>
@@ -354,12 +380,14 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
               <span>查詢</span>
             </button>
 
-            {(searchName.trim() || searchRepairId.trim()) && (
+            {isSearchActive && (
               <button
                 type="button"
                 onClick={() => {
                   setSearchName('');
                   setSearchRepairId('');
+                  setShowAllRecords(false);
+                  setStatusFilter('all');
                 }}
                 className="px-3 py-2 text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 rounded-lg transition shrink-0 cursor-pointer"
               >
@@ -400,8 +428,33 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
         </form>
       </div>
 
-      {/* Empty State */}
-      {filteredList.length === 0 && (
+      {/* 1. Initial State (尚未進行搜尋時，下方不先顯示資料) */}
+      {!isSearchActive && (
+        <div className="bg-slate-800/40 border border-slate-700/60 border-dashed rounded-2xl p-10 sm:p-14 text-center space-y-4 shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto border border-cyan-500/20 shadow-inner">
+            <Search className="w-7 h-7" />
+          </div>
+          <div className="space-y-1.5">
+            <h3 className="text-base font-bold text-slate-200">請輸入客戶姓名或維修單號以查詢保固履歷</h3>
+            <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+              在上方搜尋欄輸入客戶姓名（如：張家豪）或維修單號（如：REP-2026-003）後點擊「查詢」，即可顯示對應的零件保固資料。
+            </p>
+          </div>
+          <div className="pt-2 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAllRecords(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-cyan-300 bg-slate-900/80 border border-slate-700 hover:border-cyan-500/40 transition cursor-pointer shadow-2xs"
+            >
+              <ShieldCheck className="w-4 h-4 text-cyan-400" />
+              <span>瀏覽全部保固紀錄 ({computedWarranties.length} 筆)</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Empty State (已搜尋但查無符合紀錄) */}
+      {isSearchActive && filteredList.length === 0 && (
         <div className="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-12 text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center mx-auto border border-slate-700">
             <ShieldCheck className="w-8 h-8" />
@@ -409,29 +462,26 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
           <div>
             <h3 className="text-base font-bold text-slate-200">查無符合的零件保固紀錄</h3>
             <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
-              {searchName || searchRepairId || statusFilter !== 'all'
-                ? '請確認輸入的客戶姓名或維修單號是否正確，或清除篩選條件'
-                : '目前尚未建立任何更換零件保固資料，點擊右上角「登記更換零件保固」即可新增！'}
+              請確認輸入的客戶姓名或維修單號是否正確，或點擊下方重置按鈕重新查詢。
             </p>
           </div>
-          {(searchName || searchRepairId || statusFilter !== 'all') && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchName('');
-                setSearchRepairId('');
-                setStatusFilter('all');
-              }}
-              className="px-4 py-1.5 text-xs rounded-lg bg-slate-700 text-slate-200 hover:bg-slate-600 transition cursor-pointer"
-            >
-              重置搜尋條件
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => {
+              setSearchName('');
+              setSearchRepairId('');
+              setShowAllRecords(false);
+              setStatusFilter('all');
+            }}
+            className="px-4 py-1.5 text-xs rounded-lg bg-slate-700 text-slate-200 hover:bg-slate-600 transition cursor-pointer"
+          >
+            重置搜尋條件
+          </button>
         </div>
       )}
 
-      {/* View 1: Card Grid */}
-      {viewMode === 'cards' && filteredList.length > 0 && (
+      {/* 3. View 1: Card Grid */}
+      {isSearchActive && viewMode === 'cards' && filteredList.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredList.map((item) => {
             const Icon = getCategoryIcon(item.partCategory);
@@ -624,7 +674,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
       )}
 
       {/* View 2: Compact Table View */}
-      {viewMode === 'table' && filteredList.length > 0 && (
+      {isSearchActive && viewMode === 'table' && filteredList.length > 0 && (
         <div className="bg-slate-800/90 border border-slate-700/80 rounded-xl overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
