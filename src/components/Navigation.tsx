@@ -25,17 +25,17 @@ export const Navigation: React.FC<NavigationProps> = ({
         onClick={() => setActiveTab('list')}
         className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer ${
           activeTab === 'list'
-            ? 'bg-sky-500/20 text-slate-800 border border-sky-500/40 shadow-xs'
-            : 'text-slate-700 hover:text-slate-900 hover:bg-slate-700/15'
+            ? 'tab-active bg-sky-500/20 text-white border border-sky-400 shadow-md shadow-sky-500/10'
+            : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
         }`}
       >
-        <Users className="w-4 h-4 text-sky-600" />
-        <span className="text-slate-800">維修與客戶列表</span>
-        <span className="ml-1.5 px-2 py-0.5 text-xs font-mono rounded-full bg-slate-900/10 text-slate-700 border border-slate-300">
+        <Users className="w-4 h-4 text-sky-400" />
+        <span>維修與客戶列表</span>
+        <span className="ml-1.5 px-2 py-0.5 text-xs font-mono rounded-full bg-slate-900/60 text-slate-300 border border-slate-700">
           {customerCount}
         </span>
         {pendingCount > 0 && (
-          <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-700 border border-amber-500/40">
+          <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
             {pendingCount} 待取
           </span>
         )}
@@ -46,12 +46,12 @@ export const Navigation: React.FC<NavigationProps> = ({
         onClick={() => setActiveTab('add')}
         className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer ${
           activeTab === 'add'
-            ? 'bg-sky-500/20 text-slate-800 border border-sky-500/40 shadow-xs'
-            : 'text-slate-700 hover:text-slate-900 hover:bg-slate-700/15'
+            ? 'tab-active bg-sky-500/20 text-white border border-sky-400 shadow-md shadow-sky-500/10'
+            : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
         }`}
       >
-        <UserPlus className="w-4 h-4 text-sky-600" />
-        <span className="text-slate-800">新增客戶紀錄</span>
+        <UserPlus className="w-4 h-4 text-sky-400" />
+        <span>新增客戶紀錄</span>
       </button>
 
       <button
@@ -59,12 +59,12 @@ export const Navigation: React.FC<NavigationProps> = ({
         onClick={() => setActiveTab('pricelist')}
         className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer ${
           activeTab === 'pricelist'
-            ? 'bg-emerald-500/20 text-slate-800 border border-emerald-500/40 shadow-xs'
-            : 'text-slate-700 hover:text-slate-900 hover:bg-slate-700/15'
+            ? 'tab-active tab-emerald bg-emerald-500/20 text-white border border-emerald-400 shadow-md shadow-emerald-500/10'
+            : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
         }`}
       >
-        <Tag className="w-4 h-4 text-emerald-600" />
-        <span className="text-slate-800">維修價目表</span>
+        <Tag className="w-4 h-4 text-emerald-400" />
+        <span>維修價目表</span>
       </button>
 
       <button
@@ -72,14 +72,14 @@ export const Navigation: React.FC<NavigationProps> = ({
         onClick={() => setActiveTab('warranty')}
         className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer ${
           activeTab === 'warranty'
-            ? 'bg-cyan-500/20 text-slate-800 border border-cyan-500/40 shadow-xs'
-            : 'text-slate-700 hover:text-slate-900 hover:bg-slate-700/15'
+            ? 'tab-active tab-cyan bg-cyan-500/20 text-white border border-cyan-400 shadow-md shadow-cyan-500/10'
+            : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
         }`}
       >
-        <ShieldCheck className="w-4 h-4 text-cyan-600" />
-        <span className="text-slate-800">零件保固履歷庫</span>
+        <ShieldCheck className="w-4 h-4 text-cyan-400" />
+        <span>零件保固履歷庫</span>
         {warrantyCount > 0 && (
-          <span className="ml-1.5 px-2 py-0.5 text-xs font-mono rounded-full bg-cyan-500/20 text-cyan-800 border border-cyan-500/40 font-bold">
+          <span className="ml-1.5 px-2 py-0.5 text-xs font-mono rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-500/40 font-bold">
             {warrantyCount}
           </span>
         )}
@@ -90,12 +90,12 @@ export const Navigation: React.FC<NavigationProps> = ({
         onClick={() => setActiveTab('stats')}
         className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer ${
           activeTab === 'stats'
-            ? 'bg-sky-500/20 text-slate-800 border border-sky-500/40 shadow-xs'
-            : 'text-slate-700 hover:text-slate-900 hover:bg-slate-700/15'
+            ? 'tab-active bg-sky-500/20 text-white border border-sky-400 shadow-md shadow-sky-500/10'
+            : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
         }`}
       >
-        <BarChart3 className="w-4 h-4 text-sky-600" />
-        <span className="text-slate-800">營業統計報表</span>
+        <BarChart3 className="w-4 h-4 text-sky-400" />
+        <span>營業統計報表</span>
       </button>
     </nav>
   );

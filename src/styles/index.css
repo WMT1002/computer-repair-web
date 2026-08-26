@@ -81,13 +81,35 @@ html.light-mode div.from-slate-950 {
   color: #0f172a !important;
 }
 
-/* Nav Tab Items in Light Mode - Always Keep Original Dark Text */
+/* Nav Tab Items in Light Mode - High Contrast Text */
 html.light-mode nav button {
-  color: #0f172a !important;
+  color: #334155 !important;
 }
 
-html.light-mode nav button > span:not([class*="rounded"]) {
+html.light-mode nav button:hover {
   color: #0f172a !important;
+  background-color: #f1f5f9 !important;
+}
+
+html.light-mode nav button.tab-active,
+html.light-mode nav button.tab-active span {
+  color: #0369a1 !important;
+  background-color: #e0f2fe !important;
+  border-color: #7dd3fc !important;
+}
+
+html.light-mode nav button.tab-active.tab-emerald,
+html.light-mode nav button.tab-active.tab-emerald span {
+  color: #047857 !important;
+  background-color: #d1fae5 !important;
+  border-color: #6ee7b7 !important;
+}
+
+html.light-mode nav button.tab-active.tab-cyan,
+html.light-mode nav button.tab-active.tab-cyan span {
+  color: #0e7490 !important;
+  background-color: #cffafe !important;
+  border-color: #67e8f9 !important;
 }
 
 /* Solid Blue Action Buttons */
