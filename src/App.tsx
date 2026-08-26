@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Customer, RepairRecord, RepairStatus, ShopInfo, PriceItem } from './types';
+import { Customer, RepairRecord, RepairStatus, ShopInfo, PriceItem, PartWarrantyRecord } from './types';
 import {
   getStoredCustomers,
   saveCustomers,
@@ -7,6 +7,8 @@ import {
   saveShopInfo,
   getStoredPriceList,
   savePriceList,
+  getStoredWarranties,
+  saveWarranties,
   fetchCloudCustomers,
   syncCloudCustomers,
   deleteCloudCustomer,
@@ -20,6 +22,8 @@ import { Navigation, TabType } from './components/Navigation';
 import { CustomerList } from './components/CustomerList';
 import { AddCustomerForm } from './components/AddCustomerForm';
 import { PriceListManager } from './components/PriceListManager';
+import { WarrantyHistoryPanel } from './components/warranty/WarrantyHistoryPanel';
+import { AddWarrantyModal } from './components/warranty/AddWarrantyModal';
 import { StatsPanel } from './components/StatsPanel';
 import { CustomerDetailModal } from './components/CustomerDetailModal';
 import { EditCustomerModal } from './components/EditCustomerModal';
@@ -52,6 +56,7 @@ export function App() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [shopInfo, setShopInfo] = useState<ShopInfo>(getStoredShopInfo());
   const [priceItems, setPriceItems] = useState<PriceItem[]>([]);
+  const [warranties, setWarranties] = useState<PartWarrantyRecord[]>(() => getStoredWarranties());
   const [activeTab, setActiveTab] = useState<TabType>('list');
 
   // Theme Mode State ('dark' | 'light')
@@ -83,6 +88,10 @@ export function App() {
     customer: Customer;
     repair: RepairRecord;
   } | null>(null);
+  const [quickAddWarrantyFor, setQuickAddWarrantyFor] = useState<{
+    customerId: string;
+    repairId: string;
+  } | null>(null);
 
   // Initialize customers and price list from LocalStorage then sync Supabase Cloud when logged in
   useEffect(() => {
@@ -93,6 +102,9 @@ export function App() {
 
     const localPrices = getStoredPriceList();
     setPriceItems(localPrices);
+
+    const localWarranties = getStoredWarranties();
+    setWarranties(localWarranties);
 
     // Async Cloud Fetch
     fetchCloudCustomers().then((cloudCust) => {
@@ -206,6 +218,7 @@ export function App() {
   };
 
   const handleTogglePickedUp = (customerId: string, repairId: string, isPickedUp: boolean) => {
+    const todayStr = new Date().toISOString().split('T')[0];
     const updated = customers.map((c) => {
       if (c.id !== customerId) return c;
       return {
@@ -215,12 +228,46 @@ export function App() {
           return {
             ...r,
             isPickedUp,
-            pickedUpDate: isPickedUp ? new Date().toISOString().split('T')[0] : undefined,
+            pickedUpDate: isPickedUp ? todayStr : undefined,
           };
         }),
       };
     });
     updateCustomersState(updated);
+
+    // Synchronize warranty records start date for this ticket!
+    setWarranties((prev) => {
+      const updatedWarranties = prev.map((w) => {
+        if (w.repairId === repairId) {
+          return {
+            ...w,
+            startDate: isPickedUp ? (w.startDate || todayStr) : undefined,
+          };
+        }
+        return w;
+      });
+      saveWarranties(updatedWarranties);
+      return updatedWarranties;
+    });
+  };
+
+  const handleSaveWarranty = (newRecord: PartWarrantyRecord) => {
+    setWarranties((prev) => {
+      const exists = prev.some((w) => w.id === newRecord.id);
+      const updated = exists
+        ? prev.map((w) => (w.id === newRecord.id ? newRecord : w))
+        : [newRecord, ...prev];
+      saveWarranties(updated);
+      return updated;
+    });
+  };
+
+  const handleDeleteWarranty = (warrantyId: string) => {
+    setWarranties((prev) => {
+      const updated = prev.filter((w) => w.id !== warrantyId);
+      saveWarranties(updated);
+      return updated;
+    });
   };
 
   const handleAddRepair = (customerId: string, newRepairData: Omit<RepairRecord, 'id'>) => {
@@ -337,6 +384,7 @@ export function App() {
           setActiveTab={setActiveTab}
           customerCount={customers.length}
           pendingCount={pendingCount}
+          warrantyCount={warranties.length}
         />
 
         <main>
@@ -369,6 +417,18 @@ export function App() {
             />
           )}
 
+          {activeTab === 'warranty' && (
+            <WarrantyHistoryPanel
+              warranties={warranties}
+              customers={customers}
+              shopInfo={shopInfo}
+              onSaveWarranty={handleSaveWarranty}
+              onDeleteWarranty={handleDeleteWarranty}
+              onSelectCustomer={(c) => setSelectedCustomer(c)}
+              onTogglePickedUp={handleTogglePickedUp}
+            />
+          )}
+
           {activeTab === 'stats' && (
             <StatsPanel
               customers={customers}
@@ -395,6 +455,20 @@ export function App() {
           onDeleteRepair={handleDeleteRepair}
           onPrintRepair={(c, r) => setPrintTarget({ customer: c, repair: r })}
           priceItems={priceItems}
+          warranties={warranties}
+          onAddWarranty={(cId, rId) => setQuickAddWarrantyFor({ customerId: cId, repairId: rId })}
+        />
+      )}
+
+      {/* Quick Add Warranty Modal from Customer Detail */}
+      {quickAddWarrantyFor && (
+        <AddWarrantyModal
+          isOpen={Boolean(quickAddWarrantyFor)}
+          onClose={() => setQuickAddWarrantyFor(null)}
+          onSave={handleSaveWarranty}
+          customers={customers}
+          initialCustomerId={quickAddWarrantyFor.customerId}
+          initialRepairId={quickAddWarrantyFor.repairId}
         />
       )}
 

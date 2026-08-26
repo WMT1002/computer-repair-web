@@ -14,9 +14,10 @@ import {
   ArrowLeft,
   Info,
   Layers,
+  Barcode,
 } from 'lucide-react';
 import { RepairPhoto, getStatusStage, getStatusLabel } from '../types';
-import { fetchPublicTrackingData, PublicTrackingResult } from '../utils/storage';
+import { fetchPublicTrackingData, PublicTrackingResult, getStoredWarranties } from '../utils/storage';
 import { FixFlowLogo } from './common/FixFlowLogo';
 import { ImageLightbox } from './common/ImageLightbox';
 
@@ -519,6 +520,90 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                         </div>
                       </div>
                     )}
+
+                    {/* Part Warranty Transparency Section */}
+                    {(() => {
+                      const storedWarranties = getStoredWarranties();
+                      const linkedWarranties = storedWarranties.filter((w) => w.repairId === res.repair.id);
+                      if (linkedWarranties.length === 0) return null;
+
+                      return (
+                        <div className="space-y-3 bg-gradient-to-br from-cyan-50/70 via-white to-blue-50/70 p-5 rounded-2xl border border-cyan-200 shadow-xs">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <ShieldCheck className="w-5 h-5 text-cyan-600" />
+                              <h4 className="text-sm font-black text-slate-900">
+                                本次維修更換零件與原廠保固履歷 ({linkedWarranties.length} 件)
+                              </h4>
+                            </div>
+                            <span className="text-[11px] font-mono font-bold text-cyan-700 bg-cyan-100/80 px-2.5 py-0.5 rounded-full border border-cyan-300">
+                              原廠序號存證
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            {linkedWarranties.map((w) => {
+                              const isPickedUp = Boolean(res.repair.isPickedUp);
+                              const startDate = isPickedUp ? res.repair.pickedUpDate || w.startDate || new Date().toISOString().split('T')[0] : undefined;
+                              let daysRemaining = w.warrantyDays;
+                              let endDateStr = '—';
+                              if (isPickedUp && startDate) {
+                                const end = new Date(startDate);
+                                end.setDate(end.getDate() + w.warrantyDays);
+                                endDateStr = end.toISOString().split('T')[0];
+                                daysRemaining = Math.ceil((end.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                              }
+
+                              return (
+                                <div
+                                  key={w.id}
+                                  className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2"
+                                >
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div>
+                                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-bold">
+                                        {w.partCategory}
+                                      </span>
+                                      <h5 className="text-xs font-bold text-slate-900 mt-1">
+                                        {w.partName}
+                                      </h5>
+                                    </div>
+                                    {isPickedUp ? (
+                                      daysRemaining > 0 ? (
+                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">
+                                          保固中 剩 {daysRemaining} 天
+                                        </span>
+                                      ) : (
+                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-100 text-rose-800 border border-rose-300 shrink-0">
+                                          已過保
+                                        </span>
+                                      )
+                                    ) : (
+                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-100 text-amber-800 border border-amber-300 shrink-0">
+                                        待取件後起算
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs font-mono">
+                                    <div className="flex items-center gap-1 text-slate-700">
+                                      <Barcode className="w-4 h-4 text-cyan-600" />
+                                      <span className="font-bold">{w.serialNumber}</span>
+                                    </div>
+                                    <span className="text-[10px] text-slate-500">{w.supplier || '原廠正品'}</span>
+                                  </div>
+
+                                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-1 border-t border-slate-100">
+                                    <span>保固期限：{w.warrantyDays} 天</span>
+                                    {isPickedUp && <span>保固截止：{endDateStr}</span>}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     {/* Store Contact & Navigation Card */}
                     <div className="bg-gradient-to-r from-slate-50 via-sky-50/50 to-slate-50 p-5 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">

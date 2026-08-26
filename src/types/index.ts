@@ -99,3 +99,18 @@ export interface ManagedUser {
   email_confirmed: boolean;
 }
 
+export interface PartWarrantyRecord {
+  id: string; // e.g. "WAR-2026-001"
+  customerId: string; // e.g. "CUST-2026-001"
+  customerName: string; // e.g. "張家豪"
+  customerPhone: string; // e.g. "0933-112-233"
+  repairId: string; // e.g. "REP-2026-003"
+  partName: string; // e.g. "Micron Crucial T500 1TB PCIe 4.0 SSD"
+  partCategory: string; // e.g. "固態硬碟 (SSD)", "記憶體 (RAM)", "電源供應器 (PSU)", "顯示卡 (GPU)", "主機板 (MB)", "處理器 (CPU)", "螢幕面板", "散熱清潔", "其他配件"
+  serialNumber: string; // e.g. "SN24080911893X"
+  warrantyDays: number; // e.g. 365, 1095, 180, etc.
+  startDate?: string; // 保固起算日期 (取件日期 YYYY-MM-DD)
+  supplier?: string; // 代理商/經銷原廠 (如：捷元代理公司貨、聯強國際、原廠三年保)
+  note?: string; // 備註 (如：含盒裝發票影本)
+  createdAt: string;
+}

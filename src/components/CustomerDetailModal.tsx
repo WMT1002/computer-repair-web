@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Customer, RepairRecord, RepairStatus, PriceItem, RepairPhoto } from '../types';
-import { X, Plus, Printer, Trash2, Calendar, Phone, DollarSign, Tag, Edit3, Camera } from 'lucide-react';
+import { Customer, RepairRecord, RepairStatus, PriceItem, RepairPhoto, PartWarrantyRecord } from '../types';
+import { X, Plus, Printer, Trash2, Calendar, Phone, DollarSign, Tag, Edit3, Camera, ShieldCheck, Barcode } from 'lucide-react';
 import { PhotoUploader } from './common/PhotoUploader';
 import { ImageLightbox } from './common/ImageLightbox';
 
@@ -14,6 +14,8 @@ interface CustomerDetailModalProps {
   onDeleteRepair: (customerId: string, repairId: string) => void;
   onPrintRepair: (customer: Customer, repair: RepairRecord) => void;
   priceItems?: PriceItem[];
+  warranties?: PartWarrantyRecord[];
+  onAddWarranty?: (customerId: string, repairId: string) => void;
 }
 
 export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
@@ -26,6 +28,8 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   onDeleteRepair,
   onPrintRepair,
   priceItems,
+  warranties,
+  onAddWarranty,
 }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [lightboxPhoto, setLightboxPhoto] = useState<RepairPhoto | null>(null);
@@ -449,6 +453,91 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                       </div>
                     </div>
                   )}
+
+                  {/* Linked Part Warranties */}
+                  {(() => {
+                    const linked = (warranties || []).filter((w) => w.repairId === repair.id);
+                    return (
+                      <div className="pt-2.5 mt-2.5 border-t border-slate-800/80">
+                        <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                            <span className="text-slate-300 font-bold">更換零件保固 ({linked.length} 件)：</span>
+                          </div>
+                          {onAddWarranty && (
+                            <button
+                              type="button"
+                              onClick={() => onAddWarranty(customer.id, repair.id)}
+                              className="text-[10px] text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-0.5 cursor-pointer font-sans"
+                            >
+                              <Plus className="w-3 h-3" /> 登記此單零件保固
+                            </button>
+                          )}
+                        </div>
+
+                        {linked.length > 0 ? (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+                            {linked.map((w) => {
+                              const isPickedUp = Boolean(repair.isPickedUp);
+                              const startDate = isPickedUp ? repair.pickedUpDate || w.startDate || new Date().toISOString().split('T')[0] : undefined;
+                              let daysRemaining = w.warrantyDays;
+                              if (isPickedUp && startDate) {
+                                const end = new Date(startDate);
+                                end.setDate(end.getDate() + w.warrantyDays);
+                                daysRemaining = Math.ceil((end.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                              }
+
+                              return (
+                                <div
+                                  key={w.id}
+                                  className="p-2 rounded-lg bg-slate-950/70 border border-slate-700/60 flex items-center justify-between text-xs font-mono"
+                                >
+                                  <div className="overflow-hidden pr-2">
+                                    <div className="text-slate-200 font-bold text-[11px] truncate font-sans">{w.partName}</div>
+                                    <div className="text-[10px] text-cyan-300 font-mono tracking-wider flex items-center gap-1 mt-0.5">
+                                      <Barcode className="w-3 h-3 text-cyan-400 shrink-0" />
+                                      <span className="truncate">{w.serialNumber}</span>
+                                    </div>
+                                  </div>
+                                  <div className="shrink-0 text-right">
+                                    {isPickedUp ? (
+                                      daysRemaining > 0 ? (
+                                        <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                                          剩 {daysRemaining} 天
+                                        </span>
+                                      ) : (
+                                        <span className="px-1.5 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">
+                                          已過保
+                                        </span>
+                                      )
+                                    ) : (
+                                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
+                                        待取件起算
+                                      </span>
+                                    )}
+                                    <div className="text-[9px] text-slate-500 mt-0.5">共 {w.warrantyDays} 天</div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="text-[11px] text-slate-500 italic flex items-center justify-between py-0.5">
+                            <span>此單尚未登記零件序號保固</span>
+                            {onAddWarranty && (
+                              <button
+                                type="button"
+                                onClick={() => onAddWarranty(customer.id, repair.id)}
+                                className="text-[10px] text-slate-400 hover:text-cyan-300 underline cursor-pointer"
+                              >
+                                + 登記零件保固
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between pt-2 border-t border-slate-800 text-xs">

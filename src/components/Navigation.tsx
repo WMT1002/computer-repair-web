@@ -1,13 +1,14 @@
 import React from 'react';
-import { Users, UserPlus, BarChart3, Tag } from 'lucide-react';
+import { Users, UserPlus, BarChart3, Tag, ShieldCheck } from 'lucide-react';
 
-export type TabType = 'list' | 'add' | 'stats' | 'pricelist';
+export type TabType = 'list' | 'add' | 'pricelist' | 'warranty' | 'stats';
 
 interface NavigationProps {
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
   customerCount: number;
   pendingCount: number;
+  warrantyCount?: number;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
@@ -15,6 +16,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   setActiveTab,
   customerCount,
   pendingCount,
+  warrantyCount = 0,
 }) => {
   return (
     <nav className="flex flex-wrap gap-2 p-1.5 mb-6 bg-slate-800/80 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-lg">
@@ -63,6 +65,23 @@ export const Navigation: React.FC<NavigationProps> = ({
       </button>
 
       <button
+        onClick={() => setActiveTab('warranty')}
+        className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer ${
+          activeTab === 'warranty'
+            ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-cyan-400 border border-cyan-500/30 shadow-md'
+            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+        }`}
+      >
+        <ShieldCheck className="w-4 h-4 text-cyan-400" />
+        <span>零件保固履歷庫</span>
+        {warrantyCount > 0 && (
+          <span className="ml-1.5 px-2 py-0.5 text-xs font-mono rounded-full bg-cyan-950/60 text-cyan-300 border border-cyan-500/40">
+            {warrantyCount}
+          </span>
+        )}
+      </button>
+
+      <button
         onClick={() => setActiveTab('stats')}
         className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer ${
           activeTab === 'stats'
@@ -76,3 +95,4 @@ export const Navigation: React.FC<NavigationProps> = ({
     </nav>
   );
 };
+

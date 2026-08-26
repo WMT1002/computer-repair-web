@@ -1,9 +1,10 @@
-import { Customer, ShopInfo, PriceItem, RepairRecord } from '../types';
+import { Customer, ShopInfo, PriceItem, RepairRecord, PartWarrantyRecord } from '../types';
 import { supabase } from './supabaseClient';
 
 const CUSTOMERS_KEY = 'repair_shop_customers_v1';
 const SHOP_INFO_KEY = 'repair_shop_info_v1';
 const PRICE_LIST_KEY = 'repair_shop_pricelist_v1';
+const WARRANTY_LIST_KEY = 'repair_shop_warranties_v1';
 
 export const DEFAULT_SHOP_INFO: ShopInfo = {
   name: '極速電腦維修中心',
@@ -455,3 +456,72 @@ export async function fetchPublicTrackingData(query: string): Promise<PublicTrac
 
   return localResults.length > 0 ? localResults : null;
 }
+
+export const INITIAL_MOCK_WARRANTIES: PartWarrantyRecord[] = [
+  {
+    id: 'WAR-2026-001',
+    customerId: 'CUST-2026-001',
+    customerName: '陳小明',
+    customerPhone: '0912-345-678',
+    repairId: 'REP-2026-001',
+    partName: 'Crucial BX500 500GB 2.5吋 SATA SSD 固態硬碟',
+    partCategory: '固態硬碟 (SSD)',
+    serialNumber: 'SN-CT500BX500SSD1-2428A',
+    warrantyDays: 1095, // 3年保固
+    startDate: '2026-07-28',
+    supplier: '捷元代理公司貨',
+    note: '原廠三年有限保固，外盒與序號貼紙已交付客戶留存',
+    createdAt: '2026-07-28',
+  },
+  {
+    id: 'WAR-2026-002',
+    customerId: 'CUST-2026-003',
+    customerName: '張家豪',
+    customerPhone: '0933-112-233',
+    repairId: 'REP-2026-003',
+    partName: 'ASUS Dual GeForce RTX 4070 顯卡雙滾珠原廠風扇組',
+    partCategory: '顯示卡 (GPU)',
+    serialNumber: 'SN-ASUS-RTX4070-FN8891',
+    warrantyDays: 365, // 1年保固
+    supplier: '華碩原廠備品',
+    note: '更換原廠全新軸承風扇，門市保固 1 年',
+    createdAt: '2026-07-30',
+  },
+  {
+    id: 'WAR-2026-003',
+    customerId: 'CUST-2026-004',
+    customerName: '黃雅婷',
+    customerPhone: '0955-667-788',
+    repairId: 'REP-2026-004',
+    partName: 'Seasonic Focus GX-650 650W 80Plus 金牌全模組電源',
+    partCategory: '電源供應器 (PSU)',
+    serialNumber: 'SN-GX650-202607159G',
+    warrantyDays: 3650, // 10年保固
+    supplier: '海韻原廠代理商 (杰強)',
+    note: '十年原廠免費到府收送保固，附發票購買證明影本',
+    createdAt: '2026-07-31',
+  },
+];
+
+export const getStoredWarranties = (): PartWarrantyRecord[] => {
+  try {
+    const data = localStorage.getItem(WARRANTY_LIST_KEY);
+    if (!data) {
+      saveWarranties(INITIAL_MOCK_WARRANTIES);
+      return INITIAL_MOCK_WARRANTIES;
+    }
+    return JSON.parse(data);
+  } catch (e) {
+    console.error('Failed to load warranties from localStorage:', e);
+    return INITIAL_MOCK_WARRANTIES;
+  }
+};
+
+export const saveWarranties = (warranties: PartWarrantyRecord[]): void => {
+  try {
+    localStorage.setItem(WARRANTY_LIST_KEY, JSON.stringify(warranties));
+  } catch (e) {
+    console.error('Failed to save warranties to localStorage:', e);
+  }
+};
+
