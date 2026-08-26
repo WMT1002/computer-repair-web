@@ -1,8 +1,7 @@
-﻿import React from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
 import { PartWarrantyRecord, ShopInfo } from '../../types';
 import { X, Printer, ShieldCheck, Barcode, Phone, MapPin } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
 
 interface WarrantyPrintModalProps {
   warranty: PartWarrantyRecord;
@@ -26,8 +25,6 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
   const endDateObj = new Date(startDateObj);
   endDateObj.setDate(endDateObj.getDate() + (warranty.warrantyDays || 365));
   const endDateStr = endDateObj.toISOString().split('T')[0];
-
-  const trackingUrl = `${window.location.origin}${window.location.pathname}?track=${warranty.repairId || ''}`;
 
   return createPortal(
     <>
@@ -161,27 +158,16 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
                 </div>
               </div>
 
-              {/* Terms & Stamp & QR */}
+              {/* Terms & Stamp */}
               <div className="grid grid-cols-12 gap-3 items-end pt-3 text-[10px] text-slate-600 font-mono border-t border-slate-300">
-                <div className="col-span-12 sm:col-span-7 space-y-1">
+                <div className="col-span-12 sm:col-span-8 space-y-1">
                   <p className="font-bold text-slate-800">保固條款須知：</p>
                   <p>1. 本保固自取件日起算，憑本證明或原序號條碼享有保固服務。</p>
                   <p>2. 人為損壞、天災受潮、自行拆解改裝或序號貼紙毀損，不在免費範圍內。</p>
                   <p>3. 若零件於保固期內發生原廠非人為故障，門市協助代送原廠修復或免費換新。</p>
                 </div>
 
-                {warranty.repairId ? (
-                  <div className="col-span-6 sm:col-span-2 flex flex-col items-center justify-center p-1 border border-slate-300 rounded bg-white text-center">
-                    <QRCodeSVG value={trackingUrl} size={42} level="M" />
-                    <span className="text-[8px] text-slate-500 mt-0.5">工單進度追蹤</span>
-                  </div>
-                ) : null}
-
-                <div
-                  className={`${
-                    warranty.repairId ? 'col-span-6 sm:col-span-3' : 'col-span-12 sm:col-span-5'
-                  } border-2 border-slate-400 border-dashed rounded h-16 flex flex-col items-center justify-center text-slate-400`}
-                >
+                <div className="col-span-12 sm:col-span-4 border-2 border-slate-400 border-dashed rounded h-16 flex flex-col items-center justify-center text-slate-400">
                   <span className="text-[9px]">【 店家蓋章處 】</span>
                 </div>
               </div>
@@ -275,27 +261,16 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
             </div>
           </div>
 
-          {/* Terms & Stamp & QR */}
+          {/* Terms & Stamp */}
           <div className="grid grid-cols-12 gap-3 items-end pt-2 text-[10px] font-mono border-t border-black">
-            <div className="col-span-7 space-y-1">
+            <div className="col-span-8 space-y-1">
               <p className="font-bold text-black">保固條款須知：</p>
               <p>1. 本保固自顧客到店取件日起算，憑本證明或原序號條碼享有保固服務。</p>
               <p>2. 人為損壞、天災受潮、自行拆解改裝或序號貼紙毀損，不在免費保固範圍內。</p>
               <p>3. 若零件於保固期內發生原廠非人為故障，門市協助代送原廠修復或免費換新。</p>
             </div>
 
-            {warranty.repairId ? (
-              <div className="col-span-2 flex flex-col items-center justify-center p-1 border border-black rounded text-center">
-                <QRCodeSVG value={trackingUrl} size={48} level="M" />
-                <span className="text-[8px] mt-0.5">工單線上追蹤</span>
-              </div>
-            ) : null}
-
-            <div
-              className={`${
-                warranty.repairId ? 'col-span-3' : 'col-span-5'
-              } border-2 border-black border-dashed rounded h-16 flex flex-col items-center justify-center`}
-            >
+            <div className="col-span-4 border-2 border-black border-dashed rounded h-16 flex flex-col items-center justify-center">
               <span className="text-[9px]">【 店家經手章 / 店章 】</span>
             </div>
           </div>
