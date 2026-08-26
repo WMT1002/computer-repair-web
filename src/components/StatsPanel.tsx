@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Customer, TimeFilter } from '../types';
-import { Users, Wrench, DollarSign, Calendar, TrendingUp, Clock, CheckCircle2 } from 'lucide-react';
+import { Users, Wrench, DollarSign, Calendar, TrendingUp, Clock, CheckCircle2, ChevronRight, User } from 'lucide-react';
 
 interface StatsPanelProps {
   customers: Customer[];
+  onSelectCustomer?: (customer: Customer) => void;
 }
 
-export const StatsPanel: React.FC<StatsPanelProps> = ({ customers }) => {
+export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCustomer }) => {
   const [filter, setFilter] = useState<TimeFilter>('month');
 
   // Filter calculation function based on date string YYYY-MM-DD
@@ -46,7 +47,12 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers }) => {
   };
 
   // Flatten repairs in filter
-  const allFilteredRepairs: { customerName: string; phone: string; repair: Customer['repairs'][0] }[] = [];
+  const allFilteredRepairs: {
+    customer: Customer;
+    customerName: string;
+    phone: string;
+    repair: Customer['repairs'][0];
+  }[] = [];
   const activeCustomerIds = new Set<string>();
   let totalRevenue = 0;
   let completedCount = 0;
@@ -56,6 +62,7 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers }) => {
     customer.repairs.forEach((repair) => {
       if (isDateInFilter(repair.date, filter)) {
         allFilteredRepairs.push({
+          customer,
           customerName: customer.name,
           phone: customer.phone,
           repair,
@@ -163,9 +170,14 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers }) => {
 
       {/* Repairs Table Breakdown */}
       <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-6 shadow-lg">
-        <h3 className="text-sm font-mono font-bold tracking-wider text-sky-400 uppercase mb-4 flex items-center gap-2">
-          <DollarSign className="w-4 h-4" /> 該時段維修明細列表 ({allFilteredRepairs.length} 筆)
-        </h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <h3 className="text-sm font-mono font-bold tracking-wider text-sky-400 uppercase flex items-center gap-2">
+            <DollarSign className="w-4 h-4" /> 該時段維修明細列表 ({allFilteredRepairs.length} 筆)
+          </h3>
+          <span className="text-xs text-slate-400 flex items-center gap-1 font-sans">
+            💡 提示：點擊任一客戶欄位可直接進入該客戶詳細資訊
+          </span>
+        </div>
 
         {allFilteredRepairs.length === 0 ? (
           <div className="text-center py-8 text-slate-500 text-sm">此統計時段內尚無維修紀錄。</div>
@@ -179,18 +191,29 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers }) => {
                   <th className="py-2.5 px-3">維修項目描述</th>
                   <th className="py-2.5 px-3">狀態</th>
                   <th className="py-2.5 px-3 text-right">費用 (NT$)</th>
+                  <th className="py-2.5 px-3 text-center w-12">操作</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50">
                 {allFilteredRepairs.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-slate-700/30 transition">
+                  <tr
+                    key={idx}
+                    onClick={() => onSelectCustomer && onSelectCustomer(item.customer)}
+                    className="hover:bg-sky-500/10 hover:border-sky-500/30 transition-all cursor-pointer group"
+                    title={`點擊查看 ${item.customerName} 的客戶與維修詳細資訊`}
+                  >
                     <td className="py-3 px-3 font-mono text-slate-300 whitespace-nowrap">
                       {item.repair.date}
                     </td>
-                    <td className="py-3 px-3 font-medium text-slate-100 whitespace-nowrap">
-                      {item.customerName}
+                    <td className="py-3 px-3 font-bold text-slate-100 whitespace-nowrap group-hover:text-sky-300 transition-colors">
+                      <div className="flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-400 transition-colors" />
+                        <span>{item.customerName}</span>
+                      </div>
                     </td>
-                    <td className="py-3 px-3 text-slate-300">{item.repair.item}</td>
+                    <td className="py-3 px-3 text-slate-300 group-hover:text-slate-100 transition-colors">
+                      {item.repair.item}
+                    </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       {item.repair.status === 'completed' ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -204,6 +227,9 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers }) => {
                     </td>
                     <td className="py-3 px-3 text-right font-mono font-bold text-sky-400 whitespace-nowrap">
                       ${item.repair.price.toLocaleString()}
+                    </td>
+                    <td className="py-3 px-3 text-center text-slate-500 group-hover:text-sky-400 transition-colors whitespace-nowrap">
+                      <ChevronRight className="w-4 h-4 mx-auto group-hover:translate-x-0.5 transition-transform" />
                     </td>
                   </tr>
                 ))}

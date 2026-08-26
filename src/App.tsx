@@ -281,7 +281,12 @@ export function App() {
             />
           )}
 
-          {activeTab === 'stats' && <StatsPanel customers={customers} />}
+          {activeTab === 'stats' && (
+            <StatsPanel
+              customers={customers}
+              onSelectCustomer={(c) => setSelectedCustomer(c)}
+            />
+          )}
         </main>
       </div>
 
