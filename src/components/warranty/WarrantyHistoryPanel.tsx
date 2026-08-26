@@ -36,7 +36,6 @@ interface WarrantyHistoryPanelProps {
   onSaveWarranty: (record: PartWarrantyRecord) => void;
   onDeleteWarranty: (id: string) => void;
   onSelectCustomer?: (customer: Customer) => void;
-  onTogglePickedUp?: (customerId: string, repairId: string, isPickedUp: boolean) => void;
 }
 
 export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
@@ -46,7 +45,6 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
   onSaveWarranty,
   onDeleteWarranty,
   onSelectCustomer,
-  onTogglePickedUp,
 }) => {
   const [searchName, setSearchName] = useState('');
   const [searchRepairId, setSearchRepairId] = useState('');
@@ -66,15 +64,35 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
   const computedWarranties = useMemo(() => {
     return warranties.map((w) => {
       // Find matching customer & repair record
-      const customer = customers.find(
-        (c) => c.id === w.customerId || c.name === w.customerName
-      );
-      const repair = customer?.repairs.find((r) => r.id === w.repairId);
+      let customer = customers.find((c) => c.id === w.customerId);
+      let repair = customer?.repairs.find((r) => r.id === w.repairId);
 
-      // Linkage: If repair.isPickedUp is true, countdown is active!
-      const isPickedUp = repair ? Boolean(repair.isPickedUp) : Boolean(w.startDate);
+      if (!repair && w.repairId) {
+        for (const c of customers) {
+          const found = c.repairs.find((r) => r.id === w.repairId);
+          if (found) {
+            repair = found;
+            customer = c;
+            break;
+          }
+        }
+      }
+
+      if (!customer && w.customerName) {
+        customer = customers.find((c) => c.name.trim() === w.customerName.trim());
+        if (!repair && customer && customer.repairs.length > 0) {
+          repair = customer.repairs.find((r) => r.id === w.repairId) || customer.repairs[customer.repairs.length - 1];
+        }
+      }
+
+      // Linkage: ONLY when repair status is 'completed' (完工待取) AND isPickedUp is true!
+      const isLinkedToRepair = Boolean(repair);
+      const isPickedUp = isLinkedToRepair
+        ? (repair!.status === 'completed' && Boolean(repair!.isPickedUp))
+        : Boolean(w.startDate);
+
       const effectiveStartDate = isPickedUp
-        ? repair?.pickedUpDate || w.startDate || todayStr
+        ? (isLinkedToRepair ? repair!.pickedUpDate : w.startDate) || todayStr
         : undefined;
 
       let daysRemaining = w.warrantyDays;
@@ -200,7 +218,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium leading-relaxed">
-                記錄更換零件原廠序號 (S/N) 與保固天數，於客戶維修單打勾「已取件」即時啟動精確倒數
+                記錄更換零件原廠序號 (S/N) 與保固天數，於客戶維修單設定「完工待取」並勾選「已取件」後，即時連動啟動保固天數倒數
               </p>
             </div>
           </div>
@@ -551,21 +569,6 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                           style={{ width: `${item.progressPercent}%` }}
                         />
                       </div>
-                    </div>
-                  )}
-
-                  {/* If not picked up */}
-                  {!item.isPickedUp && (
-                    <div className="mb-3 p-2 rounded-lg bg-amber-950/40 border border-amber-500/40 text-[11px] text-amber-300 flex items-center justify-between font-mono font-medium">
-                      <span>⏳ 顧客尚未取件</span>
-                      {item.repair && onTogglePickedUp && (
-                        <button
-                          onClick={() => onTogglePickedUp(item.customerId, item.repairId, true)}
-                          className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 text-[10px] font-bold transition cursor-pointer"
-                        >
-                          立即打勾已取件
-                        </button>
-                      )}
                     </div>
                   )}
 

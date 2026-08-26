@@ -357,9 +357,9 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                         className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border cursor-pointer select-none transition-all ${
                           repair.isPickedUp
                             ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 shadow-xs'
-                            : 'bg-slate-900/80 text-slate-400 border-slate-700 hover:border-slate-600 hover:text-slate-200'
+                            : 'bg-amber-500/10 text-amber-300 border-amber-500/40 hover:bg-amber-500/20'
                         }`}
-                        title="勾選表示客戶已到店取回電腦"
+                        title="勾選表示客戶已到店取回電腦（將連動啟動零件保固倒數）"
                       >
                         <input
                           type="checkbox"
@@ -370,7 +370,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                           className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
                         />
                         <span className="whitespace-nowrap font-mono text-[11px]">
-                          {repair.isPickedUp ? '✓ 已取件' : '已取件'}
+                          {repair.isPickedUp ? '✓ 已取件' : '勾選已取件'}
                         </span>
                       </label>
                     )}
@@ -478,7 +478,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                         {linked.length > 0 ? (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
                             {linked.map((w) => {
-                              const isPickedUp = Boolean(repair.isPickedUp);
+                              const isPickedUp = repair.status === 'completed' && Boolean(repair.isPickedUp);
                               const startDate = isPickedUp ? repair.pickedUpDate || w.startDate || new Date().toISOString().split('T')[0] : undefined;
                               let daysRemaining = w.warrantyDays;
                               if (isPickedUp && startDate) {

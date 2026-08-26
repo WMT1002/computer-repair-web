@@ -159,7 +159,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
         customerName: trimmedName || foundCust.name,
         customerPhone: foundCust.phone,
         repairId: foundRepair ? foundRepair.id : trimmedId,
-        isPickedUp: foundRepair ? Boolean(foundRepair.isPickedUp) : false,
+        isPickedUp: foundRepair ? (foundRepair.status === 'completed' && Boolean(foundRepair.isPickedUp)) : false,
         repairItem: foundRepair?.item,
       });
     } else {
@@ -199,7 +199,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
           customerName: editRecord.customerName,
           customerPhone: editRecord.customerPhone || cust?.phone || '',
           repairId: editRecord.repairId,
-          isPickedUp: Boolean(rep.isPickedUp),
+          isPickedUp: Boolean(rep.status === 'completed' && rep.isPickedUp),
           repairItem: rep.item,
         });
       }
@@ -217,7 +217,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
             customerName: cust.name,
             customerPhone: cust.phone,
             repairId: rep.id,
-            isPickedUp: Boolean(rep.isPickedUp),
+            isPickedUp: Boolean(rep.status === 'completed' && rep.isPickedUp),
             repairItem: rep.item,
           });
         }
@@ -262,10 +262,12 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
     const finalCustId = matchedRepair?.customerId || matchCust?.id || `CUST-${Date.now().toString().slice(-4)}`;
 
     const targetRepair = matchCust?.repairs.find((r) => r.id === finalRepairId);
-    const isPickedUp = targetRepair ? Boolean(targetRepair.isPickedUp) : Boolean(matchedRepair?.isPickedUp);
+    const isPickedUp = targetRepair
+      ? (targetRepair.status === 'completed' && Boolean(targetRepair.isPickedUp))
+      : Boolean(matchedRepair?.isPickedUp);
     const startDate = isPickedUp
       ? targetRepair?.pickedUpDate || new Date().toISOString().split('T')[0]
-      : editRecord?.startDate;
+      : undefined;
 
     const numDays = Number(warrantyDays) > 0 ? Number(warrantyDays) : 365;
 

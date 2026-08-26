@@ -191,9 +191,9 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                           className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border cursor-pointer select-none transition-all duration-150 animate-fadeIn ${
                             latestRepair.isPickedUp
                               ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-xs'
-                              : 'bg-slate-900/80 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-200'
+                              : 'bg-amber-500/10 text-amber-300 border-amber-500/40 hover:bg-amber-500/20'
                           }`}
-                          title="勾選表示客戶已取件完成"
+                          title="勾選表示客戶已取件完成（將連動啟動零件保固倒數）"
                         >
                           <input
                             type="checkbox"
@@ -204,7 +204,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                             className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
                           />
                           <span className="whitespace-nowrap font-mono text-[11px]">
-                            {latestRepair.isPickedUp ? '✓ 已取件' : '已取件'}
+                            {latestRepair.isPickedUp ? '✓ 已取件' : '勾選已取件'}
                           </span>
                         </label>
                       )}
@@ -300,6 +300,28 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     </button>
                     {latestRepair && (
                       <>
+                        {latestRepair.status === 'completed' && (
+                          <label
+                            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border cursor-pointer select-none transition-all duration-150 ${
+                              latestRepair.isPickedUp
+                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-xs'
+                                : 'bg-amber-500/10 text-amber-300 border-amber-500/40 hover:bg-amber-500/20'
+                            }`}
+                            title="勾選表示客戶已取件完成（將連動啟動零件保固倒數）"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={Boolean(latestRepair.isPickedUp)}
+                              onChange={(e) =>
+                                onTogglePickedUp?.(customer.id, latestRepair.id, e.target.checked)
+                              }
+                              className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
+                            />
+                            <span className="whitespace-nowrap font-mono text-[11px]">
+                              {latestRepair.isPickedUp ? '✓ 已取件' : '勾選已取件'}
+                            </span>
+                          </label>
+                        )}
                         <select
                           value={latestRepair.status === 'pending' ? 'received' : latestRepair.status}
                           onChange={(e) => {

@@ -543,7 +543,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                             {linkedWarranties.map((w) => {
-                              const isPickedUp = Boolean(res.repair.isPickedUp);
+                              const isPickedUp = res.repair.status === 'completed' && Boolean(res.repair.isPickedUp);
                               const startDate = isPickedUp ? res.repair.pickedUpDate || w.startDate || new Date().toISOString().split('T')[0] : undefined;
                               let daysRemaining = w.warrantyDays;
                               let endDateStr = '—';

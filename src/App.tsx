@@ -174,9 +174,35 @@ export function App() {
   };
 
   const handleSaveCustomer = (updatedCustomer: Customer) => {
+    const todayStr = new Date().toISOString().split('T')[0];
     const updated = customers.map((c) => (c.id === updatedCustomer.id ? updatedCustomer : c));
     updateCustomersState(updated);
     setEditingCustomer(null);
+
+    // Synchronize warranty records start date for this customer's repairs
+    setWarranties((prev) => {
+      let hasChanges = false;
+      const updatedWarranties = prev.map((w) => {
+        const matchingRepair = updatedCustomer.repairs.find((r) => r.id === w.repairId);
+        if (matchingRepair) {
+          const isPickedUp = matchingRepair.status === 'completed' && Boolean(matchingRepair.isPickedUp);
+          const newStartDate = isPickedUp ? (matchingRepair.pickedUpDate || todayStr) : undefined;
+          if (w.startDate !== newStartDate) {
+            hasChanges = true;
+            return {
+              ...w,
+              startDate: newStartDate,
+            };
+          }
+        }
+        return w;
+      });
+      if (hasChanges) {
+        saveWarranties(updatedWarranties);
+        return updatedWarranties;
+      }
+      return prev;
+    });
   };
 
   const handleDeleteCustomer = (customerId: string) => {
@@ -187,34 +213,61 @@ export function App() {
   };
 
   const handleToggleStatus = (customerId: string, repairId: string, specificStatus?: RepairStatus) => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    let shouldSyncWarranties = false;
+    let newIsPickedUp = false;
+
     const updated = customers.map((c) => {
       if (c.id !== customerId) return c;
       return {
         ...c,
         repairs: c.repairs.map((r) => {
           if (r.id !== repairId) return r;
+          let nextStatus: RepairStatus;
           if (specificStatus) {
-            return {
-              ...r,
-              status: specificStatus,
-              isPickedUp: specificStatus === 'completed' ? r.isPickedUp : false,
-            };
+            nextStatus = specificStatus;
+          } else {
+            // 4-stage cycle: received -> diagnosing -> repairing -> completed -> received
+            if (r.status === 'received' || r.status === 'pending') nextStatus = 'diagnosing';
+            else if (r.status === 'diagnosing') nextStatus = 'repairing';
+            else if (r.status === 'repairing') nextStatus = 'completed';
+            else nextStatus = 'received';
           }
-          // 4-stage cycle: received -> diagnosing -> repairing -> completed -> received
-          let nextStatus: RepairStatus = 'received';
-          if (r.status === 'received' || r.status === 'pending') nextStatus = 'diagnosing';
-          else if (r.status === 'diagnosing') nextStatus = 'repairing';
-          else if (r.status === 'repairing') nextStatus = 'completed';
-          else if (r.status === 'completed') nextStatus = 'received';
+
+          const isCompleted = nextStatus === 'completed';
+          const isPickedUp = isCompleted ? Boolean(r.isPickedUp) : false;
+
+          if (Boolean(r.isPickedUp) !== isPickedUp) {
+            shouldSyncWarranties = true;
+            newIsPickedUp = isPickedUp;
+          }
+
           return {
             ...r,
             status: nextStatus,
-            isPickedUp: nextStatus === 'completed' ? r.isPickedUp : false,
+            isPickedUp,
+            pickedUpDate: isPickedUp ? (r.pickedUpDate || todayStr) : undefined,
           };
         }),
       };
     });
     updateCustomersState(updated);
+
+    if (shouldSyncWarranties) {
+      setWarranties((prev) => {
+        const updatedWarranties = prev.map((w) => {
+          if (w.repairId === repairId) {
+            return {
+              ...w,
+              startDate: newIsPickedUp ? (w.startDate || todayStr) : undefined,
+            };
+          }
+          return w;
+        });
+        saveWarranties(updatedWarranties);
+        return updatedWarranties;
+      });
+    }
   };
 
   const handleTogglePickedUp = (customerId: string, repairId: string, isPickedUp: boolean) => {
@@ -425,7 +478,6 @@ export function App() {
               onSaveWarranty={handleSaveWarranty}
               onDeleteWarranty={handleDeleteWarranty}
               onSelectCustomer={(c) => setSelectedCustomer(c)}
-              onTogglePickedUp={handleTogglePickedUp}
             />
           )}
 
