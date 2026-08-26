@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Customer, TimeFilter } from '../types';
 import { Users, Wrench, DollarSign, Calendar, TrendingUp, Clock, CheckCircle2, ChevronRight, User } from 'lucide-react';
+import { RevenueTrendChart } from './stats/RevenueTrendChart';
+import { CategoryPieChart } from './stats/CategoryPieChart';
 
 interface StatsPanelProps {
   customers: Customer[];
@@ -166,6 +168,12 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
             <TrendingUp className="w-8 h-8" />
           </div>
         </div>
+      </div>
+
+      {/* Business Visualizations: Revenue Trend & Category Breakdown Charts */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <RevenueTrendChart repairs={allFilteredRepairs} filter={filter} />
+        <CategoryPieChart repairs={allFilteredRepairs} />
       </div>
 
       {/* Repairs Table Breakdown */}
