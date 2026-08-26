@@ -349,14 +349,9 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
         >
           {/* Section 1: Customer & Ticket Binding (Direct Input + Bind Button) */}
           <div className="bg-slate-850/80 p-4 rounded-xl border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-mono font-bold text-cyan-400 uppercase flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5" /> 綁定客戶與維修單號 *
-              </label>
-              <span className="text-[11px] text-slate-400 font-sans">
-                手動輸入姓名與單號後點擊「綁定連動」即可即時關聯
-              </span>
-            </div>
+            <label className="text-xs font-mono font-bold text-cyan-400 uppercase flex items-center gap-1.5">
+              <User className="w-3.5 h-3.5" /> 綁定客戶與維修單號 *
+            </label>
 
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
               {/* 客戶姓名 */}
@@ -369,14 +364,13 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                   <input
                     type="text"
                     required
-                    placeholder="例: 粘踢踢"
                     value={customCustomerName}
                     onChange={(e) => {
                       setCustomCustomerName(e.target.value);
                       handleAutoMatch(e.target.value, customRepairId);
                     }}
                     list="existing-customers-list"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
                   <datalist id="existing-customers-list">
                     {customers.map((c) => (
@@ -398,14 +392,13 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                   <input
                     type="text"
                     required
-                    placeholder="例: REP-744757"
                     value={customRepairId}
                     onChange={(e) => {
                       setCustomRepairId(e.target.value);
                       handleAutoMatch(customCustomerName, e.target.value);
                     }}
                     list="existing-repairs-list"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
                   <datalist id="existing-repairs-list">
                     {allRepairs.map((r) => (
@@ -430,9 +423,9 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
               </div>
             </div>
 
-            {/* 聯絡電話與即時連動回饋 */}
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
-              <div className="sm:col-span-5">
+            {/* 聯絡電話與連動狀態 */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1 items-center">
+              <div className={matchedRepair ? "sm:col-span-5" : "sm:col-span-12"}>
                 <label className="block text-[11px] text-slate-400 mb-1">
                   聯絡電話 (可自動帶出或填寫)
                 </label>
@@ -440,16 +433,15 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
                   <input
                     type="text"
-                    placeholder="例: 0987-459-815"
                     value={customCustomerPhone}
                     onChange={(e) => setCustomCustomerPhone(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-1.5 text-xs font-mono text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
               </div>
 
-              <div className="sm:col-span-7 flex items-end">
-                {matchedRepair ? (
+              {matchedRepair && (
+                <div className="sm:col-span-7 mt-2 sm:mt-0">
                   <div className="w-full p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono flex items-center justify-between gap-2 shadow-2xs">
                     <div className="flex items-center gap-1.5 text-emerald-300 truncate">
                       <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
@@ -465,17 +457,8 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                       {matchedRepair.isPickedUp ? '✓ 已取件 (保固生效中)' : '⏳ 待取件 (取件後自動起算)'}
                     </span>
                   </div>
-                ) : customCustomerName.trim() && customRepairId.trim() ? (
-                  <div className="w-full p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono flex items-center gap-1.5 text-cyan-300">
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">已設定綁定 [{customRepairId.trim()}] {customCustomerName.trim()}</span>
-                  </div>
-                ) : (
-                  <div className="w-full p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-[11px] font-mono text-slate-500 flex items-center gap-1.5">
-                    <span>💡 請輸入客戶姓名與單號後點擊「綁定連動」</span>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
 
