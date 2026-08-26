@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Customer, RepairRecord } from '../types';
+import { Customer, RepairRecord, RepairStatus, getStatusLabel } from '../types';
 import { Search, Phone, User, Calendar, CheckCircle2, Clock, Printer, Trash2, ChevronRight, Filter, Edit3 } from 'lucide-react';
 
 interface CustomerListProps {
@@ -7,7 +7,7 @@ interface CustomerListProps {
   onSelectCustomer: (customer: Customer) => void;
   onEditCustomer: (customer: Customer) => void;
   onPrintCustomer: (customer: Customer, repair: RepairRecord) => void;
-  onToggleStatus: (customerId: string, repairId: string) => void;
+  onToggleStatus: (customerId: string, repairId: string, specificStatus?: RepairStatus) => void;
   onDeleteCustomer: (customerId: string) => void;
 }
 
@@ -38,11 +38,11 @@ export const CustomerList: React.FC<CustomerListProps> = ({
     if (statusFilter === 'all') return true;
 
     // Check if customer has any repair matching status filter
-    const hasPending = customer.repairs.some((r) => r.status === 'pending');
+    const hasUncompleted = customer.repairs.some((r) => r.status !== 'completed');
     const hasCompleted = customer.repairs.some((r) => r.status === 'completed');
 
-    if (statusFilter === 'pending') return hasPending;
-    if (statusFilter === 'completed') return !hasPending && hasCompleted;
+    if (statusFilter === 'pending') return hasUncompleted;
+    if (statusFilter === 'completed') return !hasUncompleted && hasCompleted;
 
     return true;
   });
@@ -158,7 +158,6 @@ export const CustomerList: React.FC<CustomerListProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredCustomers.map((customer) => {
             const latestRepair = customer.repairs[customer.repairs.length - 1];
-            const hasPending = customer.repairs.some((r) => r.status === 'pending');
 
             return (
               <div
@@ -184,13 +183,28 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     </div>
 
                     <div>
-                      {hasPending ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-sm animate-pulse">
-                          <Clock className="w-3.5 h-3.5" /> 待取件
+                      {latestRepair ? (
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border shadow-sm ${
+                            latestRepair.status === 'completed'
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                              : latestRepair.status === 'repairing'
+                              ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                              : latestRepair.status === 'diagnosing'
+                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                              : 'bg-sky-500/10 text-sky-400 border-sky-500/30'
+                          }`}
+                        >
+                          {latestRepair.status === 'completed' ? (
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                          ) : (
+                            <Clock className="w-3.5 h-3.5 animate-pulse" />
+                          )}
+                          {getStatusLabel(latestRepair.status)}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> 已完成
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                          無工單
                         </span>
                       )}
                     </div>
@@ -260,16 +274,25 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     </button>
                     {latestRepair && (
                       <>
-                        <button
-                          onClick={() => onToggleStatus(customer.id, latestRepair.id)}
-                          className={`px-2.5 py-1.5 text-xs font-medium rounded-lg border transition ${
-                            latestRepair.status === 'pending'
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-                              : 'bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20'
+                        <select
+                          value={latestRepair.status === 'pending' ? 'received' : latestRepair.status}
+                          onChange={(e) => onToggleStatus(customer.id, latestRepair.id, e.target.value as RepairStatus)}
+                          className={`px-2 py-1 text-xs font-semibold rounded-lg border cursor-pointer focus:outline-none transition ${
+                            latestRepair.status === 'completed'
+                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/25'
+                              : latestRepair.status === 'repairing'
+                              ? 'bg-purple-500/15 text-purple-300 border-purple-500/40 hover:bg-purple-500/25'
+                              : latestRepair.status === 'diagnosing'
+                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/40 hover:bg-amber-500/25'
+                              : 'bg-sky-500/15 text-sky-300 border-sky-500/40 hover:bg-sky-500/25'
                           }`}
+                          title="快速切換維修進度狀態"
                         >
-                          {latestRepair.status === 'pending' ? '標示為已完成' : '標示為待取件'}
-                        </button>
+                          <option value="received" className="bg-slate-900 text-slate-100">【1. 收件建檔】</option>
+                          <option value="diagnosing" className="bg-slate-900 text-slate-100">【2. 故障檢測】</option>
+                          <option value="repairing" className="bg-slate-900 text-slate-100">【3. 維修更換】</option>
+                          <option value="completed" className="bg-slate-900 text-slate-100">【4. 完工待取】</option>
+                        </select>
                         <button
                           onClick={() => onPrintCustomer(customer, latestRepair)}
                           className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-700/60 text-slate-200 border border-slate-600 hover:bg-sky-500/20 hover:text-sky-400 hover:border-sky-500/30 flex items-center gap-1 transition"

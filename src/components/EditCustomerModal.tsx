@@ -204,12 +204,14 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1">當前維修狀態</label>
                   <select
-                    value={status}
+                    value={status === 'pending' ? 'received' : status}
                     onChange={(e) => setStatus(e.target.value as RepairStatus)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 font-medium"
                   >
-                    <option value="pending">⏳ 待取件 (進行中)</option>
-                    <option value="completed">✅ 已完成</option>
+                    <option value="received">【1. 收件建檔】</option>
+                    <option value="diagnosing">【2. 故障檢測】</option>
+                    <option value="repairing">【3. 維修更換】</option>
+                    <option value="completed">【4. 完工待取】</option>
                   </select>
                 </div>
 

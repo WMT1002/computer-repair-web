@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Customer, RepairRecord, ShopInfo } from '../types';
+import { Customer, RepairRecord, ShopInfo, getStatusLabel } from '../types';
 import { X, Printer, Scissors, Building, Phone, MapPin, Share2, Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -282,8 +282,8 @@ const ReceiptSlip: React.FC<ReceiptSlipProps> = ({ title, customer, repair, shop
             <td className="p-3 border-r border-slate-900 font-semibold text-slate-900 align-middle">
               {repair.item}
             </td>
-            <td className="p-3 w-28 text-center border-r border-slate-900 font-semibold text-slate-900 align-middle">
-              {repair.status === 'completed' ? '已完成' : '待取件'}
+            <td className="p-3 w-32 text-center border-r border-slate-900 font-bold text-slate-900 align-middle">
+              {getStatusLabel(repair.status)}
             </td>
             <td className="p-3 w-36 text-right font-mono font-bold text-base text-slate-900 align-middle">
               NT$ {repair.price.toLocaleString()}

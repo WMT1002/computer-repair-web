@@ -174,14 +174,22 @@ export function App() {
     deleteCloudCustomer(customerId);
   };
 
-  const handleToggleStatus = (customerId: string, repairId: string) => {
+  const handleToggleStatus = (customerId: string, repairId: string, specificStatus?: RepairStatus) => {
     const updated = customers.map((c) => {
       if (c.id !== customerId) return c;
       return {
         ...c,
         repairs: c.repairs.map((r) => {
           if (r.id !== repairId) return r;
-          const nextStatus: RepairStatus = r.status === 'pending' ? 'completed' : 'pending';
+          if (specificStatus) {
+            return { ...r, status: specificStatus };
+          }
+          // 4-stage cycle: received -> diagnosing -> repairing -> completed -> received
+          let nextStatus: RepairStatus = 'received';
+          if (r.status === 'received' || r.status === 'pending') nextStatus = 'diagnosing';
+          else if (r.status === 'diagnosing') nextStatus = 'repairing';
+          else if (r.status === 'repairing') nextStatus = 'completed';
+          else if (r.status === 'completed') nextStatus = 'received';
           return { ...r, status: nextStatus };
         }),
       };
@@ -224,9 +232,9 @@ export function App() {
     saveShopInfo(newInfo);
   };
 
-  // Pending count for navigation badge
+  // Pending count for navigation badge (all in-progress repairs not completed)
   const pendingCount = customers.reduce((acc, c) => {
-    return acc + c.repairs.filter((r) => r.status === 'pending').length;
+    return acc + c.repairs.filter((r) => r.status !== 'completed').length;
   }, 0);
 
   // 1. Initial Loading Screen

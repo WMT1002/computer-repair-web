@@ -18,7 +18,7 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
   const [price, setPrice] = useState<number | ''>(1000);
   const [date, setDate] = useState(getTodayStr());
   const [dueDate, setDueDate] = useState('');
-  const [status, setStatus] = useState<RepairStatus>('pending');
+  const [status, setStatus] = useState<RepairStatus>('received');
   const [note, setNote] = useState('');
   const [hasLeftPanel, setHasLeftPanel] = useState(false);
   const [hasRightPanel, setHasRightPanel] = useState(false);
@@ -213,12 +213,14 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
                 當前維修狀態
               </label>
               <select
-                value={status}
+                value={status === 'pending' ? 'received' : status}
                 onChange={(e) => setStatus(e.target.value as RepairStatus)}
-                className="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"
+                className="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 font-medium"
               >
-                <option value="pending">⏳ 待取件 (進行中/測試中)</option>
-                <option value="completed">✅ 已完成 (已取件修復完成)</option>
+                <option value="received">【1. 收件建檔】</option>
+                <option value="diagnosing">【2. 故障檢測】</option>
+                <option value="repairing">【3. 維修更換】</option>
+                <option value="completed">【4. 完工待取】</option>
               </select>
             </div>
 

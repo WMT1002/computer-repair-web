@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Customer, RepairRecord, RepairStatus, PriceItem, RepairPhoto } from '../types';
-import { X, Plus, Printer, Trash2, Calendar, Phone, Clock, CheckCircle2, DollarSign, Tag, Edit3, Camera } from 'lucide-react';
+import { X, Plus, Printer, Trash2, Calendar, Phone, DollarSign, Tag, Edit3, Camera } from 'lucide-react';
 import { PhotoUploader } from './common/PhotoUploader';
 import { ImageLightbox } from './common/ImageLightbox';
 
@@ -9,7 +9,7 @@ interface CustomerDetailModalProps {
   onClose: () => void;
   onEditCustomer: (customer: Customer, repairId?: string) => void;
   onAddRepair: (customerId: string, repair: Omit<RepairRecord, 'id'>) => void;
-  onToggleStatus: (customerId: string, repairId: string) => void;
+  onToggleStatus: (customerId: string, repairId: string, newStatus?: RepairStatus) => void;
   onDeleteRepair: (customerId: string, repairId: string) => void;
   onPrintRepair: (customer: Customer, repair: RepairRecord) => void;
   priceItems?: PriceItem[];
@@ -34,7 +34,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   const [price, setPrice] = useState<number | ''>(1000);
   const [date, setDate] = useState(getTodayStr());
   const [dueDate, setDueDate] = useState('');
-  const [status, setStatus] = useState<RepairStatus>('pending');
+  const [status, setStatus] = useState<RepairStatus>('received');
   const [note, setNote] = useState('');
   const [hasLeftPanel, setHasLeftPanel] = useState(false);
   const [hasRightPanel, setHasRightPanel] = useState(false);
@@ -215,12 +215,14 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1">維修狀態</label>
                   <select
-                    value={status}
+                    value={status === 'pending' ? 'received' : status}
                     onChange={(e) => setStatus(e.target.value as RepairStatus)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-slate-100"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-slate-100 font-medium"
                   >
-                    <option value="pending">⏳ 待取件</option>
-                    <option value="completed">✅ 已完成</option>
+                    <option value="received">【1. 收件建檔】</option>
+                    <option value="diagnosing">【2. 故障檢測】</option>
+                    <option value="repairing">【3. 維修更換】</option>
+                    <option value="completed">【4. 完工待取】</option>
                   </select>
                 </div>
                 <div>
@@ -316,24 +318,25 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => onToggleStatus(customer.id, repair.id)}
-                      className={`px-2 py-0.5 text-xs font-semibold rounded-full flex items-center gap-1 border ${
-                        repair.status === 'pending'
-                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                    <select
+                      value={repair.status === 'pending' ? 'received' : repair.status}
+                      onChange={(e) => onToggleStatus(customer.id, repair.id, e.target.value as RepairStatus)}
+                      className={`px-2.5 py-1 text-xs font-semibold rounded-full border cursor-pointer focus:outline-none transition shadow-sm ${
+                        repair.status === 'completed'
+                          ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+                          : repair.status === 'repairing'
+                          ? 'bg-purple-500/15 text-purple-300 border-purple-500/40'
+                          : repair.status === 'diagnosing'
+                          ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                          : 'bg-sky-500/15 text-sky-300 border-sky-500/40'
                       }`}
+                      title="點擊切換當前維修進度狀態"
                     >
-                      {repair.status === 'pending' ? (
-                        <>
-                          <Clock className="w-3 h-3 animate-pulse" /> 待取件
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="w-3 h-3" /> 已完成
-                        </>
-                      )}
-                    </button>
+                      <option value="received" className="bg-slate-900 text-slate-100">【1. 收件建檔】</option>
+                      <option value="diagnosing" className="bg-slate-900 text-slate-100">【2. 故障檢測】</option>
+                      <option value="repairing" className="bg-slate-900 text-slate-100">【3. 維修更換】</option>
+                      <option value="completed" className="bg-slate-900 text-slate-100">【4. 完工待取】</option>
+                    </select>
                   </div>
                 </div>
 

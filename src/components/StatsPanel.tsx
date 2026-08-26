@@ -216,12 +216,20 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       {item.repair.status === 'completed' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          <CheckCircle2 className="w-3 h-3" /> 已完成
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                          <CheckCircle2 className="w-3 h-3" /> 4. 完工待取
+                        </span>
+                      ) : item.repair.status === 'repairing' ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-semibold">
+                          <Clock className="w-3 h-3" /> 3. 維修更換
+                        </span>
+                      ) : item.repair.status === 'diagnosing' ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">
+                          <Clock className="w-3 h-3" /> 2. 故障檢測
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                          <Clock className="w-3 h-3 animate-pulse" /> 待取件
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-sky-500/10 text-sky-400 border border-sky-500/20 font-semibold">
+                          <Clock className="w-3 h-3" /> 1. 收件建檔
                         </span>
                       )}
                     </td>
