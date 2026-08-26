@@ -12,12 +12,14 @@ import {
   Printer,
   Cloud,
   FileSpreadsheet,
+  Search,
 } from 'lucide-react';
 import { FixFlowLogo } from '../common/FixFlowLogo';
 import { supabase } from '../../utils/supabaseClient';
 
 interface LoginPageProps {
   onSwitchToRegister: () => void;
+  onGoToTracking?: () => void;
 }
 
 function authErrorMessage(message: string) {
@@ -38,7 +40,7 @@ function validateEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister, onGoToTracking }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -316,7 +318,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
 
               {/* Switch to Register */}
               {!isResetMode && (
-                <div className="mt-6 pt-5 border-t border-slate-800 text-center">
+                <div className="mt-6 pt-5 border-t border-slate-800 text-center space-y-4">
                   <p className="text-xs text-slate-400">
                     還沒有工程師或管理員帳號？{' '}
                     <button
@@ -327,6 +329,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister }) => {
                       立即前往註冊
                     </button>
                   </p>
+
+                  {/* Customer Tracking Portal Shortcut */}
+                  {onGoToTracking && (
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={onGoToTracking}
+                        className="w-full py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-sky-400 hover:text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-md"
+                      >
+                        <Search className="w-3.5 h-3.5" />
+                        <span>我是送修客戶：即時查詢維修進度與照片</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

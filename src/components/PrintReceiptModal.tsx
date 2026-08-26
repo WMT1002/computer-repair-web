@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Customer, RepairRecord, ShopInfo } from '../types';
-import { X, Printer, Scissors, Building, Phone, MapPin } from 'lucide-react';
+import { X, Printer, Scissors, Building, Phone, MapPin, Share2, Check } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface PrintReceiptModalProps {
   customer: Customer;
@@ -19,6 +20,7 @@ export const PrintReceiptModal: React.FC<PrintReceiptModalProps> = ({
 }) => {
   const [editingShop, setEditingShop] = useState(false);
   const [tempShopInfo, setTempShopInfo] = useState<ShopInfo>(shopInfo);
+  const [copied, setCopied] = useState(false);
 
   const handleTriggerPrint = () => {
     window.print();
@@ -27,6 +29,13 @@ export const PrintReceiptModal: React.FC<PrintReceiptModalProps> = ({
   const handleSaveShop = () => {
     onSaveShopInfo(tempShopInfo);
     setEditingShop(false);
+  };
+
+  const handleCopyTrackingLink = () => {
+    const url = `${window.location.origin}${window.location.pathname}?track=${repair.id}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
   };
 
   return (
@@ -43,20 +52,29 @@ export const PrintReceiptModal: React.FC<PrintReceiptModalProps> = ({
 
             <div className="flex items-center gap-3">
               <button
+                onClick={handleCopyTrackingLink}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 hover:bg-sky-500/30 flex items-center gap-1.5 transition cursor-pointer"
+                title="複製此工單的顧客進度查詢網址，可貼在 LINE 給顧客"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-sky-400" />}
+                {copied ? '已複製顧客查詢連結！' : '複製顧客追蹤連結'}
+              </button>
+
+              <button
                 onClick={() => setEditingShop(!editingShop)}
-                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300 hover:text-slate-100"
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-700 text-slate-300 hover:text-slate-100 cursor-pointer"
               >
                 {editingShop ? '關閉店家資訊編輯' : '設定店家資訊'}
               </button>
               <button
                 onClick={handleTriggerPrint}
-                className="px-4 py-1.5 text-xs font-bold rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 flex items-center gap-1.5 shadow-lg shadow-sky-500/20 hover:brightness-110"
+                className="px-4 py-1.5 text-xs font-bold rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 flex items-center gap-1.5 shadow-lg shadow-sky-500/20 hover:brightness-110 cursor-pointer"
               >
                 <Printer className="w-4 h-4" /> 一鍵列印 A4 單據
               </button>
               <button
                 onClick={onClose}
-                className="p-1.5 text-slate-400 hover:text-slate-100 rounded-lg"
+                className="p-1.5 text-slate-400 hover:text-slate-100 rounded-lg cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -291,7 +309,23 @@ const ReceiptSlip: React.FC<ReceiptSlipProps> = ({ title, customer, repair, shop
           <p className="leading-tight">{shopInfo.notice}</p>
         </div>
 
-        <div className="w-36 h-14 border-2 border-dashed border-slate-400 flex items-center justify-center text-slate-400 text-xs font-mono rounded shrink-0">
+        {/* Dynamic QR Code for Customer Copy */}
+        {badge === '客戶憑證' && (
+          <div className="flex items-center gap-2 p-1.5 border border-slate-300 rounded bg-white shrink-0">
+            <QRCodeSVG
+              value={`${window.location.origin}${window.location.pathname}?track=${repair.id}`}
+              size={52}
+              level="M"
+            />
+            <div className="text-[10px] leading-tight text-slate-700 font-mono flex flex-col justify-center">
+              <span className="font-bold text-slate-950 flex items-center gap-0.5">📱 手機掃碼</span>
+              <span className="font-semibold text-sky-700">即時追蹤進度</span>
+              <span className="text-[9px] text-slate-500">免登入查詢</span>
+            </div>
+          </div>
+        )}
+
+        <div className="w-32 h-14 border-2 border-dashed border-slate-400 flex items-center justify-center text-slate-400 text-xs font-mono rounded shrink-0">
           【 店家蓋章處 】
         </div>
       </div>

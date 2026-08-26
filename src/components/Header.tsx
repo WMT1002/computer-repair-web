@@ -7,6 +7,7 @@ import {
   Moon,
   LogOut,
   Shield,
+  Search,
 } from 'lucide-react';
 import { FixFlowLogo } from './common/FixFlowLogo';
 import { useAuth } from '../contexts/AuthContext';
@@ -16,12 +17,14 @@ interface HeaderProps {
   themeMode: 'dark' | 'light';
   onToggleTheme: () => void;
   onOpenAccountManagement?: () => void;
+  onOpenCustomerTracking?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   themeMode,
   onToggleTheme,
   onOpenAccountManagement,
+  onOpenCustomerTracking,
 }) => {
   const { user, profile, signOut } = useAuth();
   const [timeStr, setTimeStr] = useState<string>('');
@@ -127,6 +130,18 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Shield className="w-4 h-4 text-purple-400" />
             <span>帳號管理</span>
+          </button>
+        )}
+
+        {/* Customer Tracking Portal Link */}
+        {onOpenCustomerTracking && (
+          <button
+            onClick={onOpenCustomerTracking}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-sky-500/15 text-sky-300 border border-sky-500/30 hover:bg-sky-500/25 hover:border-sky-400 shadow-md transition-all cursor-pointer"
+            title="前往顧客專屬免登入維修進度查詢頁"
+          >
+            <Search className="w-4 h-4 text-sky-400" />
+            <span className="hidden sm:inline">顧客查詢頁</span>
           </button>
         )}
 

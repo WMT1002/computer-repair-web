@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Customer, RepairRecord, RepairStatus, PriceItem } from '../types';
-import { X, Plus, Printer, Trash2, Calendar, Phone, Clock, CheckCircle2, DollarSign, Tag, Edit3 } from 'lucide-react';
+import { Customer, RepairRecord, RepairStatus, PriceItem, RepairPhoto } from '../types';
+import { X, Plus, Printer, Trash2, Calendar, Phone, Clock, CheckCircle2, DollarSign, Tag, Edit3, Camera } from 'lucide-react';
+import { PhotoUploader } from './common/PhotoUploader';
+import { ImageLightbox } from './common/ImageLightbox';
 
 interface CustomerDetailModalProps {
   customer: Customer;
@@ -24,6 +26,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   priceItems,
 }) => {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [lightboxPhoto, setLightboxPhoto] = useState<RepairPhoto | null>(null);
 
   const getTodayStr = () => new Date().toISOString().split('T')[0];
 
@@ -35,6 +38,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   const [note, setNote] = useState('');
   const [hasLeftPanel, setHasLeftPanel] = useState(false);
   const [hasRightPanel, setHasRightPanel] = useState(false);
+  const [newPhotos, setNewPhotos] = useState<RepairPhoto[]>([]);
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,12 +56,14 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
       note: note.trim(),
       hasLeftPanel,
       hasRightPanel,
+      photos: newPhotos,
     });
 
     setItem('');
     setNote('');
     setHasLeftPanel(false);
     setHasRightPanel(false);
+    setNewPhotos([]);
     setShowAddForm(false);
   };
 
@@ -270,6 +276,9 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 </label>
               </div>
 
+              {/* Photo Evidence Uploader in Add Form */}
+              <PhotoUploader photos={newPhotos} onChange={setNewPhotos} maxPhotos={6} />
+
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
@@ -350,6 +359,34 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   {repair.note && (
                     <p className="text-xs text-slate-400 italic mt-1.5">備註：{repair.note}</p>
                   )}
+
+                  {/* Photo Evidence Gallery */}
+                  {repair.photos && repair.photos.length > 0 && (
+                    <div className="pt-2.5 mt-2.5 border-t border-slate-800/80">
+                      <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 mb-2">
+                        <Camera className="w-3.5 h-3.5 text-sky-400" />
+                        <span>存證照片 ({repair.photos.length} 張)：</span>
+                        <span className="text-[10px] text-slate-500">(點擊放大)</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {repair.photos.map((p) => (
+                          <div
+                            key={p.id}
+                            onClick={() => setLightboxPhoto(p)}
+                            className="relative group/photo w-14 h-14 rounded-lg overflow-hidden border border-slate-700 bg-slate-950 cursor-pointer hover:border-sky-500 transition shadow"
+                            title={p.caption || '點擊放大'}
+                          >
+                            <img src={p.url} alt={p.caption || '存證照片'} className="w-full h-full object-cover group-hover/photo:scale-110 transition-transform duration-300" />
+                            {p.caption && (
+                              <div className="absolute inset-x-0 bottom-0 bg-black/85 text-[9px] text-slate-300 text-center truncate px-0.5 font-sans">
+                                {p.caption}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between pt-2 border-t border-slate-800 text-xs">
@@ -392,6 +429,9 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Lightbox Zoom */}
+      <ImageLightbox photo={lightboxPhoto} onClose={() => setLightboxPhoto(null)} />
     </div>
   );
 };

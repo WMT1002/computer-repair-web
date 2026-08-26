@@ -1,5 +1,12 @@
 export type RepairStatus = 'pending' | 'completed';
 
+export interface RepairPhoto {
+  id: string;
+  url: string; // Base64 data URL or remote URL
+  caption?: string; // e.g. "機殼外觀正面", "左側板刮痕", "風扇灰塵"
+  createdAt?: string;
+}
+
 export interface RepairRecord {
   id: string;
   date: string;
@@ -10,6 +17,7 @@ export interface RepairRecord {
   note?: string;
   hasLeftPanel?: boolean;
   hasRightPanel?: boolean;
+  photos?: RepairPhoto[];
 }
 
 export interface Customer {

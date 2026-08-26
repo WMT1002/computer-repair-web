@@ -214,6 +214,7 @@ export async function fetchCloudCustomers(): Promise<Customer[] | null> {
           note: r.note || '',
           hasLeftPanel: Boolean(r.has_left_panel),
           hasRightPanel: Boolean(r.has_right_panel),
+          photos: Array.isArray(r.photos) ? r.photos : [],
         }));
 
       return {
@@ -254,6 +255,7 @@ export async function syncCloudCustomers(customers: Customer[]): Promise<void> {
           note: r.note,
           has_left_panel: Boolean(r.hasLeftPanel),
           has_right_panel: Boolean(r.hasRightPanel),
+          photos: r.photos || [],
         });
       }
     }
@@ -325,4 +327,131 @@ export async function deleteCloudRepairRecord(id: string): Promise<void> {
   } catch (err) {
     console.error('Failed to delete repair record from Supabase:', err);
   }
+}
+
+export interface PublicTrackingResult {
+  customer: Customer;
+  repair: RepairRecord;
+  shopInfo: ShopInfo;
+}
+
+export async function fetchPublicTrackingData(query: string): Promise<PublicTrackingResult[] | null> {
+  const cleanQuery = query.trim();
+  if (!cleanQuery) return null;
+
+  try {
+    const defaultShopInfo = getStoredShopInfo();
+
+    // 1. Try Supabase cloud query
+    let { data: repData } = await supabase
+      .from('repair_records')
+      .select('*')
+      .ilike('id', `%${cleanQuery}%`)
+      .order('created_at', { ascending: false });
+
+    // Or Query by customer phone or customer ID/name
+    let customerIds: string[] = [];
+    if (!repData || repData.length === 0) {
+      const { data: custData } = await supabase
+        .from('repair_customers')
+        .select('*')
+        .or(`phone.ilike.%${cleanQuery}%,id.ilike.%${cleanQuery}%,name.ilike.%${cleanQuery}%`);
+
+      if (custData && custData.length > 0) {
+        customerIds = custData.map((c) => c.id);
+        const { data: matchedRepairs } = await supabase
+          .from('repair_records')
+          .select('*')
+          .in('customer_id', customerIds)
+          .order('created_at', { ascending: false });
+        repData = matchedRepairs || [];
+      }
+    }
+
+    if (repData && repData.length > 0) {
+      const allCustIds = Array.from(new Set(repData.map((r) => r.customer_id)));
+      const { data: allCustData } = await supabase
+        .from('repair_customers')
+        .select('*')
+        .in('id', allCustIds);
+
+      // Fetch shop info from cloud
+      const { data: shopData } = await supabase.from('repair_shop_info').select('*').limit(1);
+      const activeShopInfo: ShopInfo =
+        shopData && shopData.length > 0
+          ? {
+              name: shopData[0].name,
+              phone: shopData[0].phone,
+              address: shopData[0].address,
+              notice: shopData[0].notice,
+            }
+          : defaultShopInfo;
+
+      const results: PublicTrackingResult[] = [];
+      for (const r of repData) {
+        const matchingCust = allCustData?.find((c) => c.id === r.customer_id) || {
+          id: r.customer_id,
+          name: '客戶',
+          phone: '',
+          createdAt: r.date,
+        };
+
+        const repairRecord: RepairRecord = {
+          id: r.id,
+          date: r.date,
+          item: r.item,
+          dueDate: r.due_date || '',
+          price: Number(r.price) || 0,
+          status: r.status as 'pending' | 'completed',
+          note: r.note || '',
+          hasLeftPanel: Boolean(r.has_left_panel),
+          hasRightPanel: Boolean(r.has_right_panel),
+          photos: Array.isArray(r.photos) ? r.photos : [],
+        };
+
+        const customerObj: Customer = {
+          id: matchingCust.id,
+          name: matchingCust.name,
+          phone: matchingCust.phone,
+          createdAt: matchingCust.created_at ? matchingCust.created_at.split('T')[0] : r.date,
+          repairs: [repairRecord],
+        };
+
+        results.push({
+          customer: customerObj,
+          repair: repairRecord,
+          shopInfo: activeShopInfo,
+        });
+      }
+
+      if (results.length > 0) return results;
+    }
+  } catch (err) {
+    console.warn('Public tracking cloud fetch fallback to local:', err);
+  }
+
+  // Fallback to LocalStorage
+  const localCustomers = getStoredCustomers();
+  const localShop = getStoredShopInfo();
+  const lowerQuery = cleanQuery.toLowerCase();
+  const localResults: PublicTrackingResult[] = [];
+
+  for (const c of localCustomers) {
+    for (const r of c.repairs) {
+      if (
+        r.id.toLowerCase().includes(lowerQuery) ||
+        c.phone.toLowerCase().includes(lowerQuery) ||
+        c.name.toLowerCase().includes(lowerQuery) ||
+        c.id.toLowerCase().includes(lowerQuery)
+      ) {
+        localResults.push({
+          customer: c,
+          repair: r,
+          shopInfo: localShop,
+        });
+      }
+    }
+  }
+
+  return localResults.length > 0 ? localResults : null;
 }

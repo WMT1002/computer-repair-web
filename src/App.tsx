@@ -27,6 +27,7 @@ import { PrintReceiptModal } from './components/PrintReceiptModal';
 import { AccountManagementModal } from './components/AccountManagementModal';
 import { LoginPage } from './components/auth/LoginPage';
 import { RegisterPage } from './components/auth/RegisterPage';
+import { CustomerTrackingPage } from './components/CustomerTrackingPage';
 import { useAuth } from './contexts/AuthContext';
 import { RefreshCcw, Wrench } from 'lucide-react';
 
@@ -34,6 +35,19 @@ export function App() {
   const { user, isLoading } = useAuth();
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
   const [showAccountModal, setShowAccountModal] = useState(false);
+
+  // Check URL query parameters for public tracking
+  const getInitialTrackId = () => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('track') || params.get('order') || '';
+    } catch {
+      return '';
+    }
+  };
+
+  const [trackingOrderId, setTrackingOrderId] = useState<string>(getInitialTrackId());
+  const [isTrackingMode, setIsTrackingMode] = useState<boolean>(() => Boolean(getInitialTrackId()));
 
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [shopInfo, setShopInfo] = useState<ShopInfo>(getStoredShopInfo());
@@ -230,15 +244,40 @@ export function App() {
     );
   }
 
-  // 2. Unauthenticated View (Login / Register)
+  // 2. Public Customer Tracking View (Bypasses login for QR code scans & customer tracking)
+  if (isTrackingMode) {
+    return (
+      <CustomerTrackingPage
+        initialOrderId={trackingOrderId}
+        onBackToLogin={() => {
+          setIsTrackingMode(false);
+          // Clean URL param without reload
+          if (window.history.pushState) {
+            const newUrl = window.location.pathname;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+          }
+        }}
+      />
+    );
+  }
+
+  // 3. Unauthenticated View (Login / Register)
   if (!user) {
     if (authView === 'register') {
       return <RegisterPage onSwitchToLogin={() => setAuthView('login')} />;
     }
-    return <LoginPage onSwitchToRegister={() => setAuthView('register')} />;
+    return (
+      <LoginPage
+        onSwitchToRegister={() => setAuthView('register')}
+        onGoToTracking={() => {
+          setTrackingOrderId('');
+          setIsTrackingMode(true);
+        }}
+      />
+    );
   }
 
-  // 3. Authenticated Repair System View
+  // 4. Authenticated Repair System View
   return (
     <>
       <div className="app-container">
@@ -246,6 +285,10 @@ export function App() {
           themeMode={themeMode}
           onToggleTheme={handleToggleTheme}
           onOpenAccountManagement={() => setShowAccountModal(true)}
+          onOpenCustomerTracking={() => {
+            setTrackingOrderId('');
+            setIsTrackingMode(true);
+          }}
         />
 
         <Navigation

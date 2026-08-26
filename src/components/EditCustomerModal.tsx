@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Customer, RepairStatus } from '../types';
+import { Customer, RepairStatus, RepairPhoto } from '../types';
 import { X, Save, User, Phone, Wrench, DollarSign, Calendar, FileText, Edit3 } from 'lucide-react';
+import { PhotoUploader } from './common/PhotoUploader';
 
 interface EditCustomerModalProps {
   customer: Customer;
@@ -33,6 +34,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
   const [note, setNote] = useState(targetRepair?.note || '');
   const [hasLeftPanel, setHasLeftPanel] = useState(Boolean(targetRepair?.hasLeftPanel));
   const [hasRightPanel, setHasRightPanel] = useState(Boolean(targetRepair?.hasRightPanel));
+  const [photos, setPhotos] = useState<RepairPhoto[]>(targetRepair?.photos || []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +58,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
             note: note.trim(),
             hasLeftPanel,
             hasRightPanel,
+            photos,
           };
         }
         return r;
@@ -264,6 +267,9 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                   </div>
                 </label>
               </div>
+
+              {/* Photo Evidence Uploader */}
+              <PhotoUploader photos={photos} onChange={setPhotos} maxPhotos={6} />
             </div>
           )}
 

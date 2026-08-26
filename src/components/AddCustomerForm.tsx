@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Customer, RepairStatus, PriceItem } from '../types';
+import { Customer, RepairStatus, PriceItem, RepairPhoto } from '../types';
 import { UserPlus, Save, DollarSign, Calendar, Wrench, Phone, User, FileText, Printer, ArrowLeft, Tag } from 'lucide-react';
+import { PhotoUploader } from './common/PhotoUploader';
 
 interface AddCustomerFormProps {
   onAddCustomer: (newCustomer: Customer, shouldPrint?: boolean) => void;
@@ -21,6 +22,7 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
   const [note, setNote] = useState('');
   const [hasLeftPanel, setHasLeftPanel] = useState(false);
   const [hasRightPanel, setHasRightPanel] = useState(false);
+  const [photos, setPhotos] = useState<RepairPhoto[]>([]);
 
   const handleSave = (shouldPrint: boolean) => {
     if (!name.trim() || !phone.trim() || !repairItem.trim()) {
@@ -47,6 +49,7 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
           note: note.trim(),
           hasLeftPanel,
           hasRightPanel,
+          photos,
         },
       ],
     };
@@ -291,6 +294,9 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
             </label>
           </div>
         </div>
+
+        {/* Photo Evidence Uploader */}
+        <PhotoUploader photos={photos} onChange={setPhotos} maxPhotos={6} />
 
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-slate-700">
