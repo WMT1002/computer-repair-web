@@ -8,6 +8,8 @@ export interface RepairRecord {
   price: number;
   status: RepairStatus;
   note?: string;
+  hasLeftPanel?: boolean;
+  hasRightPanel?: boolean;
 }
 
 export interface Customer {

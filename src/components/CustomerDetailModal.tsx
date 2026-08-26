@@ -31,6 +31,8 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   const [dueDate, setDueDate] = useState('');
   const [status, setStatus] = useState<RepairStatus>('pending');
   const [note, setNote] = useState('');
+  const [hasLeftPanel, setHasLeftPanel] = useState(false);
+  const [hasRightPanel, setHasRightPanel] = useState(false);
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,10 +48,14 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
       price: Number(price) || 0,
       status,
       note: note.trim(),
+      hasLeftPanel,
+      hasRightPanel,
     });
 
     setItem('');
     setNote('');
+    setHasLeftPanel(false);
+    setHasRightPanel(false);
     setShowAddForm(false);
   };
 
@@ -212,6 +218,47 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 </div>
               </div>
 
+              {/* 側板勾選 (左側板 / 右側板) */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer select-none transition ${
+                  hasLeftPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasLeftPanel}
+                    onChange={(e) => setHasLeftPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1">
+                    <span>左側板</span>
+                    <span className={`text-[10px] px-1 py-0.2 rounded border ${
+                      hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasLeftPanel ? '✓ 有' : '無'}
+                    </span>
+                  </div>
+                </label>
+
+                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer select-none transition ${
+                  hasRightPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasRightPanel}
+                    onChange={(e) => setHasRightPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1">
+                    <span>右側板</span>
+                    <span className={`text-[10px] px-1 py-0.2 rounded border ${
+                      hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasRightPanel ? '✓ 有' : '無'}
+                    </span>
+                  </div>
+                </label>
+              </div>
+
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
@@ -272,8 +319,25 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
 
                 <div>
                   <h4 className="text-sm font-semibold text-slate-100">{repair.item}</h4>
+                  
+                  {/* Side panels badges */}
+                  {(repair.hasLeftPanel || repair.hasRightPanel) && (
+                    <div className="flex items-center gap-1.5 mt-2 flex-wrap text-[11px]">
+                      {repair.hasLeftPanel && (
+                        <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 font-mono">
+                          ✓ 左側板
+                        </span>
+                      )}
+                      {repair.hasRightPanel && (
+                        <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 font-mono">
+                          ✓ 右側板
+                        </span>
+                      )}
+                    </div>
+                  )}
+
                   {repair.note && (
-                    <p className="text-xs text-slate-400 italic mt-1">備註：{repair.note}</p>
+                    <p className="text-xs text-slate-400 italic mt-1.5">備註：{repair.note}</p>
                   )}
                 </div>
 

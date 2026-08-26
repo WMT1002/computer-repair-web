@@ -19,6 +19,8 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
   const [dueDate, setDueDate] = useState('');
   const [status, setStatus] = useState<RepairStatus>('pending');
   const [note, setNote] = useState('');
+  const [hasLeftPanel, setHasLeftPanel] = useState(false);
+  const [hasRightPanel, setHasRightPanel] = useState(false);
 
   const handleSave = (shouldPrint: boolean) => {
     if (!name.trim() || !phone.trim() || !repairItem.trim()) {
@@ -43,6 +45,8 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
           price: Number(price) || 0,
           status,
           note: note.trim(),
+          hasLeftPanel,
+          hasRightPanel,
         },
       ],
     };
@@ -230,6 +234,61 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
                 />
               </div>
             </div>
+          </div>
+
+          {/* 側板勾選 (左側板 / 右側板) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            {/* 左側板 */}
+            <label
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer select-none transition-all ${
+                hasLeftPanel
+                  ? 'bg-slate-700/90 border-slate-500 text-slate-100 shadow-sm'
+                  : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={hasLeftPanel}
+                onChange={(e) => setHasLeftPanel(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-500 focus:ring-offset-slate-900 cursor-pointer accent-slate-600"
+              />
+              <div className="flex items-center justify-between flex-1">
+                <span className="text-sm font-semibold">左側板</span>
+                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
+                  hasLeftPanel 
+                    ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' 
+                    : 'bg-slate-950/40 text-slate-500 border-slate-800'
+                }`}>
+                  {hasLeftPanel ? '✓ 已勾選 (有)' : '未勾選 (無)'}
+                </span>
+              </div>
+            </label>
+
+            {/* 右側板 */}
+            <label
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer select-none transition-all ${
+                hasRightPanel
+                  ? 'bg-slate-700/90 border-slate-500 text-slate-100 shadow-sm'
+                  : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={hasRightPanel}
+                onChange={(e) => setHasRightPanel(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-500 focus:ring-offset-slate-900 cursor-pointer accent-slate-600"
+              />
+              <div className="flex items-center justify-between flex-1">
+                <span className="text-sm font-semibold">右側板</span>
+                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
+                  hasRightPanel 
+                    ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' 
+                    : 'bg-slate-950/40 text-slate-500 border-slate-800'
+                }`}>
+                  {hasRightPanel ? '✓ 已勾選 (有)' : '未勾選 (無)'}
+                </span>
+              </div>
+            </label>
           </div>
         </div>
 

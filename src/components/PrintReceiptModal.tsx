@@ -208,8 +208,8 @@ const ReceiptSlip: React.FC<ReceiptSlipProps> = ({ title, customer, repair, shop
         </div>
       </div>
 
-      {/* Info Grid (Section 2 - Enlarged) */}
-      <div className="grid grid-cols-2 gap-4 text-sm border border-slate-400 p-3.5 bg-slate-50/80 rounded-lg">
+      {/* Info Grid (Section 2 - Enlarged with Left/Right Panel Checkboxes) */}
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm border border-slate-400 p-3.5 bg-slate-50/80 rounded-lg">
         <div>
           <span className="text-slate-600 font-mono">客戶姓名：</span>
           <span className="font-bold text-slate-900 text-base ml-1">{customer.name}</span>
@@ -226,6 +226,26 @@ const ReceiptSlip: React.FC<ReceiptSlipProps> = ({ title, customer, repair, shop
           <span className="text-slate-600 font-mono">預計取件：</span>
           <span className="font-mono font-semibold text-slate-900 ml-1">
             {repair.dueDate?.trim() ? repair.dueDate : '______________'}
+          </span>
+        </div>
+        <div>
+          <span className="inline-flex items-center gap-2 font-mono">
+            <span className={`inline-flex items-center justify-center w-4 h-4 border border-slate-900 rounded-sm text-xs font-black ${repair.hasLeftPanel ? 'bg-slate-900 text-white' : 'bg-white text-transparent'}`}>
+              ✓
+            </span>
+            <span className={`font-mono ${repair.hasLeftPanel ? 'text-slate-950 font-bold' : 'text-slate-500 font-normal'}`}>
+              左側板 {repair.hasLeftPanel ? '【有】' : '【無】'}
+            </span>
+          </span>
+        </div>
+        <div>
+          <span className="inline-flex items-center gap-2 font-mono">
+            <span className={`inline-flex items-center justify-center w-4 h-4 border border-slate-900 rounded-sm text-xs font-black ${repair.hasRightPanel ? 'bg-slate-900 text-white' : 'bg-white text-transparent'}`}>
+              ✓
+            </span>
+            <span className={`font-mono ${repair.hasRightPanel ? 'text-slate-950 font-bold' : 'text-slate-500 font-normal'}`}>
+              右側板 {repair.hasRightPanel ? '【有】' : '【無】'}
+            </span>
           </span>
         </div>
       </div>
