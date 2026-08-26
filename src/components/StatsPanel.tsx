@@ -225,7 +225,7 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
                     <td className="py-3 px-3 whitespace-nowrap">
                       {item.repair.status === 'completed' ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
-                          <CheckCircle2 className="w-3 h-3" /> 4. 完工待取
+                          <CheckCircle2 className="w-3 h-3" /> 4. 完工待取{item.repair.isPickedUp ? ' (已取件)' : ''}
                         </span>
                       ) : item.repair.status === 'repairing' ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-semibold">

@@ -182,7 +182,11 @@ export function App() {
         repairs: c.repairs.map((r) => {
           if (r.id !== repairId) return r;
           if (specificStatus) {
-            return { ...r, status: specificStatus };
+            return {
+              ...r,
+              status: specificStatus,
+              isPickedUp: specificStatus === 'completed' ? r.isPickedUp : false,
+            };
           }
           // 4-stage cycle: received -> diagnosing -> repairing -> completed -> received
           let nextStatus: RepairStatus = 'received';
@@ -190,7 +194,29 @@ export function App() {
           else if (r.status === 'diagnosing') nextStatus = 'repairing';
           else if (r.status === 'repairing') nextStatus = 'completed';
           else if (r.status === 'completed') nextStatus = 'received';
-          return { ...r, status: nextStatus };
+          return {
+            ...r,
+            status: nextStatus,
+            isPickedUp: nextStatus === 'completed' ? r.isPickedUp : false,
+          };
+        }),
+      };
+    });
+    updateCustomersState(updated);
+  };
+
+  const handleTogglePickedUp = (customerId: string, repairId: string, isPickedUp: boolean) => {
+    const updated = customers.map((c) => {
+      if (c.id !== customerId) return c;
+      return {
+        ...c,
+        repairs: c.repairs.map((r) => {
+          if (r.id !== repairId) return r;
+          return {
+            ...r,
+            isPickedUp,
+            pickedUpDate: isPickedUp ? new Date().toISOString().split('T')[0] : undefined,
+          };
         }),
       };
     });
@@ -232,9 +258,12 @@ export function App() {
     saveShopInfo(newInfo);
   };
 
-  // Pending count for navigation badge (all in-progress repairs not completed)
+  // Pending count for navigation badge (active repairs in shop not yet picked up)
   const pendingCount = customers.reduce((acc, c) => {
-    return acc + c.repairs.filter((r) => r.status !== 'completed').length;
+    return (
+      acc +
+      c.repairs.filter((r) => r.status !== 'completed' || !r.isPickedUp).length
+    );
   }, 0);
 
   // 1. Initial Loading Screen
@@ -318,6 +347,7 @@ export function App() {
               onEditCustomer={(c) => setEditingCustomer({ customer: c })}
               onPrintCustomer={(c, r) => setPrintTarget({ customer: c, repair: r })}
               onToggleStatus={handleToggleStatus}
+              onTogglePickedUp={handleTogglePickedUp}
               onDeleteCustomer={handleDeleteCustomer}
             />
           )}
@@ -361,6 +391,7 @@ export function App() {
           onEditCustomer={(c, rId) => setEditingCustomer({ customer: c, targetRepairId: rId })}
           onAddRepair={handleAddRepair}
           onToggleStatus={handleToggleStatus}
+          onTogglePickedUp={handleTogglePickedUp}
           onDeleteRepair={handleDeleteRepair}
           onPrintRepair={(c, r) => setPrintTarget({ customer: c, repair: r })}
           priceItems={priceItems}

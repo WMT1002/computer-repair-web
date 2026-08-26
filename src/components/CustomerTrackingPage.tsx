@@ -189,8 +189,10 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                   return {
                     bg: 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-emerald-200 text-emerald-900',
                     iconBg: 'bg-emerald-500 text-white shadow-emerald-500/30',
-                    title: '🎉 您的電腦已修復完工，歡迎於營業時間至門市取件！',
-                    badge: '【4. 完工待取】',
+                    title: res.repair.isPickedUp
+                      ? '✨ 您的電腦已於門市順利完成取件，感謝您的支持！'
+                      : '🎉 您的電腦已修復完工，歡迎於營業時間至門市取件！',
+                    badge: res.repair.isPickedUp ? '【4. 完工待取】(已取件)' : '【4. 完工待取】',
                   };
                 }
                 if (currentStage === 3) {

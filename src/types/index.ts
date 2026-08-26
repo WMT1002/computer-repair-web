@@ -46,6 +46,8 @@ export interface RepairRecord {
   dueDate: string;
   price: number;
   status: RepairStatus;
+  isPickedUp?: boolean;
+  pickedUpDate?: string;
   note?: string;
   hasLeftPanel?: boolean;
   hasRightPanel?: boolean;

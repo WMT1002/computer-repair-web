@@ -10,6 +10,7 @@ interface CustomerDetailModalProps {
   onEditCustomer: (customer: Customer, repairId?: string) => void;
   onAddRepair: (customerId: string, repair: Omit<RepairRecord, 'id'>) => void;
   onToggleStatus: (customerId: string, repairId: string, newStatus?: RepairStatus) => void;
+  onTogglePickedUp?: (customerId: string, repairId: string, isPickedUp: boolean) => void;
   onDeleteRepair: (customerId: string, repairId: string) => void;
   onPrintRepair: (customer: Customer, repair: RepairRecord) => void;
   priceItems?: PriceItem[];
@@ -21,6 +22,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   onEditCustomer,
   onAddRepair,
   onToggleStatus,
+  onTogglePickedUp,
   onDeleteRepair,
   onPrintRepair,
   priceItems,
@@ -35,6 +37,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   const [date, setDate] = useState(getTodayStr());
   const [dueDate, setDueDate] = useState('');
   const [status, setStatus] = useState<RepairStatus>('received');
+  const [isPickedUp, setIsPickedUp] = useState(false);
   const [note, setNote] = useState('');
   const [hasLeftPanel, setHasLeftPanel] = useState(false);
   const [hasRightPanel, setHasRightPanel] = useState(false);
@@ -48,11 +51,13 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
     }
 
     onAddRepair(customer.id, {
-      date,
+      date: date || getTodayStr(),
       item: item.trim(),
       dueDate,
       price: Number(price) || 0,
       status,
+      isPickedUp: status === 'completed' ? isPickedUp : false,
+      pickedUpDate: status === 'completed' && isPickedUp ? getTodayStr() : undefined,
       note: note.trim(),
       hasLeftPanel,
       hasRightPanel,
@@ -60,6 +65,11 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
     });
 
     setItem('');
+    setPrice(1000);
+    setDate(getTodayStr());
+    setDueDate('');
+    setStatus('received');
+    setIsPickedUp(false);
     setNote('');
     setHasLeftPanel(false);
     setHasRightPanel(false);
@@ -136,10 +146,29 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
                     <span className="text-slate-300 font-normal">狀態:</span>
+                    {status === 'completed' && (
+                      <label className={`flex items-center gap-1 px-2 py-0.5 rounded border text-[11px] font-semibold cursor-pointer select-none transition ${
+                        isPickedUp 
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-xs' 
+                          : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200'
+                      }`}>
+                        <input
+                          type="checkbox"
+                          checked={isPickedUp}
+                          onChange={(e) => setIsPickedUp(e.target.checked)}
+                          className="w-3 h-3 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
+                        />
+                        <span>{isPickedUp ? '✓ 已取件' : '已取件'}</span>
+                      </label>
+                    )}
                     <select
                       value={status === 'pending' ? 'received' : status}
-                      onChange={(e) => setStatus(e.target.value as RepairStatus)}
-                      className="bg-slate-800 border border-slate-700 rounded px-2 py-0.5 text-xs text-slate-100 font-medium"
+                      onChange={(e) => {
+                        const newStatus = e.target.value as RepairStatus;
+                        setStatus(newStatus);
+                        if (newStatus !== 'completed') setIsPickedUp(false);
+                      }}
+                      className="bg-slate-800 border border-slate-700 rounded px-2 py-0.5 text-xs text-slate-100 font-medium cursor-pointer"
                     >
                       <option value="received">【1. 收件建檔】</option>
                       <option value="diagnosing">【2. 故障檢測】</option>
@@ -318,9 +347,39 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {/* 只有設定成「完工待取」的時候，在他（狀態選單）的左邊出現一個已取件的勾選小區塊 */}
+                    {repair.status === 'completed' && (
+                      <label
+                        className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border cursor-pointer select-none transition-all ${
+                          repair.isPickedUp
+                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 shadow-xs'
+                            : 'bg-slate-900/80 text-slate-400 border-slate-700 hover:border-slate-600 hover:text-slate-200'
+                        }`}
+                        title="勾選表示客戶已到店取回電腦"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={Boolean(repair.isPickedUp)}
+                          onChange={(e) =>
+                            onTogglePickedUp?.(customer.id, repair.id, e.target.checked)
+                          }
+                          className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
+                        />
+                        <span className="whitespace-nowrap font-mono text-[11px]">
+                          {repair.isPickedUp ? '✓ 已取件' : '已取件'}
+                        </span>
+                      </label>
+                    )}
+
                     <select
                       value={repair.status === 'pending' ? 'received' : repair.status}
-                      onChange={(e) => onToggleStatus(customer.id, repair.id, e.target.value as RepairStatus)}
+                      onChange={(e) => {
+                        const newStatus = e.target.value as RepairStatus;
+                        onToggleStatus(customer.id, repair.id, newStatus);
+                        if (newStatus !== 'completed' && repair.isPickedUp) {
+                          onTogglePickedUp?.(customer.id, repair.id, false);
+                        }
+                      }}
                       className={`px-2.5 py-1 text-xs font-semibold rounded-full border cursor-pointer focus:outline-none transition shadow-sm ${
                         repair.status === 'completed'
                           ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'

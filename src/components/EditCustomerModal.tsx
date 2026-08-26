@@ -31,6 +31,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
   const [date, setDate] = useState(targetRepair?.date || '');
   const [dueDate, setDueDate] = useState(targetRepair?.dueDate || '');
   const [status, setStatus] = useState<RepairStatus>(targetRepair?.status || 'received');
+  const [isPickedUp, setIsPickedUp] = useState(Boolean(targetRepair?.isPickedUp));
   const [note, setNote] = useState(targetRepair?.note || '');
   const [hasLeftPanel, setHasLeftPanel] = useState(Boolean(targetRepair?.hasLeftPanel));
   const [hasRightPanel, setHasRightPanel] = useState(Boolean(targetRepair?.hasRightPanel));
@@ -56,6 +57,8 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
             date: date || r.date,
             dueDate,
             status,
+            isPickedUp: status === 'completed' ? isPickedUp : false,
+            pickedUpDate: status === 'completed' && isPickedUp ? (targetRepair.pickedUpDate || new Date().toISOString().split('T')[0]) : undefined,
             note,
             hasLeftPanel,
             hasRightPanel,
@@ -110,9 +113,28 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                   <label className="text-xs font-medium text-slate-300 whitespace-nowrap">
                     當前維修狀態：
                   </label>
+                  {status === 'completed' && (
+                    <label className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold cursor-pointer select-none transition-all ${
+                      isPickedUp 
+                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 shadow-xs' 
+                        : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200'
+                    }`}>
+                      <input
+                        type="checkbox"
+                        checked={isPickedUp}
+                        onChange={(e) => setIsPickedUp(e.target.checked)}
+                        className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
+                      />
+                      <span className="font-mono text-[11px]">{isPickedUp ? '✓ 已取件' : '已取件'}</span>
+                    </label>
+                  )}
                   <select
                     value={status === 'pending' ? 'received' : status}
-                    onChange={(e) => setStatus(e.target.value as RepairStatus)}
+                    onChange={(e) => {
+                      const newStatus = e.target.value as RepairStatus;
+                      setStatus(newStatus);
+                      if (newStatus !== 'completed') setIsPickedUp(false);
+                    }}
                     className="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-100 focus:outline-none focus:border-sky-500 font-semibold cursor-pointer shadow-sm"
                   >
                     <option value="received">【1. 收件建檔】</option>

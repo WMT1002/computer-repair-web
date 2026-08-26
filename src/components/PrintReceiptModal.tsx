@@ -283,7 +283,7 @@ const ReceiptSlip: React.FC<ReceiptSlipProps> = ({ title, customer, repair, shop
               {repair.item}
             </td>
             <td className="p-3 w-32 text-center border-r border-slate-900 font-bold text-slate-900 align-middle">
-              {getStatusLabel(repair.status)}
+              {getStatusLabel(repair.status)}{repair.status === 'completed' && repair.isPickedUp ? ' (已取件)' : ''}
             </td>
             <td className="p-3 w-36 text-right font-mono font-bold text-base text-slate-900 align-middle">
               NT$ {repair.price.toLocaleString()}
