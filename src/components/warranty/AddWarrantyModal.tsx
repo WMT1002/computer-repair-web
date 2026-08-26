@@ -293,25 +293,25 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn">
       <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl my-auto max-h-[92vh] flex flex-col overflow-hidden">
         {/* Fixed Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900 shrink-0 text-white">
+        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center border border-cyan-500/40 shadow-xs shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center border border-cyan-500/40 shadow-xs shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
                 {editRecord ? '編輯零件保固' : '新增零件保固'}
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-mono">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 font-mono">
                   同單號取件連動
                 </span>
               </h2>
-              <p className="text-xs text-white/80 font-medium">記錄更換零件之原廠序號與保固天數，取件後自動開始倒數</p>
+              <p className="text-xs text-slate-400 font-medium">記錄更換零件之原廠序號與保固天數，取件後自動開始倒數</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition cursor-pointer"
+            className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -321,18 +321,18 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
         <form
           id="warranty-form"
           onSubmit={handleSubmit}
-          className="p-5 sm:p-6 space-y-5 overflow-y-auto flex-1 overscroll-contain text-white"
+          className="p-5 sm:p-6 space-y-5 overflow-y-auto flex-1 overscroll-contain"
         >
           {/* Section 1: Customer & Ticket Binding (Direct Input + Bind Button) */}
           <div className="bg-slate-850 p-4 rounded-xl border border-slate-700/80 space-y-3">
-            <label className="text-xs font-mono font-bold text-cyan-300 uppercase flex items-center gap-1.5">
+            <label className="text-xs font-mono font-bold text-cyan-400 uppercase flex items-center gap-1.5">
               <User className="w-3.5 h-3.5" /> 綁定客戶與維修單號 *
             </label>
 
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
               {/* 客戶姓名 */}
               <div className="sm:col-span-4">
-                <label className="block text-[11px] text-white mb-1 font-bold">
+                <label className="block text-[11px] text-slate-100 mb-1 font-bold">
                   客戶姓名 <span className="text-rose-400">*</span>
                 </label>
                 <div className="relative">
@@ -353,7 +353,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
 
               {/* 維修單號 */}
               <div className="sm:col-span-5">
-                <label className="block text-[11px] text-white mb-1 font-bold">
+                <label className="block text-[11px] text-slate-100 mb-1 font-bold">
                   維修單號 <span className="text-rose-400">*</span>
                 </label>
                 <div className="relative">
@@ -388,7 +388,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
             {/* 聯絡電話與連動狀態 */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1 items-center">
               <div className={matchedRepair ? "sm:col-span-5" : "sm:col-span-12"}>
-                <label className="block text-[11px] text-white mb-1 font-bold">
+                <label className="block text-[11px] text-slate-100 mb-1 font-bold">
                   聯絡電話 (可自動帶出或填寫)
                 </label>
                 <div className="relative">
@@ -405,15 +405,15 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
               {matchedRepair && (
                 <div className="sm:col-span-7 mt-2 sm:mt-0">
                   <div className="w-full p-2 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-xs font-mono flex items-center justify-between gap-2 shadow-2xs">
-                    <div className="flex items-center gap-1.5 text-emerald-300 truncate">
+                    <div className="flex items-center gap-1.5 text-emerald-400 truncate">
                       <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                       <span className="font-bold truncate">已連動 [{matchedRepair.repairId}] {matchedRepair.customerName}</span>
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] shrink-0 font-bold ${
                         matchedRepair.isPickedUp
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                          : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                       }`}
                     >
                       {matchedRepair.isPickedUp ? '✓ 已取件 (保固生效中)' : '⏳ 待取件 (取件後自動起算)'}
@@ -426,7 +426,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
 
           {/* Section 2: Part Category Pills */}
           <div>
-            <label className="block text-xs font-bold text-white mb-2">零件分類標籤</label>
+            <label className="block text-xs font-bold text-slate-100 mb-2">零件分類標籤</label>
             <div className="flex flex-wrap gap-1.5">
               {CATEGORY_OPTIONS.map((cat) => {
                 const isSelected = partCategory === cat.label;
@@ -439,7 +439,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                     className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg border transition-all cursor-pointer select-none ${
                       isSelected
                         ? cat.color + ' ring-1 ring-cyan-400 font-bold shadow-sm'
-                        : 'bg-slate-800 border-slate-600 text-white hover:text-cyan-200 hover:bg-slate-700'
+                        : 'bg-slate-800 border-slate-600 text-slate-300 hover:text-cyan-200 hover:bg-slate-700'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -453,7 +453,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
           {/* Section 3: Part Name & Serial Number (S/N) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-white mb-1">
+              <label className="block text-xs font-bold text-slate-100 mb-1">
                 更換零件名稱與型號規格 <span className="text-rose-400">*</span>
               </label>
               <div className="relative">
@@ -470,9 +470,9 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-white mb-1 flex items-center justify-between">
+              <label className="block text-xs font-bold text-slate-100 mb-1 flex items-center justify-between">
                 <span>原廠零件序號 (S/N) <span className="text-rose-400">*</span></span>
-                <span className="text-[10px] text-cyan-300 font-mono font-bold">支援掃描槍或貼上</span>
+                <span className="text-[10px] text-cyan-400 font-mono font-bold">支援掃描槍或貼上</span>
               </label>
               <div className="relative">
                 <Barcode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400" />
@@ -491,11 +491,11 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
           {/* Section 4: Warranty Days & Presets */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-bold text-white">
+              <label className="text-xs font-bold text-slate-100">
                 保固天數 (起算後倒數) <span className="text-rose-400">*</span>
               </label>
-              <span className="text-[11px] font-mono text-white/90 font-medium">
-                目前設定：<strong className="text-cyan-300">{warrantyDays || 0}</strong> 天
+              <span className="text-[11px] font-mono text-slate-400 font-medium">
+                目前設定：<strong className="text-cyan-400">{warrantyDays || 0}</strong> 天
               </span>
             </div>
 
@@ -507,8 +507,8 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                   onClick={() => setWarrantyDays(p.days)}
                   className={`px-2 py-1 text-[11px] font-mono rounded-md border transition cursor-pointer ${
                     warrantyDays === p.days
-                      ? 'bg-cyan-500/25 text-cyan-300 border-cyan-400 font-bold shadow-xs'
-                      : 'bg-slate-800 text-white border-slate-600 hover:text-cyan-200 hover:bg-slate-700'
+                      ? 'bg-cyan-500/25 text-cyan-400 border-cyan-400 font-bold shadow-xs'
+                      : 'bg-slate-800 text-slate-300 border-slate-600 hover:text-cyan-200 hover:bg-slate-700'
                   }`}
                 >
                   {p.label}
@@ -532,7 +532,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
           {/* Section 5: Supplier & Note */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-white mb-1">
+              <label className="block text-xs font-bold text-slate-100 mb-1">
                 代理商 / 原廠通路
               </label>
               <div className="relative mb-1.5">
@@ -551,7 +551,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                     key={s}
                     type="button"
                     onClick={() => setSupplier(s)}
-                    className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-white border border-slate-600 hover:text-cyan-200 hover:bg-slate-700 cursor-pointer font-medium"
+                    className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 hover:text-cyan-200 hover:bg-slate-700 cursor-pointer font-medium"
                   >
                     {s}
                   </button>
@@ -560,7 +560,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-white mb-1">備註說明 (選填)</label>
+              <label className="block text-xs font-bold text-slate-100 mb-1">備註說明 (選填)</label>
               <textarea
                 rows={2}
                 placeholder="例: 附原廠外盒與購買發票影本，提供原廠 3 年免費保固..."
@@ -573,8 +573,8 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
         </form>
 
         {/* Fixed Footer */}
-        <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-900 flex items-center justify-between shrink-0 text-white">
-          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-white/90 font-mono font-medium">
+        <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-900 flex items-center justify-between shrink-0">
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 font-mono font-medium">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             <span>保固將於維修單勾選「已取件」日起算倒數</span>
           </div>
@@ -583,7 +583,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium rounded-lg text-slate-200 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+              className="px-4 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition cursor-pointer"
             >
               取消
             </button>

@@ -47,23 +47,67 @@ html.light-mode body::before {
 }
 
 /* Light Mode Overrides for Slate Dark Background & Text Utilities */
-html.light-mode .bg-slate-900\/80,
+html.light-mode .bg-slate-950,
+html.light-mode .bg-slate-900\/95,
 html.light-mode .bg-slate-900\/90,
+html.light-mode .bg-slate-900\/80,
 html.light-mode .bg-slate-900\/60,
 html.light-mode .bg-slate-900\/40,
-html.light-mode .bg-slate-900 {
+html.light-mode .bg-slate-900,
+html.light-mode .bg-slate-855\/80,
+html.light-mode .bg-slate-850\/95,
+html.light-mode .bg-slate-850\/90,
+html.light-mode .bg-slate-850\/80,
+html.light-mode .bg-slate-850\/60,
+html.light-mode .bg-slate-850,
+html.light-mode .bg-slate-800\/95,
+html.light-mode .bg-slate-800\/90,
+html.light-mode .bg-slate-800\/80,
+html.light-mode .bg-slate-800\/60,
+html.light-mode .bg-slate-800\/40,
+html.light-mode .bg-slate-800 {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+html.light-mode div.from-slate-800,
+html.light-mode div.from-slate-850,
+html.light-mode div.from-slate-900,
+html.light-mode div.from-slate-950 {
+  background-image: none !important;
   background-color: #ffffff !important;
   color: #0f172a !important;
 }
 
-html.light-mode .bg-slate-800\/80,
-html.light-mode .bg-slate-800\/60,
-html.light-mode .bg-slate-800\/40,
-html.light-mode .bg-slate-800\/90,
-html.light-mode .bg-slate-800 {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+html.light-mode button.bg-gradient-to-r,
+html.light-mode a.bg-gradient-to-r {
+  color: #ffffff !important;
+}
+
+html.light-mode .bg-emerald-950\/60,
+html.light-mode .bg-emerald-950\/40,
+html.light-mode .bg-emerald-950\/20,
+html.light-mode .bg-emerald-950 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+
+html.light-mode .bg-amber-950\/60,
+html.light-mode .bg-amber-950\/40,
+html.light-mode .bg-amber-950\/20,
+html.light-mode .bg-amber-950 {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+}
+
+html.light-mode .bg-rose-950\/60,
+html.light-mode .bg-rose-950\/40,
+html.light-mode .bg-rose-950\/20,
+html.light-mode .bg-rose-950 {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
 }
 
 html.light-mode .bg-slate-700\/50,
@@ -79,15 +123,20 @@ html.light-mode .border-slate-700\/60,
 html.light-mode .border-slate-700\/50,
 html.light-mode .border-slate-700,
 html.light-mode .border-slate-800,
+html.light-mode .border-slate-600,
 html.light-mode .border-\[\#334155\] {
   border-color: #cbd5e1 !important;
 }
 
+html.light-mode .text-white,
 html.light-mode .text-slate-100,
 html.light-mode .text-slate-200 {
   color: #0f172a !important;
 }
 
+html.light-mode .text-white\/90,
+html.light-mode .text-white\/80,
+html.light-mode .text-white\/70,
 html.light-mode .text-slate-300,
 html.light-mode .text-slate-400 {
   color: #334155 !important;
@@ -101,13 +150,17 @@ html.light-mode input,
 html.light-mode select,
 html.light-mode textarea {
   background-color: #ffffff !important;
-  color: #0f172a !important;
+  color: #334155 !important;
   border-color: #cbd5e1 !important;
 }
 
 html.light-mode input::placeholder,
 html.light-mode textarea::placeholder {
   color: #94a3b8 !important;
+}
+
+html.light-mode label {
+  color: #0f172a !important;
 }
 
 html.light-mode .modal-overlay {
