@@ -91,18 +91,6 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
     repairItem?: string;
   } | null>(null);
 
-  // All existing repairs flattened for quick datalist lookup
-  const allRepairs = customers.flatMap((c) =>
-    c.repairs.map((r) => ({
-      customerId: c.id,
-      customerName: c.name,
-      customerPhone: c.phone,
-      repairId: r.id,
-      repairItem: r.item,
-      isPickedUp: Boolean(r.isPickedUp),
-    }))
-  );
-
   // Automatic match function while typing
   const handleAutoMatch = (name: string, rId: string) => {
     const trimmedName = name.trim().toLowerCase();
@@ -369,16 +357,8 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                       setCustomCustomerName(e.target.value);
                       handleAutoMatch(e.target.value, customRepairId);
                     }}
-                    list="existing-customers-list"
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
-                  <datalist id="existing-customers-list">
-                    {customers.map((c) => (
-                      <option key={c.id} value={c.name}>
-                        {c.name} ({c.phone})
-                      </option>
-                    ))}
-                  </datalist>
                 </div>
               </div>
 
@@ -397,16 +377,8 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                       setCustomRepairId(e.target.value);
                       handleAutoMatch(customCustomerName, e.target.value);
                     }}
-                    list="existing-repairs-list"
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
-                  <datalist id="existing-repairs-list">
-                    {allRepairs.map((r) => (
-                      <option key={r.repairId} value={r.repairId}>
-                        [{r.repairId}] {r.customerName} - {r.repairItem}
-                      </option>
-                    ))}
-                  </datalist>
                 </div>
               </div>
 
