@@ -8,6 +8,7 @@ import {
   Search,
   Barcode,
   User,
+  FileText,
   Clock,
   CheckCircle2,
   AlertTriangle,
@@ -48,9 +49,9 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
   onSelectCustomer,
   onTogglePickedUp,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchName, setSearchName] = useState('');
+  const [searchRepairId, setSearchRepairId] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending_pickup' | 'expiring' | 'expired'>('all');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -130,20 +131,26 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
     return { total, active, pendingPickup, expiring, expired };
   }, [computedWarranties]);
 
-  // Filtered List
+  // Filtered List based on Customer Name and Repair Order ID
   const filteredList = useMemo(() => {
     return computedWarranties.filter((item) => {
-      // Query filter
-      if (searchQuery.trim()) {
-        const q = searchQuery.trim().toLowerCase();
-        const match =
-          item.partName.toLowerCase().includes(q) ||
-          item.serialNumber.toLowerCase().includes(q) ||
-          item.customerName.toLowerCase().includes(q) ||
-          item.customerPhone.toLowerCase().includes(q) ||
-          item.repairId.toLowerCase().includes(q) ||
-          (item.supplier && item.supplier.toLowerCase().includes(q));
-        if (!match) return false;
+      // Customer Name filter
+      if (searchName.trim()) {
+        const nameQ = searchName.trim().toLowerCase();
+        const matchesName =
+          item.customerName.toLowerCase().includes(nameQ) ||
+          (item.customerPhone && item.customerPhone.includes(nameQ));
+        if (!matchesName) return false;
+      }
+
+      // Repair ID (單號) or S/N filter
+      if (searchRepairId.trim()) {
+        const idQ = searchRepairId.trim().toLowerCase();
+        const matchesId =
+          item.repairId.toLowerCase().includes(idQ) ||
+          item.serialNumber.toLowerCase().includes(idQ) ||
+          item.partName.toLowerCase().includes(idQ);
+        if (!matchesId) return false;
       }
 
       // Status filter
@@ -151,14 +158,9 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
         return false;
       }
 
-      // Category filter
-      if (categoryFilter !== 'all' && item.partCategory !== categoryFilter) {
-        return false;
-      }
-
       return true;
     });
-  }, [computedWarranties, searchQuery, statusFilter, categoryFilter]);
+  }, [computedWarranties, searchName, searchRepairId, statusFilter]);
 
   const handleCopySn = (sn: string, id: string) => {
     navigator.clipboard.writeText(sn);
@@ -309,34 +311,69 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
         </div>
       </div>
 
-      {/* Toolbar: Search, Category & View Switcher */}
-      <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-4 shadow-lg space-y-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* Search Input */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="搜尋零件名稱、原廠序號 (S/N)、客戶姓名、電話或維修單號..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
-            />
-            {searchQuery && (
+      {/* Toolbar: Search by Name & Order ID, View Switcher */}
+      <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-4 shadow-lg">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            (document.activeElement as HTMLElement)?.blur();
+          }}
+          className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3"
+        >
+          <div className="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+            {/* 客戶姓名搜尋 */}
+            <div className="relative flex-1">
+              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="搜尋客戶姓名..."
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                className="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+              />
+            </div>
+
+            {/* 維修單號搜尋 */}
+            <div className="relative flex-1">
+              <FileText className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="搜尋維修單號 (如 REP-2026-001)..."
+                value={searchRepairId}
+                onChange={(e) => setSearchRepairId(e.target.value)}
+                className="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 font-mono transition"
+              />
+            </div>
+
+            {/* 查詢按鈕 */}
+            <button
+              type="submit"
+              className="px-5 py-2 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border border-cyan-500/40 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer shadow-xs"
+            >
+              <Search className="w-4 h-4" />
+              <span>查詢</span>
+            </button>
+
+            {(searchName.trim() || searchRepairId.trim()) && (
               <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-200"
+                type="button"
+                onClick={() => {
+                  setSearchName('');
+                  setSearchRepairId('');
+                }}
+                className="px-3 py-2 text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 rounded-lg transition shrink-0 cursor-pointer"
               >
-                清除
+                重置
               </button>
             )}
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-700/80 shrink-0 self-end sm:self-auto">
+          <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-700/80 shrink-0 self-end md:self-auto">
             <button
+              type="button"
               onClick={() => setViewMode('cards')}
-              className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                 viewMode === 'cards'
                   ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40'
                   : 'text-slate-400 hover:text-slate-200'
@@ -344,55 +381,23 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
               title="卡片檢視"
             >
               <LayoutGrid className="w-4 h-4" />
-              <span className="hidden md:inline">卡片</span>
+              <span className="hidden sm:inline">卡片</span>
             </button>
             <button
+              type="button"
               onClick={() => setViewMode('table')}
-              className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+              className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                 viewMode === 'table'
                   ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
-              title="列表檢視"
+              title="表格檢視"
             >
               <List className="w-4 h-4" />
-              <span className="hidden md:inline">表格</span>
+              <span className="hidden sm:inline">表格</span>
             </button>
           </div>
-        </div>
-
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-          <span className="text-slate-400 font-mono text-[11px] whitespace-nowrap mr-1">類別：</span>
-          {[
-            'all',
-            '固態硬碟 (SSD)',
-            '記憶體 (RAM)',
-            '電源供應器 (PSU)',
-            '顯示卡 (GPU)',
-            '主機板 (MB)',
-            '處理器 (CPU)',
-            '螢幕面板',
-            '散熱清潔',
-            '其他配件',
-          ].map((cat) => {
-            const isSelected = categoryFilter === cat;
-            const label = cat === 'all' ? '全部零件' : cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => setCategoryFilter(cat)}
-                className={`px-2.5 py-1 rounded-lg border whitespace-nowrap transition cursor-pointer ${
-                  isSelected
-                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 font-bold shadow-xs'
-                    : 'bg-slate-900/60 text-slate-400 border-slate-700/60 hover:text-slate-200 hover:border-slate-600'
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
+        </form>
       </div>
 
       {/* Empty State */}
@@ -404,21 +409,24 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
           <div>
             <h3 className="text-base font-bold text-slate-200">查無符合的零件保固紀錄</h3>
             <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
-              {searchQuery || statusFilter !== 'all' || categoryFilter !== 'all'
-                ? '請嘗試調整搜尋關鍵字或清除篩選條件'
+              {searchName || searchRepairId || statusFilter !== 'all'
+                ? '請確認輸入的客戶姓名或維修單號是否正確，或清除篩選條件'
                 : '目前尚未建立任何更換零件保固資料，點擊右上角「登記更換零件保固」即可新增！'}
             </p>
           </div>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              setStatusFilter('all');
-              setCategoryFilter('all');
-            }}
-            className="px-4 py-1.5 text-xs rounded-lg bg-slate-700 text-slate-200 hover:bg-slate-600 transition"
-          >
-            重置搜尋篩選
-          </button>
+          {(searchName || searchRepairId || statusFilter !== 'all') && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchName('');
+                setSearchRepairId('');
+                setStatusFilter('all');
+              }}
+              className="px-4 py-1.5 text-xs rounded-lg bg-slate-700 text-slate-200 hover:bg-slate-600 transition cursor-pointer"
+            >
+              重置搜尋條件
+            </button>
+          )}
         </div>
       )}
 
