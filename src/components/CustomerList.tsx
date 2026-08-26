@@ -184,14 +184,36 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                       </div>
                     </div>
 
-                    <div>
+                    <div className="flex items-center gap-2">
+                      {/* 只有設定成「完工待取」的時候，在右上角完工待取的左邊出現「已取件」勾選小區塊 */}
+                      {latestRepair && latestRepair.status === 'completed' && (
+                        <label
+                          className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border cursor-pointer select-none transition-all duration-150 animate-fadeIn ${
+                            latestRepair.isPickedUp
+                              ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-xs'
+                              : 'bg-slate-900/80 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-200'
+                          }`}
+                          title="勾選表示客戶已取件完成"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={Boolean(latestRepair.isPickedUp)}
+                            onChange={(e) =>
+                              onTogglePickedUp?.(customer.id, latestRepair.id, e.target.checked)
+                            }
+                            className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
+                          />
+                          <span className="whitespace-nowrap font-mono text-[11px]">
+                            {latestRepair.isPickedUp ? '✓ 已取件' : '已取件'}
+                          </span>
+                        </label>
+                      )}
+
                       {latestRepair ? (
                         <span
                           className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border shadow-sm ${
                             latestRepair.status === 'completed'
-                              ? latestRepair.isPickedUp
-                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                               : latestRepair.status === 'repairing'
                               ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
                               : latestRepair.status === 'diagnosing'
@@ -204,9 +226,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                           ) : (
                             <Clock className="w-3.5 h-3.5 animate-pulse" />
                           )}
-                          {latestRepair.status === 'completed' && latestRepair.isPickedUp
-                            ? '【4. 完工待取】(已取件)'
-                            : getStatusLabel(latestRepair.status)}
+                          {getStatusLabel(latestRepair.status)}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700">
@@ -262,7 +282,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="flex items-center justify-between pt-4 mt-2 border-t border-slate-700/50 gap-2 flex-wrap sm:flex-nowrap">
+                <div className="flex items-center justify-between pt-4 mt-2 border-t border-slate-700/50 gap-2">
                   <button
                     onClick={() => onDeleteCustomer(customer.id)}
                     className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition"
@@ -271,7 +291,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     <Trash2 className="w-4 h-4" />
                   </button>
 
-                  <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-end">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => onEditCustomer(customer)}
                       className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1 transition"
@@ -280,30 +300,6 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     </button>
                     {latestRepair && (
                       <>
-                        {/* 只有設定成「完工待取」的時候，在他（狀態選單）的左邊出現一個已取件的勾選小區塊 */}
-                        {latestRepair.status === 'completed' && (
-                          <label
-                            className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border cursor-pointer select-none transition-all duration-200 shadow-sm ${
-                              latestRepair.isPickedUp
-                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
-                                : 'bg-slate-900/80 text-slate-400 border-slate-700 hover:border-slate-600 hover:text-slate-200'
-                            }`}
-                            title="勾選表示客戶已取件完成"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={Boolean(latestRepair.isPickedUp)}
-                              onChange={(e) =>
-                                onTogglePickedUp?.(customer.id, latestRepair.id, e.target.checked)
-                              }
-                              className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
-                            />
-                            <span className="whitespace-nowrap font-mono text-[11px]">
-                              {latestRepair.isPickedUp ? '✓ 已取件' : '已取件'}
-                            </span>
-                          </label>
-                        )}
-
                         <select
                           value={latestRepair.status === 'pending' ? 'received' : latestRepair.status}
                           onChange={(e) => {
