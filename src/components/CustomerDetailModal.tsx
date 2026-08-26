@@ -470,7 +470,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                               onClick={() => onAddWarranty(customer.id, repair.id)}
                               className="text-[10px] text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-0.5 cursor-pointer font-sans"
                             >
-                              <Plus className="w-3 h-3" /> 登記此單零件保固
+                              <Plus className="w-3 h-3" /> 新增此單零件保固
                             </button>
                           )}
                         </div>
@@ -523,14 +523,14 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                           </div>
                         ) : (
                           <div className="text-[11px] text-slate-500 italic flex items-center justify-between py-0.5">
-                            <span>此單尚未登記零件序號保固</span>
+                            <span>此單尚未新增零件序號保固</span>
                             {onAddWarranty && (
                               <button
                                 type="button"
                                 onClick={() => onAddWarranty(customer.id, repair.id)}
                                 className="text-[10px] text-slate-400 hover:text-cyan-300 underline cursor-pointer"
                               >
-                                + 登記零件保固
+                                + 新增零件保固
                               </button>
                             )}
                           </div>

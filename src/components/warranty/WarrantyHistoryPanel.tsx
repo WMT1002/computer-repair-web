@@ -217,7 +217,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
             className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-200 cursor-pointer shrink-0"
           >
             <Plus className="w-4 h-4" />
-            <span>登記更換零件保固</span>
+            <span>新增零件保固</span>
           </button>
         </div>
 

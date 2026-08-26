@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Customer, PartWarrantyRecord } from '../../types';
-import { X, ShieldCheck, Cpu, HardDrive, Zap, Monitor, Fan, Box, Save, Barcode, CheckCircle2, User, FileText, Building2 } from 'lucide-react';
+import {
+  X,
+  ShieldCheck,
+  Cpu,
+  HardDrive,
+  Zap,
+  Monitor,
+  Fan,
+  Box,
+  Save,
+  Barcode,
+  CheckCircle2,
+  User,
+  FileText,
+  Building2,
+  Link2,
+  Phone,
+} from 'lucide-react';
 
 interface AddWarrantyModalProps {
   isOpen: boolean;
@@ -53,11 +70,9 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
   initialRepairId,
   editRecord,
 }) => {
-  const [selectedBinding, setSelectedBinding] = useState<string>(''); // format: "customerId::repairId"
   const [customCustomerName, setCustomCustomerName] = useState('');
   const [customCustomerPhone, setCustomCustomerPhone] = useState('');
   const [customRepairId, setCustomRepairId] = useState('');
-  const [isManualInput, setIsManualInput] = useState(false);
 
   const [partCategory, setPartCategory] = useState('固態硬碟 (SSD)');
   const [partName, setPartName] = useState('');
@@ -66,58 +81,175 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
   const [supplier, setSupplier] = useState('捷元代理公司貨');
   const [note, setNote] = useState('');
 
-  // Collect all available customer-repair ticket options
-  const repairOptions = customers.flatMap((c) =>
+  // Matched repair ticket info for real-time live link feedback
+  const [matchedRepair, setMatchedRepair] = useState<{
+    customerId: string;
+    customerName: string;
+    customerPhone: string;
+    repairId: string;
+    isPickedUp: boolean;
+    repairItem?: string;
+  } | null>(null);
+
+  // All existing repairs flattened for quick datalist lookup
+  const allRepairs = customers.flatMap((c) =>
     c.repairs.map((r) => ({
-      key: `${c.id}::${r.id}`,
       customerId: c.id,
       customerName: c.name,
       customerPhone: c.phone,
       repairId: r.id,
       repairItem: r.item,
       isPickedUp: Boolean(r.isPickedUp),
-      status: r.status,
     }))
   );
+
+  // Automatic match function while typing
+  const handleAutoMatch = (name: string, rId: string) => {
+    const trimmedName = name.trim().toLowerCase();
+    const trimmedId = rId.trim().toUpperCase();
+
+    // 1. Try match by Repair ID first
+    if (trimmedId) {
+      for (const c of customers) {
+        const found = c.repairs.find(
+          (r) => r.id.toUpperCase() === trimmedId || r.id.toUpperCase().includes(trimmedId)
+        );
+        if (found) {
+          if (!name.trim()) setCustomCustomerName(c.name);
+          if (!customCustomerPhone) setCustomCustomerPhone(c.phone);
+          setMatchedRepair({
+            customerId: c.id,
+            customerName: c.name,
+            customerPhone: c.phone,
+            repairId: found.id,
+            isPickedUp: Boolean(found.isPickedUp),
+            repairItem: found.item,
+          });
+          return;
+        }
+      }
+    }
+
+    // 2. Try match by Customer Name
+    if (trimmedName) {
+      const foundCust = customers.find(
+        (c) => c.name.toLowerCase() === trimmedName || c.name.toLowerCase().includes(trimmedName)
+      );
+      if (foundCust && foundCust.repairs.length > 0) {
+        const latest = foundCust.repairs[foundCust.repairs.length - 1];
+        if (!rId.trim()) setCustomRepairId(latest.id);
+        if (!customCustomerPhone) setCustomCustomerPhone(foundCust.phone);
+        setMatchedRepair({
+          customerId: foundCust.id,
+          customerName: foundCust.name,
+          customerPhone: foundCust.phone,
+          repairId: latest.id,
+          isPickedUp: Boolean(latest.isPickedUp),
+          repairItem: latest.item,
+        });
+        return;
+      }
+    }
+
+    setMatchedRepair(null);
+  };
+
+  // Explicit bind button click handler
+  const handleTriggerBind = () => {
+    if (!customCustomerName.trim() && !customRepairId.trim()) {
+      alert('請先輸入客戶姓名或維修單號！');
+      return;
+    }
+
+    const trimmedName = customCustomerName.trim().toLowerCase();
+    const trimmedId = customRepairId.trim().toUpperCase();
+
+    let found = false;
+    for (const c of customers) {
+      const repairMatch = c.repairs.find(
+        (r) =>
+          (trimmedId && r.id.toUpperCase() === trimmedId) ||
+          (trimmedId && r.id.toUpperCase().includes(trimmedId)) ||
+          (trimmedName && c.name.toLowerCase() === trimmedName)
+      );
+
+      if (repairMatch) {
+        setCustomCustomerName(c.name);
+        setCustomCustomerPhone(c.phone);
+        setCustomRepairId(repairMatch.id);
+        setMatchedRepair({
+          customerId: c.id,
+          customerName: c.name,
+          customerPhone: c.phone,
+          repairId: repairMatch.id,
+          isPickedUp: Boolean(repairMatch.isPickedUp),
+          repairItem: repairMatch.item,
+        });
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      if (!customRepairId.trim()) {
+        const genId = `REP-${Date.now().toString().slice(-6)}`;
+        setCustomRepairId(genId);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) return;
 
     if (editRecord) {
-      const matchKey = `${editRecord.customerId}::${editRecord.repairId}`;
-      setSelectedBinding(matchKey);
       setCustomCustomerName(editRecord.customerName);
-      setCustomCustomerPhone(editRecord.customerPhone);
+      setCustomCustomerPhone(editRecord.customerPhone || '');
       setCustomRepairId(editRecord.repairId);
-      setIsManualInput(false);
       setPartCategory(editRecord.partCategory || '固態硬碟 (SSD)');
       setPartName(editRecord.partName || '');
       setSerialNumber(editRecord.serialNumber || '');
       setWarrantyDays(editRecord.warrantyDays || 365);
       setSupplier(editRecord.supplier || '');
       setNote(editRecord.note || '');
+
+      // Check matching repair for picked up status
+      const cust = customers.find(
+        (c) => c.id === editRecord.customerId || c.name === editRecord.customerName
+      );
+      const rep = cust?.repairs.find((r) => r.id === editRecord.repairId);
+      if (rep) {
+        setMatchedRepair({
+          customerId: cust?.id || editRecord.customerId,
+          customerName: editRecord.customerName,
+          customerPhone: editRecord.customerPhone || cust?.phone || '',
+          repairId: editRecord.repairId,
+          isPickedUp: Boolean(rep.isPickedUp),
+          repairItem: rep.item,
+        });
+      }
     } else {
-      // New record
+      // New record initialization
       if (initialCustomerId && initialRepairId) {
-        const found = repairOptions.find(
-          (o) => o.customerId === initialCustomerId && o.repairId === initialRepairId
-        );
-        if (found) {
-          setSelectedBinding(found.key);
-          setCustomCustomerName(found.customerName);
-          setCustomCustomerPhone(found.customerPhone);
-          setCustomRepairId(found.repairId);
-          setIsManualInput(false);
-        } else {
-          setCustomRepairId(initialRepairId);
-          setIsManualInput(true);
+        const cust = customers.find((c) => c.id === initialCustomerId);
+        const rep = cust?.repairs.find((r) => r.id === initialRepairId);
+        if (cust && rep) {
+          setCustomCustomerName(cust.name);
+          setCustomCustomerPhone(cust.phone);
+          setCustomRepairId(rep.id);
+          setMatchedRepair({
+            customerId: cust.id,
+            customerName: cust.name,
+            customerPhone: cust.phone,
+            repairId: rep.id,
+            isPickedUp: Boolean(rep.isPickedUp),
+            repairItem: rep.item,
+          });
         }
-      } else if (repairOptions.length > 0) {
-        setSelectedBinding(repairOptions[0].key);
-        setCustomCustomerName(repairOptions[0].customerName);
-        setCustomCustomerPhone(repairOptions[0].customerPhone);
-        setCustomRepairId(repairOptions[0].repairId);
-        setIsManualInput(false);
+      } else {
+        setCustomCustomerName('');
+        setCustomCustomerPhone('');
+        setCustomRepairId('');
+        setMatchedRepair(null);
       }
       setPartCategory('固態硬碟 (SSD)');
       setPartName('');
@@ -126,70 +258,40 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
       setSupplier('捷元代理公司貨');
       setNote('');
     }
-  }, [isOpen, editRecord, initialCustomerId, initialRepairId]);
+  }, [isOpen, editRecord, initialCustomerId, initialRepairId, customers]);
 
   if (!isOpen) return null;
-
-  const handleBindingChange = (key: string) => {
-    setSelectedBinding(key);
-    if (key === '__manual__') {
-      setIsManualInput(true);
-    } else {
-      setIsManualInput(false);
-      const selected = repairOptions.find((o) => o.key === key);
-      if (selected) {
-        setCustomCustomerName(selected.customerName);
-        setCustomCustomerPhone(selected.customerPhone);
-        setCustomRepairId(selected.repairId);
-      }
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    let finalCustId = '';
-    let finalCustName = '';
-    let finalCustPhone = '';
-    let finalRepairId = '';
-
-    if (!isManualInput && selectedBinding && selectedBinding !== '__manual__') {
-      const selected = repairOptions.find((o) => o.key === selectedBinding);
-      if (selected) {
-        finalCustId = selected.customerId;
-        finalCustName = selected.customerName;
-        finalCustPhone = selected.customerPhone;
-        finalRepairId = selected.repairId;
-      }
-    } else {
-      finalCustName = customCustomerName.trim();
-      finalCustPhone = customCustomerPhone.trim();
-      finalRepairId = customRepairId.trim();
-      // Try to find matching customer ID
-      const match = customers.find(
-        (c) => c.name === finalCustName || c.phone === finalCustPhone
-      );
-      finalCustId = match ? match.id : `CUST-${Date.now().toString().slice(-4)}`;
-    }
+    const finalCustName = customCustomerName.trim();
+    const finalRepairId = customRepairId.trim().toUpperCase();
+    const finalCustPhone = customCustomerPhone.trim();
 
     if (!finalCustName || !finalRepairId) {
-      alert('請選擇或填寫客戶姓名與工單單號！');
+      alert('請填寫客戶姓名與維修單號！');
       return;
     }
 
     if (!partName.trim() || !serialNumber.trim()) {
-      alert('請填寫更換零件名稱與零件序號 (S/N)！');
+      alert('請填寫更換零件名稱與原廠零件序號 (S/N)！');
       return;
     }
 
-    const numDays = Number(warrantyDays) > 0 ? Number(warrantyDays) : 365;
+    // Match or create customer ID
+    const matchCust = customers.find(
+      (c) => c.name === finalCustName || (finalCustPhone && c.phone === finalCustPhone)
+    );
+    const finalCustId = matchedRepair?.customerId || matchCust?.id || `CUST-${Date.now().toString().slice(-4)}`;
 
-    // Check if the linked repair is already picked up to carry start date
-    const targetCust = customers.find((c) => c.id === finalCustId || c.name === finalCustName);
-    const targetRepair = targetCust?.repairs.find((r) => r.id === finalRepairId);
-    const startDate = targetRepair?.isPickedUp
-      ? targetRepair.pickedUpDate || new Date().toISOString().split('T')[0]
+    const targetRepair = matchCust?.repairs.find((r) => r.id === finalRepairId);
+    const isPickedUp = targetRepair ? Boolean(targetRepair.isPickedUp) : Boolean(matchedRepair?.isPickedUp);
+    const startDate = isPickedUp
+      ? targetRepair?.pickedUpDate || new Date().toISOString().split('T')[0]
       : editRecord?.startDate;
+
+    const numDays = Number(warrantyDays) > 0 ? Number(warrantyDays) : 365;
 
     const record: PartWarrantyRecord = {
       id: editRecord ? editRecord.id : `WAR-${Date.now().toString().slice(-6)}`,
@@ -211,28 +313,27 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
     onClose();
   };
 
-  const selectedOption = repairOptions.find((o) => o.key === selectedBinding);
-
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl my-8">
-        {/* Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn">
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl my-auto max-h-[92vh] flex flex-col overflow-hidden">
+        {/* Fixed Header */}
+        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center border border-cyan-500/30 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center border border-cyan-500/30 shadow-xs shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
               <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                {editRecord ? '編輯零件保固紀錄' : '新增更換零件保固履歷'}
+                {editRecord ? '編輯零件保固' : '新增零件保固'}
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
                   同單號取件連動
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">登記零件序號與保固期，並與客戶維修工單取件狀態即時倒數</p>
+              <p className="text-xs text-slate-400">記錄更換零件之原廠序號與保固天數，取件後自動開始倒數</p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition cursor-pointer"
           >
@@ -240,98 +341,142 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Section 1: Customer & Ticket Binding */}
+        {/* Scrollable Form Body */}
+        <form
+          id="warranty-form"
+          onSubmit={handleSubmit}
+          className="p-5 sm:p-6 space-y-5 overflow-y-auto flex-1 overscroll-contain"
+        >
+          {/* Section 1: Customer & Ticket Binding (Direct Input + Bind Button) */}
           <div className="bg-slate-850/80 p-4 rounded-xl border border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-mono font-bold text-cyan-400 uppercase flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5" /> 綁定客戶與維修單號 *
               </label>
-              <button
-                type="button"
-                onClick={() => setIsManualInput(!isManualInput)}
-                className="text-[11px] text-sky-400 hover:underline cursor-pointer"
-              >
-                {isManualInput ? '切換為選單挑選' : '自行手動輸入單號'}
-              </button>
+              <span className="text-[11px] text-slate-400 font-sans">
+                手動輸入姓名與單號後點擊「綁定連動」即可即時關聯
+              </span>
             </div>
 
-            {!isManualInput ? (
-              <div>
-                <select
-                  value={selectedBinding}
-                  onChange={(e) => handleBindingChange(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-cyan-500 cursor-pointer"
-                >
-                  {repairOptions.map((opt) => (
-                    <option key={opt.key} value={opt.key}>
-                      [{opt.repairId}] {opt.customerName} ({opt.customerPhone}) ➔ {opt.repairItem.slice(0, 25)}
-                      {opt.isPickedUp ? ' (✓ 已取件)' : ' (⏳ 待取件)'}
-                    </option>
-                  ))}
-                  <option value="__manual__">➕ 自行手動輸入單號與客戶...</option>
-                </select>
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+              {/* 客戶姓名 */}
+              <div className="sm:col-span-4">
+                <label className="block text-[11px] text-slate-300 mb-1 font-medium">
+                  客戶姓名 <span className="text-rose-400">*</span>
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="例: 粘踢踢"
+                    value={customCustomerName}
+                    onChange={(e) => {
+                      setCustomCustomerName(e.target.value);
+                      handleAutoMatch(e.target.value, customRepairId);
+                    }}
+                    list="existing-customers-list"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  />
+                  <datalist id="existing-customers-list">
+                    {customers.map((c) => (
+                      <option key={c.id} value={c.name}>
+                        {c.name} ({c.phone})
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
+              </div>
 
-                {selectedOption && (
-                  <div className="mt-2.5 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80 flex items-center justify-between text-xs font-mono">
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-400">客戶:</span>
-                      <span className="text-slate-200 font-bold">{selectedOption.customerName}</span>
-                      <span className="text-slate-500">({selectedOption.customerPhone})</span>
+              {/* 維修單號 */}
+              <div className="sm:col-span-5">
+                <label className="block text-[11px] text-slate-300 mb-1 font-medium">
+                  維修單號 <span className="text-rose-400">*</span>
+                </label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="例: REP-744757"
+                    value={customRepairId}
+                    onChange={(e) => {
+                      setCustomRepairId(e.target.value);
+                      handleAutoMatch(customCustomerName, e.target.value);
+                    }}
+                    list="existing-repairs-list"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  />
+                  <datalist id="existing-repairs-list">
+                    {allRepairs.map((r) => (
+                      <option key={r.repairId} value={r.repairId}>
+                        [{r.repairId}] {r.customerName} - {r.repairItem}
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
+              </div>
+
+              {/* 綁定連動按鈕 */}
+              <div className="sm:col-span-3">
+                <button
+                  type="button"
+                  onClick={handleTriggerBind}
+                  className="w-full py-2 px-3 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border border-cyan-500/40 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs"
+                >
+                  <Link2 className="w-3.5 h-3.5" />
+                  <span>綁定連動</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 聯絡電話與即時連動回饋 */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
+              <div className="sm:col-span-5">
+                <label className="block text-[11px] text-slate-400 mb-1">
+                  聯絡電話 (可自動帶出或填寫)
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
+                  <input
+                    type="text"
+                    placeholder="例: 0987-459-815"
+                    value={customCustomerPhone}
+                    onChange={(e) => setCustomCustomerPhone(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-1.5 text-xs font-mono text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-7 flex items-end">
+                {matchedRepair ? (
+                  <div className="w-full p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono flex items-center justify-between gap-2 shadow-2xs">
+                    <div className="flex items-center gap-1.5 text-emerald-300 truncate">
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      <span className="font-bold truncate">已連動 [{matchedRepair.repairId}] {matchedRepair.customerName}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-400">單號:</span>
-                      <span className="text-cyan-400 font-bold">{selectedOption.repairId}</span>
-                      <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          selectedOption.isPickedUp
-                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                        }`}
-                      >
-                        {selectedOption.isPickedUp ? '✓ 已取件 (保固生效中)' : '⏳ 待取件 (取件後自動倒數)'}
-                      </span>
-                    </div>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] shrink-0 font-bold ${
+                        matchedRepair.isPickedUp
+                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                          : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                      }`}
+                    >
+                      {matchedRepair.isPickedUp ? '✓ 已取件 (保固生效中)' : '⏳ 待取件 (取件後自動起算)'}
+                    </span>
+                  </div>
+                ) : customCustomerName.trim() && customRepairId.trim() ? (
+                  <div className="w-full p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono flex items-center gap-1.5 text-cyan-300">
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">已設定綁定 [{customRepairId.trim()}] {customCustomerName.trim()}</span>
+                  </div>
+                ) : (
+                  <div className="w-full p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-[11px] font-mono text-slate-500 flex items-center gap-1.5">
+                    <span>💡 請輸入客戶姓名與單號後點擊「綁定連動」</span>
                   </div>
                 )}
               </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">客戶姓名 *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="例: 張家豪"
-                    value={customCustomerName}
-                    onChange={(e) => setCustomCustomerName(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">聯絡電話</label>
-                  <input
-                    type="text"
-                    placeholder="例: 0933-112-233"
-                    value={customCustomerPhone}
-                    onChange={(e) => setCustomCustomerPhone(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">維修單號 *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="例: REP-2026-003"
-                    value={customRepairId}
-                    onChange={(e) => setCustomRepairId(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Section 2: Part Category Pills */}
@@ -417,7 +562,7 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                   onClick={() => setWarrantyDays(p.days)}
                   className={`px-2 py-1 text-[11px] font-mono rounded-md border transition cursor-pointer ${
                     warrantyDays === p.days
-                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 font-bold'
+                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 font-bold shadow-xs'
                       : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200'
                   }`}
                 >
@@ -480,32 +625,33 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
               />
             </div>
           </div>
-
-          {/* Footer Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>保固將於維修單勾選「已取件」當日起算倒數</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-xs font-medium rounded-lg text-slate-300 hover:bg-slate-800 transition cursor-pointer"
-              >
-                取消
-              </button>
-              <button
-                type="submit"
-                className="px-5 py-2 text-xs font-bold rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/20 flex items-center gap-1.5 transition cursor-pointer"
-              >
-                <Save className="w-4 h-4" />
-                <span>{editRecord ? '儲存變更' : '登記並儲存保固'}</span>
-              </button>
-            </div>
-          </div>
         </form>
+
+        {/* Fixed Footer */}
+        <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-900 flex items-center justify-between shrink-0">
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span>保固將於維修單勾選「已取件」日起算倒數</span>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-xs font-medium rounded-lg text-slate-300 hover:bg-slate-800 transition cursor-pointer"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              form="warranty-form"
+              className="px-5 py-2 text-xs font-bold rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/20 flex items-center gap-1.5 transition cursor-pointer"
+            >
+              <Save className="w-4 h-4" />
+              <span>{editRecord ? '儲存變更' : '新增零件保固'}</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
