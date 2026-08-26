@@ -125,10 +125,10 @@ export const Header: React.FC<HeaderProps> = ({
         {userIsAdmin && onOpenAccountManagement && (
           <button
             onClick={onOpenAccountManagement}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30 hover:bg-purple-500/25 hover:border-purple-400 shadow-md transition-all cursor-pointer"
+            className="btn-account-mgmt flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/40 hover:bg-purple-500/25 hover:border-purple-400 shadow-sm transition-all cursor-pointer"
             title="帳號與身分權限管理（管理員專屬）"
           >
-            <Shield className="w-4 h-4 text-purple-400" />
+            <Shield className="w-4 h-4 text-purple-700 dark:text-purple-300" />
             <span>帳號管理</span>
           </button>
         )}
@@ -137,10 +137,10 @@ export const Header: React.FC<HeaderProps> = ({
         {onOpenCustomerTracking && (
           <button
             onClick={onOpenCustomerTracking}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-sky-500/15 text-sky-300 border border-sky-500/30 hover:bg-sky-500/25 hover:border-sky-400 shadow-md transition-all cursor-pointer"
+            className="btn-customer-tracking flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/40 hover:bg-sky-500/25 hover:border-sky-400 shadow-sm transition-all cursor-pointer"
             title="前往顧客專屬免登入維修進度查詢頁"
           >
-            <Search className="w-4 h-4 text-sky-400" />
+            <Search className="w-4 h-4 text-sky-700 dark:text-sky-300" />
             <span className="hidden sm:inline">顧客查詢頁</span>
           </button>
         )}
