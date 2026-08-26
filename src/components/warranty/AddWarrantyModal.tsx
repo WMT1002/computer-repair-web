@@ -91,98 +91,86 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
     repairItem?: string;
   } | null>(null);
 
-  // Automatic match function while typing
-  const handleAutoMatch = (name: string, rId: string) => {
-    const trimmedName = name.trim().toLowerCase();
+  // Only lookup telephone for exact match without ever touching user's name or repair ID
+  const tryLookupPhone = (name: string, rId: string) => {
+    const trimmedName = name.trim();
     const trimmedId = rId.trim().toUpperCase();
 
-    // 1. Try match by Repair ID first
+    // 1. If exact Repair ID matches a ticket in system
     if (trimmedId) {
       for (const c of customers) {
-        const found = c.repairs.find(
-          (r) => r.id.toUpperCase() === trimmedId || r.id.toUpperCase().includes(trimmedId)
-        );
-        if (found) {
-          if (!name.trim()) setCustomCustomerName(c.name);
-          if (!customCustomerPhone) setCustomCustomerPhone(c.phone);
-          setMatchedRepair({
-            customerId: c.id,
-            customerName: c.name,
-            customerPhone: c.phone,
-            repairId: found.id,
-            isPickedUp: Boolean(found.isPickedUp),
-            repairItem: found.item,
-          });
+        const foundRepair = c.repairs.find((r) => r.id.toUpperCase() === trimmedId);
+        if (foundRepair) {
+          if (c.phone) setCustomCustomerPhone(c.phone);
           return;
         }
       }
     }
 
-    // 2. Try match by Customer Name
+    // 2. If exact full Name matches (strictly equal, and only if exactly 1 customer found)
     if (trimmedName) {
-      const foundCust = customers.find(
-        (c) => c.name.toLowerCase() === trimmedName || c.name.toLowerCase().includes(trimmedName)
-      );
-      if (foundCust && foundCust.repairs.length > 0) {
-        const latest = foundCust.repairs[foundCust.repairs.length - 1];
-        if (!rId.trim()) setCustomRepairId(latest.id);
-        if (!customCustomerPhone) setCustomCustomerPhone(foundCust.phone);
-        setMatchedRepair({
-          customerId: foundCust.id,
-          customerName: foundCust.name,
-          customerPhone: foundCust.phone,
-          repairId: latest.id,
-          isPickedUp: Boolean(latest.isPickedUp),
-          repairItem: latest.item,
-        });
-        return;
+      const matchingCustomers = customers.filter((c) => c.name.trim() === trimmedName);
+      if (matchingCustomers.length === 1 && matchingCustomers[0].phone) {
+        setCustomCustomerPhone(matchingCustomers[0].phone);
       }
     }
-
-    setMatchedRepair(null);
   };
 
   // Explicit bind button click handler
   const handleTriggerBind = () => {
-    if (!customCustomerName.trim() && !customRepairId.trim()) {
-      alert('請先輸入客戶姓名或維修單號！');
+    const trimmedName = customCustomerName.trim();
+    const trimmedId = customRepairId.trim().toUpperCase();
+
+    if (!trimmedName && !trimmedId) {
+      alert('請先輸入客戶姓名與維修單號！');
       return;
     }
 
-    const trimmedName = customCustomerName.trim().toLowerCase();
-    const trimmedId = customRepairId.trim().toUpperCase();
+    // 1. Search for exact matching customer and repair ticket
+    let foundCust = customers.find(
+      (c) =>
+        c.name.trim() === trimmedName &&
+        c.repairs.some((r) => r.id.toUpperCase() === trimmedId)
+    );
+    let foundRepair = foundCust?.repairs.find((r) => r.id.toUpperCase() === trimmedId);
 
-    let found = false;
-    for (const c of customers) {
-      const repairMatch = c.repairs.find(
-        (r) =>
-          (trimmedId && r.id.toUpperCase() === trimmedId) ||
-          (trimmedId && r.id.toUpperCase().includes(trimmedId)) ||
-          (trimmedName && c.name.toLowerCase() === trimmedName)
-      );
-
-      if (repairMatch) {
-        setCustomCustomerName(c.name);
-        setCustomCustomerPhone(c.phone);
-        setCustomRepairId(repairMatch.id);
-        setMatchedRepair({
-          customerId: c.id,
-          customerName: c.name,
-          customerPhone: c.phone,
-          repairId: repairMatch.id,
-          isPickedUp: Boolean(repairMatch.isPickedUp),
-          repairItem: repairMatch.item,
-        });
-        found = true;
-        break;
+    // 2. If not found together, check if repair ID exists in system
+    if (!foundRepair && trimmedId) {
+      for (const c of customers) {
+        const r = c.repairs.find((rep) => rep.id.toUpperCase() === trimmedId);
+        if (r) {
+          foundCust = c;
+          foundRepair = r;
+          break;
+        }
       }
     }
 
-    if (!found) {
-      if (!customRepairId.trim()) {
-        const genId = `REP-${Date.now().toString().slice(-6)}`;
-        setCustomRepairId(genId);
-      }
+    // 3. If still not found, check if full customer name matches
+    if (!foundCust && trimmedName) {
+      foundCust = customers.find((c) => c.name.trim() === trimmedName);
+      foundRepair = foundCust?.repairs[foundCust.repairs.length - 1];
+    }
+
+    if (foundCust) {
+      if (foundCust.phone) setCustomCustomerPhone(foundCust.phone);
+      setMatchedRepair({
+        customerId: foundCust.id,
+        customerName: trimmedName || foundCust.name,
+        customerPhone: foundCust.phone,
+        repairId: foundRepair ? foundRepair.id : trimmedId,
+        isPickedUp: foundRepair ? Boolean(foundRepair.isPickedUp) : false,
+        repairItem: foundRepair?.item,
+      });
+    } else {
+      // Manual custom record binding without existing customer in DB
+      setMatchedRepair({
+        customerId: `CUST-${Date.now().toString().slice(-4)}`,
+        customerName: trimmedName,
+        customerPhone: customCustomerPhone.trim(),
+        repairId: trimmedId,
+        isPickedUp: false,
+      });
     }
   };
 
@@ -354,8 +342,9 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                     required
                     value={customCustomerName}
                     onChange={(e) => {
-                      setCustomCustomerName(e.target.value);
-                      handleAutoMatch(e.target.value, customRepairId);
+                      const val = e.target.value;
+                      setCustomCustomerName(val);
+                      tryLookupPhone(val, customRepairId);
                     }}
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
@@ -374,8 +363,9 @@ export const AddWarrantyModal: React.FC<AddWarrantyModalProps> = ({
                     required
                     value={customRepairId}
                     onChange={(e) => {
-                      setCustomRepairId(e.target.value);
-                      handleAutoMatch(customCustomerName, e.target.value);
+                      const val = e.target.value;
+                      setCustomRepairId(val);
+                      tryLookupPhone(customCustomerName, val);
                     }}
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   />
