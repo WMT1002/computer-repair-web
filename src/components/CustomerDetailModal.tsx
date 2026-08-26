@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Customer, RepairRecord, RepairStatus, PriceItem } from '../types';
-import { X, Plus, Printer, Trash2, Calendar, Phone, Clock, CheckCircle2, DollarSign, Tag } from 'lucide-react';
+import { X, Plus, Printer, Trash2, Calendar, Phone, Clock, CheckCircle2, DollarSign, Tag, Edit3 } from 'lucide-react';
 
 interface CustomerDetailModalProps {
   customer: Customer;
   onClose: () => void;
+  onEditCustomer: (customer: Customer, repairId?: string) => void;
   onAddRepair: (customerId: string, repair: Omit<RepairRecord, 'id'>) => void;
   onToggleStatus: (customerId: string, repairId: string) => void;
   onDeleteRepair: (customerId: string, repairId: string) => void;
@@ -15,6 +16,7 @@ interface CustomerDetailModalProps {
 export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   customer,
   onClose,
+  onEditCustomer,
   onAddRepair,
   onToggleStatus,
   onDeleteRepair,
@@ -84,12 +86,21 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-700 rounded-lg transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onEditCustomer(customer)}
+              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 flex items-center gap-1.5 transition cursor-pointer"
+              title="編輯客戶姓名、電話與最新維修紀錄"
+            >
+              <Edit3 className="w-3.5 h-3.5" /> 編輯資料
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-700 rounded-lg transition cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Modal Body */}
@@ -352,10 +363,17 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   </div>
 
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onEditCustomer(customer, repair.id)}
+                      className="px-2.5 py-1 text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg hover:bg-amber-500/20 flex items-center gap-1 transition cursor-pointer"
+                      title="編輯此筆維修單項目、金額與側板設定"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" /> 編輯
+                    </button>
                     {customer.repairs.length > 1 && (
                       <button
                         onClick={() => onDeleteRepair(customer.id, repair.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition"
+                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition cursor-pointer"
                         title="刪除此筆紀錄"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -363,7 +381,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                     )}
                     <button
                       onClick={() => onPrintRepair(customer, repair)}
-                      className="px-3 py-1 text-xs font-semibold bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg hover:bg-sky-500/30 flex items-center gap-1 transition"
+                      className="px-3 py-1 text-xs font-semibold bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg hover:bg-sky-500/30 flex items-center gap-1 transition cursor-pointer"
                     >
                       <Printer className="w-3.5 h-3.5" /> 列印此單據
                     </button>

@@ -4,29 +4,35 @@ import { X, Save, User, Phone, Wrench, DollarSign, Calendar, FileText, Edit3 } f
 
 interface EditCustomerModalProps {
   customer: Customer;
+  targetRepairId?: string;
   onClose: () => void;
   onSaveCustomer: (updatedCustomer: Customer) => void;
 }
 
 export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
   customer,
+  targetRepairId,
   onClose,
   onSaveCustomer,
 }) => {
   const [name, setName] = useState(customer.name);
   const [phone, setPhone] = useState(customer.phone);
 
-  // Latest repair editing state
-  const latestRepair = customer.repairs.length > 0 ? customer.repairs[customer.repairs.length - 1] : null;
+  // Target repair to edit (specified repair or latest repair)
+  const targetRepair = targetRepairId
+    ? customer.repairs.find((r) => r.id === targetRepairId) || (customer.repairs.length > 0 ? customer.repairs[customer.repairs.length - 1] : null)
+    : customer.repairs.length > 0
+    ? customer.repairs[customer.repairs.length - 1]
+    : null;
 
-  const [repairItem, setRepairItem] = useState(latestRepair?.item || '');
-  const [price, setPrice] = useState<number | ''>(latestRepair?.price ?? 0);
-  const [date, setDate] = useState(latestRepair?.date || '');
-  const [dueDate, setDueDate] = useState(latestRepair?.dueDate || '');
-  const [status, setStatus] = useState<RepairStatus>(latestRepair?.status || 'pending');
-  const [note, setNote] = useState(latestRepair?.note || '');
-  const [hasLeftPanel, setHasLeftPanel] = useState(Boolean(latestRepair?.hasLeftPanel));
-  const [hasRightPanel, setHasRightPanel] = useState(Boolean(latestRepair?.hasRightPanel));
+  const [repairItem, setRepairItem] = useState(targetRepair?.item || '');
+  const [price, setPrice] = useState<number | ''>(targetRepair?.price ?? 0);
+  const [date, setDate] = useState(targetRepair?.date || '');
+  const [dueDate, setDueDate] = useState(targetRepair?.dueDate || '');
+  const [status, setStatus] = useState<RepairStatus>(targetRepair?.status || 'pending');
+  const [note, setNote] = useState(targetRepair?.note || '');
+  const [hasLeftPanel, setHasLeftPanel] = useState(Boolean(targetRepair?.hasLeftPanel));
+  const [hasRightPanel, setHasRightPanel] = useState(Boolean(targetRepair?.hasRightPanel));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,9 +43,9 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
     }
 
     let updatedRepairs = [...customer.repairs];
-    if (latestRepair) {
+    if (targetRepair) {
       updatedRepairs = updatedRepairs.map((r) => {
-        if (r.id === latestRepair.id) {
+        if (r.id === targetRepair.id) {
           return {
             ...r,
             item: repairItem.trim(),
@@ -132,10 +138,10 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
           </div>
 
           {/* Repair info */}
-          {latestRepair && (
+          {targetRepair && (
             <div className="space-y-4 pt-4 border-t border-slate-700/60">
               <h3 className="text-xs font-mono font-bold tracking-wider text-sky-400 uppercase flex items-center gap-1.5">
-                <Wrench className="w-3.5 h-3.5" /> 最新維修單內容 (單號: {latestRepair.id})
+                <Wrench className="w-3.5 h-3.5" /> 維修單內容 (單號: {targetRepair.id})
               </h3>
 
               <div>

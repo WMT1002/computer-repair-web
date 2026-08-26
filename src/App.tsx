@@ -61,7 +61,10 @@ export function App() {
 
   // Modals state
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [editingCustomer, setEditingCustomer] = useState<{
+    customer: Customer;
+    targetRepairId?: string;
+  } | null>(null);
   const [printTarget, setPrintTarget] = useState<{
     customer: Customer;
     repair: RepairRecord;
@@ -257,7 +260,7 @@ export function App() {
             <CustomerList
               customers={customers}
               onSelectCustomer={(c) => setSelectedCustomer(c)}
-              onEditCustomer={(c) => setEditingCustomer(c)}
+              onEditCustomer={(c) => setEditingCustomer({ customer: c })}
               onPrintCustomer={(c, r) => setPrintTarget({ customer: c, repair: r })}
               onToggleStatus={handleToggleStatus}
               onDeleteCustomer={handleDeleteCustomer}
@@ -300,6 +303,7 @@ export function App() {
         <CustomerDetailModal
           customer={selectedCustomer}
           onClose={() => setSelectedCustomer(null)}
+          onEditCustomer={(c, rId) => setEditingCustomer({ customer: c, targetRepairId: rId })}
           onAddRepair={handleAddRepair}
           onToggleStatus={handleToggleStatus}
           onDeleteRepair={handleDeleteRepair}
@@ -310,7 +314,8 @@ export function App() {
 
       {editingCustomer && (
         <EditCustomerModal
-          customer={editingCustomer}
+          customer={editingCustomer.customer}
+          targetRepairId={editingCustomer.targetRepairId}
           onClose={() => setEditingCustomer(null)}
           onSaveCustomer={handleSaveCustomer}
         />
