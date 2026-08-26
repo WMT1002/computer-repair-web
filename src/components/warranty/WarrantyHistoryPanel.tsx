@@ -11,7 +11,6 @@ import {
   FileText,
   Clock,
   CheckCircle2,
-  AlertTriangle,
   XCircle,
   Copy,
   Check,
@@ -52,7 +51,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
   const [searchName, setSearchName] = useState('');
   const [searchRepairId, setSearchRepairId] = useState('');
   const [showAllRecords, setShowAllRecords] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending_pickup' | 'expiring' | 'expired'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending_pickup' | 'expired'>('all');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -81,7 +80,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
       let daysRemaining = w.warrantyDays;
       let endDateStr = '—';
       let progressPercent = 100;
-      let statusType: 'active' | 'pending_pickup' | 'expiring' | 'expired' = 'pending_pickup';
+      let statusType: 'active' | 'pending_pickup' | 'expired' = 'pending_pickup';
 
       if (isPickedUp && effectiveStartDate) {
         const startObj = new Date(effectiveStartDate);
@@ -98,8 +97,6 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
 
         if (daysRemaining < 0) {
           statusType = 'expired';
-        } else if (daysRemaining <= 30) {
-          statusType = 'expiring';
         } else {
           statusType = 'active';
         }
@@ -127,9 +124,8 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
     const total = computedWarranties.length;
     const active = computedWarranties.filter((w) => w.statusType === 'active').length;
     const pendingPickup = computedWarranties.filter((w) => w.statusType === 'pending_pickup').length;
-    const expiring = computedWarranties.filter((w) => w.statusType === 'expiring').length;
     const expired = computedWarranties.filter((w) => w.statusType === 'expired').length;
-    return { total, active, pendingPickup, expiring, expired };
+    return { total, active, pendingPickup, expired };
   }, [computedWarranties]);
 
   // Filtered List based on Customer Name and Repair Order ID
@@ -221,8 +217,8 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
           </button>
         </div>
 
-        {/* Top KPI Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-6">
+        {/* Top KPI Cards (4 cards) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
           <div
             onClick={() => {
               setStatusFilter('all');
@@ -288,31 +284,10 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
 
           <div
             onClick={() => {
-              setStatusFilter('expiring');
-              setShowAllRecords(false);
-            }}
-            className={`p-3 rounded-xl border transition-all cursor-pointer ${
-              statusFilter === 'expiring'
-                ? 'bg-orange-950/40 border-orange-500/60 ring-1 ring-orange-500 shadow-md'
-                : 'bg-slate-900/60 border-slate-700/60 hover:bg-slate-800/60'
-            }`}
-          >
-            <div className="flex items-center justify-between text-xs text-orange-400 font-medium">
-              <span>⚠️ 30天內到期</span>
-              <AlertTriangle className="w-4 h-4 text-orange-400" />
-            </div>
-            <div className="text-2xl font-black text-orange-400 font-mono mt-1">
-              {stats.expiring}
-              <span className="text-xs text-slate-400 ml-1 font-sans font-normal">件</span>
-            </div>
-          </div>
-
-          <div
-            onClick={() => {
               setStatusFilter('expired');
               setShowAllRecords(false);
             }}
-            className={`p-3 rounded-xl border transition-all cursor-pointer col-span-2 sm:col-span-1 ${
+            className={`p-3 rounded-xl border transition-all cursor-pointer ${
               statusFilter === 'expired'
                 ? 'bg-rose-950/40 border-rose-500/60 ring-1 ring-rose-500 shadow-md'
                 : 'bg-slate-900/60 border-slate-700/60 hover:bg-slate-800/60'
@@ -493,12 +468,6 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                     bg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40',
                     text: `🟢 保固中 (剩餘 ${item.daysRemaining} 天)`,
                     bar: 'bg-gradient-to-r from-emerald-500 to-teal-400',
-                  }
-                : item.statusType === 'expiring'
-                ? {
-                    bg: 'bg-orange-500/20 text-orange-400 border-orange-500/40 animate-pulse',
-                    text: `⚠️ 30天內到期 (剩餘 ${item.daysRemaining} 天)`,
-                    bar: 'bg-gradient-to-r from-amber-500 to-orange-500',
                   }
                 : item.statusType === 'expired'
                 ? {
@@ -696,10 +665,6 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                       {item.statusType === 'active' ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-bold">
                           <CheckCircle2 className="w-3 h-3" /> 剩餘 {item.daysRemaining} 天
-                        </span>
-                      ) : item.statusType === 'expiring' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/40 text-[11px] font-bold">
-                          <AlertTriangle className="w-3 h-3" /> 剩餘 {item.daysRemaining} 天
                         </span>
                       ) : item.statusType === 'expired' ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[11px] font-bold">
