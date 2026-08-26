@@ -81,8 +81,18 @@ html.light-mode div.from-slate-950 {
   color: #0f172a !important;
 }
 
-html.light-mode button.bg-gradient-to-r,
-html.light-mode a.bg-gradient-to-r {
+/* Nav Tab Items in Light Mode - Always Keep Original Dark Text */
+html.light-mode nav button {
+  color: #0f172a !important;
+}
+
+html.light-mode nav button > span:not([class*="rounded"]) {
+  color: #0f172a !important;
+}
+
+/* Solid Blue Action Buttons */
+html.light-mode button.from-cyan-500,
+html.light-mode button.from-blue-600 {
   color: #ffffff !important;
 }
 
