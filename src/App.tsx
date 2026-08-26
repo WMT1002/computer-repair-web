@@ -257,14 +257,18 @@ export function App() {
     return (
       <CustomerTrackingPage
         initialOrderId={trackingOrderId}
-        onBackToLogin={() => {
-          setIsTrackingMode(false);
-          // Clean URL param without reload
-          if (window.history.pushState) {
-            const newUrl = window.location.pathname;
-            window.history.pushState({ path: newUrl }, '', newUrl);
-          }
-        }}
+        onBackToDashboard={
+          user
+            ? () => {
+                setIsTrackingMode(false);
+                // Clean URL param without reload
+                if (window.history.pushState) {
+                  const newUrl = window.location.pathname;
+                  window.history.pushState({ path: newUrl }, '', newUrl);
+                }
+              }
+            : undefined
+        }
       />
     );
   }

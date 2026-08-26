@@ -22,12 +22,12 @@ import { ImageLightbox } from './common/ImageLightbox';
 
 interface CustomerTrackingPageProps {
   initialOrderId?: string;
-  onBackToLogin?: () => void;
+  onBackToDashboard?: () => void;
 }
 
 export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
   initialOrderId = '',
-  onBackToLogin,
+  onBackToDashboard,
 }) => {
   const [searchInput, setSearchInput] = useState(initialOrderId);
   const [isLoading, setIsLoading] = useState(false);
@@ -89,12 +89,12 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
             </div>
           </div>
 
-          {onBackToLogin && (
+          {onBackToDashboard && (
             <button
-              onClick={onBackToLogin}
-              className="text-xs text-slate-600 hover:text-sky-600 font-medium flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 hover:border-sky-400 bg-slate-50 hover:bg-white transition shadow-2xs cursor-pointer"
+              onClick={onBackToDashboard}
+              className="text-xs text-slate-600 hover:text-sky-600 font-medium flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 hover:border-sky-400 bg-slate-50 hover:bg-white transition shadow-2xs cursor-pointer"
             >
-              <ArrowLeft className="w-3.5 h-3.5" /> 系統登入
+              <ArrowLeft className="w-3.5 h-3.5" /> 返回維修後台
             </button>
           )}
         </div>
