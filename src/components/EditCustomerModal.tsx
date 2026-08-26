@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Customer, RepairStatus, RepairPhoto } from '../types';
-import { X, Save, User, Phone, Wrench, DollarSign, Calendar, FileText, Edit3 } from 'lucide-react';
+import { X, Save, User, Phone, Wrench, Calendar, DollarSign, FileText } from 'lucide-react';
 import { PhotoUploader } from './common/PhotoUploader';
 
 interface EditCustomerModalProps {
@@ -19,9 +19,9 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
   const [name, setName] = useState(customer.name);
   const [phone, setPhone] = useState(customer.phone);
 
-  // Target repair to edit (specified repair or latest repair)
+  // Target repair record
   const targetRepair = targetRepairId
-    ? customer.repairs.find((r) => r.id === targetRepairId) || (customer.repairs.length > 0 ? customer.repairs[customer.repairs.length - 1] : null)
+    ? customer.repairs.find((r) => r.id === targetRepairId) || null
     : customer.repairs.length > 0
     ? customer.repairs[customer.repairs.length - 1]
     : null;
@@ -30,7 +30,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
   const [price, setPrice] = useState<number | ''>(targetRepair?.price ?? 0);
   const [date, setDate] = useState(targetRepair?.date || '');
   const [dueDate, setDueDate] = useState(targetRepair?.dueDate || '');
-  const [status, setStatus] = useState<RepairStatus>(targetRepair?.status || 'pending');
+  const [status, setStatus] = useState<RepairStatus>(targetRepair?.status || 'received');
   const [note, setNote] = useState(targetRepair?.note || '');
   const [hasLeftPanel, setHasLeftPanel] = useState(Boolean(targetRepair?.hasLeftPanel));
   const [hasRightPanel, setHasRightPanel] = useState(Boolean(targetRepair?.hasRightPanel));
@@ -45,17 +45,18 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
     }
 
     let updatedRepairs = [...customer.repairs];
+
     if (targetRepair) {
       updatedRepairs = updatedRepairs.map((r) => {
         if (r.id === targetRepair.id) {
           return {
             ...r,
-            item: repairItem.trim(),
-            price: Number(price) || 0,
-            date,
+            item: repairItem.trim() ? repairItem : r.item,
+            price: price === '' ? 0 : price,
+            date: date || r.date,
             dueDate,
             status,
-            note: note.trim(),
+            note,
             hasLeftPanel,
             hasRightPanel,
             photos,
@@ -78,21 +79,19 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content fade-in max-w-2xl">
+      <div className="modal-content max-w-2xl fade-in flex flex-col">
         {/* Header */}
-        <div className="p-5 border-b border-slate-700 flex items-center justify-between bg-slate-800/90">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
-              <Edit3 className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-slate-100">編輯客戶與維修資料</h2>
-              <p className="text-xs text-slate-400 font-mono">編號：{customer.id}</p>
-            </div>
+        <div className="p-6 border-b border-slate-700 flex items-center justify-between bg-slate-800/90">
+          <div className="flex items-center gap-2">
+            <User className="w-5 h-5 text-sky-400" />
+            <h2 className="text-lg font-bold text-slate-100">
+              編輯客戶與維修資料
+              <span className="text-xs text-slate-400 font-mono ml-2">({customer.id})</span>
+            </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-700 rounded-lg transition"
+            className="p-1.5 text-slate-400 hover:text-slate-100 rounded-lg cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -102,9 +101,29 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
           {/* Customer info */}
           <div className="space-y-4">
-            <h3 className="text-xs font-mono font-bold tracking-wider text-sky-400 uppercase flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5" /> 客戶基本資訊
-            </h3>
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h3 className="text-xs font-mono font-bold tracking-wider text-sky-400 uppercase flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5" /> 客戶基本資訊
+              </h3>
+              {targetRepair && (
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-medium text-slate-300 whitespace-nowrap">
+                    當前維修狀態：
+                  </label>
+                  <select
+                    value={status === 'pending' ? 'received' : status}
+                    onChange={(e) => setStatus(e.target.value as RepairStatus)}
+                    className="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-100 focus:outline-none focus:border-sky-500 font-semibold cursor-pointer shadow-sm"
+                  >
+                    <option value="received">【1. 收件建檔】</option>
+                    <option value="diagnosing">【2. 故障檢測】</option>
+                    <option value="repairing">【3. 維修更換】</option>
+                    <option value="completed">【4. 完工待取】</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
@@ -147,6 +166,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                 <Wrench className="w-3.5 h-3.5" /> 維修單內容 (單號: {targetRepair.id})
               </h3>
 
+              {/* 1. 維修項目描述 */}
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">維修項目描述</label>
                 <textarea
@@ -157,6 +177,48 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                 />
               </div>
 
+              {/* 2. 側板勾選 (左側板 / 右側板) - 位於維修項目下方 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border cursor-pointer select-none transition ${
+                  hasLeftPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasLeftPanel}
+                    onChange={(e) => setHasLeftPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1 text-xs">
+                    <span className="font-semibold">左側板</span>
+                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${
+                      hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasLeftPanel ? '✓ 已勾選 (有留存)' : '未勾選 (無)'}
+                    </span>
+                  </div>
+                </label>
+
+                <label className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border cursor-pointer select-none transition ${
+                  hasRightPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasRightPanel}
+                    onChange={(e) => setHasRightPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1 text-xs">
+                    <span className="font-semibold">右側板</span>
+                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${
+                      hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasRightPanel ? '✓ 已勾選 (有留存)' : '未勾選 (無)'}
+                    </span>
+                  </div>
+                </label>
+              </div>
+
+              {/* 3. 費用與日期 */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1">費用 (NT$)</label>
@@ -200,95 +262,47 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">當前維修狀態</label>
-                  <select
-                    value={status === 'pending' ? 'received' : status}
-                    onChange={(e) => setStatus(e.target.value as RepairStatus)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 font-medium"
-                  >
-                    <option value="received">【1. 收件建檔】</option>
-                    <option value="diagnosing">【2. 故障檢測】</option>
-                    <option value="repairing">【3. 維修更換】</option>
-                    <option value="completed">【4. 完工待取】</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">備註說明</label>
-                  <div className="relative">
-                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
-                      type="text"
-                      value={note}
-                      onChange={(e) => setNote(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"
-                    />
-                  </div>
+              {/* 4. 備註說明 */}
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">備註說明</label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="例如：附隨身碟、變壓器"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"
+                  />
                 </div>
               </div>
 
-              {/* 側板勾選 (左側板 / 右側板) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <label className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border cursor-pointer select-none transition ${
-                  hasLeftPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
-                }`}>
-                  <input
-                    type="checkbox"
-                    checked={hasLeftPanel}
-                    onChange={(e) => setHasLeftPanel(e.target.checked)}
-                    className="rounded accent-slate-600 cursor-pointer"
-                  />
-                  <div className="flex items-center justify-between flex-1 text-xs">
-                    <span className="font-semibold">左側板</span>
-                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${
-                      hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
-                    }`}>
-                      {hasLeftPanel ? '✓ 已勾選' : '未勾選'}
-                    </span>
-                  </div>
-                </label>
-
-                <label className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border cursor-pointer select-none transition ${
-                  hasRightPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
-                }`}>
-                  <input
-                    type="checkbox"
-                    checked={hasRightPanel}
-                    onChange={(e) => setHasRightPanel(e.target.checked)}
-                    className="rounded accent-slate-600 cursor-pointer"
-                  />
-                  <div className="flex items-center justify-between flex-1 text-xs">
-                    <span className="font-semibold">右側板</span>
-                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${
-                      hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
-                    }`}>
-                      {hasRightPanel ? '✓ 已勾選' : '未勾選'}
-                    </span>
-                  </div>
-                </label>
+              {/* 5. 照片存證管理 */}
+              <div className="pt-2">
+                <PhotoUploader
+                  photos={photos}
+                  onChange={setPhotos}
+                  maxPhotos={6}
+                  title="主機外觀與零件照片存證 (選填)"
+                />
               </div>
-
-              {/* Photo Evidence Uploader */}
-              <PhotoUploader photos={photos} onChange={setPhotos} maxPhotos={6} />
             </div>
           )}
 
-          {/* Footer buttons */}
+          {/* Action buttons */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-700">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 rounded-lg transition"
+              className="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-700 text-slate-300 hover:text-slate-100 cursor-pointer"
             >
               取消
             </button>
             <button
               type="submit"
-              className="px-5 py-2 text-sm font-semibold rounded-lg bg-sky-500 text-slate-950 hover:bg-sky-400 flex items-center gap-2 shadow-lg transition"
+              className="px-5 py-2 text-sm font-bold rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 flex items-center gap-1.5 shadow-lg shadow-sky-500/20 hover:brightness-110 cursor-pointer"
             >
-              <Save className="w-4 h-4" /> 儲存變更
+              <Save className="w-4 h-4" /> 儲存修改
             </button>
           </div>
         </form>

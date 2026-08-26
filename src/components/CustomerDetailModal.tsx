@@ -133,13 +133,28 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
             >
               <div className="flex items-center justify-between text-xs font-semibold text-sky-400 border-b border-slate-800 pb-2">
                 <span>新增維修單紀錄</span>
-                <button
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                  className="text-slate-400 hover:text-slate-200"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-300 font-normal">狀態:</span>
+                    <select
+                      value={status === 'pending' ? 'received' : status}
+                      onChange={(e) => setStatus(e.target.value as RepairStatus)}
+                      className="bg-slate-800 border border-slate-700 rounded px-2 py-0.5 text-xs text-slate-100 font-medium"
+                    >
+                      <option value="received">【1. 收件建檔】</option>
+                      <option value="diagnosing">【2. 故障檢測】</option>
+                      <option value="repairing">【3. 維修更換】</option>
+                      <option value="completed">【4. 完工待取】</option>
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddForm(false)}
+                    className="text-slate-400 hover:text-slate-200 cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -179,6 +194,47 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 />
               </div>
 
+              {/* 側板勾選 (左側板 / 右側板) - 位於維修項目描述下方 */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer select-none transition ${
+                  hasLeftPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasLeftPanel}
+                    onChange={(e) => setHasLeftPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1">
+                    <span>左側板</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
+                      hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasLeftPanel ? '✓ 已留存' : '無'}
+                    </span>
+                  </div>
+                </label>
+
+                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer select-none transition ${
+                  hasRightPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}>
+                  <input
+                    type="checkbox"
+                    checked={hasRightPanel}
+                    onChange={(e) => setHasRightPanel(e.target.checked)}
+                    className="rounded accent-slate-600 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-between flex-1">
+                    <span>右側板</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
+                      hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
+                    }`}>
+                      {hasRightPanel ? '✓ 已留存' : '無'}
+                    </span>
+                  </div>
+                </label>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1">費用 (NT$)</label>
@@ -211,71 +267,15 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">維修狀態</label>
-                  <select
-                    value={status === 'pending' ? 'received' : status}
-                    onChange={(e) => setStatus(e.target.value as RepairStatus)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-slate-100 font-medium"
-                  >
-                    <option value="received">【1. 收件建檔】</option>
-                    <option value="diagnosing">【2. 故障檢測】</option>
-                    <option value="repairing">【3. 維修更換】</option>
-                    <option value="completed">【4. 完工待取】</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">備註說明</label>
-                  <input
-                    type="text"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder="可空"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-slate-100"
-                  />
-                </div>
-              </div>
-
-              {/* 側板勾選 (左側板 / 右側板) */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer select-none transition ${
-                  hasLeftPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
-                }`}>
-                  <input
-                    type="checkbox"
-                    checked={hasLeftPanel}
-                    onChange={(e) => setHasLeftPanel(e.target.checked)}
-                    className="rounded accent-slate-600 cursor-pointer"
-                  />
-                  <div className="flex items-center justify-between flex-1">
-                    <span>左側板</span>
-                    <span className={`text-[10px] px-1 py-0.2 rounded border ${
-                      hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
-                    }`}>
-                      {hasLeftPanel ? '✓ 有' : '無'}
-                    </span>
-                  </div>
-                </label>
-
-                <label className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer select-none transition ${
-                  hasRightPanel ? 'bg-slate-700/80 border-slate-500 text-slate-100' : 'bg-slate-900 border-slate-700 text-slate-400'
-                }`}>
-                  <input
-                    type="checkbox"
-                    checked={hasRightPanel}
-                    onChange={(e) => setHasRightPanel(e.target.checked)}
-                    className="rounded accent-slate-600 cursor-pointer"
-                  />
-                  <div className="flex items-center justify-between flex-1">
-                    <span>右側板</span>
-                    <span className={`text-[10px] px-1 py-0.2 rounded border ${
-                      hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
-                    }`}>
-                      {hasRightPanel ? '✓ 有' : '無'}
-                    </span>
-                  </div>
-                </label>
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">備註說明</label>
+                <input
+                  type="text"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="例如：附隨身碟、變壓器"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-slate-100"
+                />
               </div>
 
               {/* Photo Evidence Uploader in Add Form */}

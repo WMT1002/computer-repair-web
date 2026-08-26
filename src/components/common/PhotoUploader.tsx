@@ -8,6 +8,7 @@ interface PhotoUploaderProps {
   photos: RepairPhoto[];
   onChange: (photos: RepairPhoto[]) => void;
   maxPhotos?: number;
+  title?: string;
 }
 
 const PRESET_TAGS = [
@@ -24,6 +25,7 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
   photos = [],
   onChange,
   maxPhotos = 6,
+  title = '機身照片與外觀存證',
 }) => {
   const [isCompressing, setIsCompressing] = useState(false);
   const [selectedTag, setSelectedTag] = useState(PRESET_TAGS[0]);
@@ -86,7 +88,7 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
         <div className="flex items-center gap-2">
           <Camera className="w-4 h-4 text-sky-400" />
           <span className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-            機身照片與外觀存證 ({photos.length}/{maxPhotos})
+            {title} ({photos.length}/{maxPhotos})
           </span>
           <span className="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">
             選填 • 自動智慧壓縮

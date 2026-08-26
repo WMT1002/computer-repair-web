@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Customer, RepairStatus, PriceItem, RepairPhoto } from '../types';
-import { UserPlus, Save, DollarSign, Calendar, Wrench, Phone, User, FileText, Printer, ArrowLeft, Tag } from 'lucide-react';
+import { UserPlus, Calendar, DollarSign, FileText, User, Phone, Wrench, Printer, Tag } from 'lucide-react';
 import { PhotoUploader } from './common/PhotoUploader';
 
 interface AddCustomerFormProps {
-  onAddCustomer: (newCustomer: Customer, shouldPrint?: boolean) => void;
-  onCancel: () => void;
+  onAddCustomer: (customer: Customer, shouldPrint?: boolean) => void;
+  onCancel?: () => void;
   priceItems?: PriceItem[];
 }
 
@@ -30,31 +30,41 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
       return;
     }
 
-    const customerId = `CUST-${Date.now().toString().slice(-6)}`;
-    const repairId = `REP-${Date.now().toString().slice(-6)}`;
+    const newRepair = {
+      id: `REP-${Date.now().toString().slice(-6)}`,
+      date: date || getTodayStr(),
+      item: repairItem,
+      dueDate,
+      price: price === '' ? 0 : price,
+      status,
+      note,
+      hasLeftPanel,
+      hasRightPanel,
+      photos,
+    };
 
     const newCustomer: Customer = {
-      id: customerId,
-      name: name.trim(),
-      phone: phone.trim(),
-      createdAt: date,
-      repairs: [
-        {
-          id: repairId,
-          date,
-          item: repairItem.trim(),
-          dueDate,
-          price: Number(price) || 0,
-          status,
-          note: note.trim(),
-          hasLeftPanel,
-          hasRightPanel,
-          photos,
-        },
-      ],
+      id: `CUST-${Date.now().toString().slice(-4)}`,
+      name,
+      phone,
+      createdAt: getTodayStr(),
+      repairs: [newRepair],
     };
 
     onAddCustomer(newCustomer, shouldPrint);
+
+    // Reset Form
+    setName('');
+    setPhone('');
+    setRepairItem('');
+    setPrice(1000);
+    setDate(getTodayStr());
+    setDueDate('');
+    setStatus('received');
+    setNote('');
+    setHasLeftPanel(false);
+    setHasRightPanel(false);
+    setPhotos([]);
   };
 
   return (
@@ -72,9 +82,29 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
       <form onSubmit={(e) => { e.preventDefault(); handleSave(false); }} className="space-y-6">
         {/* Customer Information */}
         <div className="space-y-4">
-          <h3 className="text-xs font-mono font-bold tracking-wider text-sky-400 uppercase flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5" /> 客戶基本資料
-          </h3>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h3 className="text-xs font-mono font-bold tracking-wider text-sky-400 uppercase flex items-center gap-1.5">
+              <User className="w-3.5 h-3.5" /> 客戶基本資料
+            </h3>
+
+            {/* 當前維修狀態 (位置於連絡電話上方，靠右與尾巴方框切齊) */}
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-medium text-slate-300 whitespace-nowrap">
+                當前維修狀態：
+              </label>
+              <select
+                value={status === 'pending' ? 'received' : status}
+                onChange={(e) => setStatus(e.target.value as RepairStatus)}
+                className="bg-slate-900/90 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-100 focus:outline-none focus:border-sky-500 font-semibold cursor-pointer shadow-sm"
+              >
+                <option value="received">【1. 收件建檔】</option>
+                <option value="diagnosing">【2. 故障檢測】</option>
+                <option value="repairing">【3. 維修更換】</option>
+                <option value="completed">【4. 完工待取】</option>
+              </select>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-1">
@@ -118,6 +148,7 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
             <Wrench className="w-3.5 h-3.5" /> 維修單據詳情
           </h3>
 
+          {/* 1. 維修項目 / 問題描述 */}
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="block text-xs font-medium text-slate-300">
@@ -157,6 +188,62 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
             />
           </div>
 
+          {/* 2. 側板勾選 (左側板 / 右側板) - 位於維修項目填寫區塊下方 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* 左側板 */}
+            <label
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer select-none transition-all ${
+                hasLeftPanel
+                  ? 'bg-slate-700/90 border-slate-500 text-slate-100 shadow-sm'
+                  : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={hasLeftPanel}
+                onChange={(e) => setHasLeftPanel(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-500 focus:ring-offset-slate-900 cursor-pointer accent-slate-600"
+              />
+              <div className="flex items-center justify-between flex-1">
+                <span className="text-sm font-semibold">左側板</span>
+                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
+                  hasLeftPanel 
+                    ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' 
+                    : 'bg-slate-950/40 text-slate-500 border-slate-800'
+                }`}>
+                  {hasLeftPanel ? '✓ 已勾選 (有留存)' : '未勾選 (無)'}
+                </span>
+              </div>
+            </label>
+
+            {/* 右側板 */}
+            <label
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer select-none transition-all ${
+                hasRightPanel
+                  ? 'bg-slate-700/90 border-slate-500 text-slate-100 shadow-sm'
+                  : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={hasRightPanel}
+                onChange={(e) => setHasRightPanel(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-500 focus:ring-offset-slate-900 cursor-pointer accent-slate-600"
+              />
+              <div className="flex items-center justify-between flex-1">
+                <span className="text-sm font-semibold">右側板</span>
+                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
+                  hasRightPanel 
+                    ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' 
+                    : 'bg-slate-950/40 text-slate-500 border-slate-800'
+                }`}>
+                  {hasRightPanel ? '✓ 已勾選 (有留存)' : '未勾選 (無)'}
+                </span>
+              </div>
+            </label>
+          </div>
+
+          {/* 3. 費用與日期 */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-1">
@@ -207,126 +294,58 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                當前維修狀態
-              </label>
-              <select
-                value={status === 'pending' ? 'received' : status}
-                onChange={(e) => setStatus(e.target.value as RepairStatus)}
-                className="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 font-medium"
-              >
-                <option value="received">【1. 收件建檔】</option>
-                <option value="diagnosing">【2. 故障檢測】</option>
-                <option value="repairing">【3. 維修更換】</option>
-                <option value="completed">【4. 完工待取】</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                補充說明 / 備註
-              </label>
-              <div className="relative">
-                <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="例如：附隨身碟、變壓器"
-                  className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-                />
-              </div>
+          {/* 4. 補充說明 / 備註 */}
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              補充說明 / 備註
+            </label>
+            <div className="relative">
+              <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="例如：附隨身碟、變壓器"
+                className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              />
             </div>
           </div>
 
-          {/* 側板勾選 (左側板 / 右側板) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            {/* 左側板 */}
-            <label
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer select-none transition-all ${
-                hasLeftPanel
-                  ? 'bg-slate-700/90 border-slate-500 text-slate-100 shadow-sm'
-                  : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={hasLeftPanel}
-                onChange={(e) => setHasLeftPanel(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-500 focus:ring-offset-slate-900 cursor-pointer accent-slate-600"
-              />
-              <div className="flex items-center justify-between flex-1">
-                <span className="text-sm font-semibold">左側板</span>
-                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
-                  hasLeftPanel 
-                    ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' 
-                    : 'bg-slate-950/40 text-slate-500 border-slate-800'
-                }`}>
-                  {hasLeftPanel ? '✓ 已勾選 (有)' : '未勾選 (無)'}
-                </span>
-              </div>
-            </label>
-
-            {/* 右側板 */}
-            <label
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer select-none transition-all ${
-                hasRightPanel
-                  ? 'bg-slate-700/90 border-slate-500 text-slate-100 shadow-sm'
-                  : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={hasRightPanel}
-                onChange={(e) => setHasRightPanel(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-500 focus:ring-offset-slate-900 cursor-pointer accent-slate-600"
-              />
-              <div className="flex items-center justify-between flex-1">
-                <span className="text-sm font-semibold">右側板</span>
-                <span className={`text-xs font-mono px-2 py-0.5 rounded border ${
-                  hasRightPanel 
-                    ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' 
-                    : 'bg-slate-950/40 text-slate-500 border-slate-800'
-                }`}>
-                  {hasRightPanel ? '✓ 已勾選 (有)' : '未勾選 (無)'}
-                </span>
-              </div>
-            </label>
+          {/* 5. 照片存證上傳 (相機拍照 / 選擇照片) */}
+          <div className="pt-2">
+            <PhotoUploader
+              photos={photos}
+              onChange={setPhotos}
+              maxPhotos={6}
+              title="主機外觀與零件照片存證 (選填)"
+            />
           </div>
         </div>
 
-        {/* Photo Evidence Uploader */}
-        <PhotoUploader photos={photos} onChange={setPhotos} maxPhotos={6} />
-
-        {/* Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-slate-700">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-6 border-t border-slate-700">
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-700 text-slate-300 hover:text-slate-100 font-semibold text-sm transition cursor-pointer"
+            >
+              取消返回
+            </button>
+          )}
           <button
             type="button"
-            onClick={onCancel}
-            className="px-4 py-2.5 text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer"
+            onClick={() => handleSave(true)}
+            className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-sky-500/30 text-sky-400 hover:bg-sky-500/10 font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4" /> 取消返回首頁
+            <Printer className="w-4 h-4" /> 儲存並列印 A4 單據
           </button>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <button
-              type="button"
-              onClick={() => handleSave(false)}
-              className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 border border-slate-600 flex items-center justify-center gap-2 transition cursor-pointer"
-            >
-              <Save className="w-4 h-4 text-sky-400" /> 單純儲存客戶
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleSave(true)}
-              className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 hover:brightness-110 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 transition cursor-pointer"
-            >
-              <Printer className="w-4 h-4" /> 儲存並列印
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-bold text-sm hover:brightness-110 shadow-lg shadow-sky-500/20 transition cursor-pointer"
+          >
+            儲存客戶與維修資料
+          </button>
         </div>
       </form>
     </div>
