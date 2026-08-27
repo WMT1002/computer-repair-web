@@ -29,10 +29,11 @@ interface CustomerListProps {
 
 const STATUS_OPTIONS_CONFIG: Record<
   string,
-  { label: string; bg: string; text: string; border: string; dot: string; hoverBg: string }
+  { label: string; short: string; bg: string; text: string; border: string; dot: string; hoverBg: string }
 > = {
   received: {
     label: '【1. 收件建檔】',
+    short: '1. 收件建檔',
     bg: 'bg-sky-500/15',
     text: 'text-sky-300',
     border: 'border-sky-500/40',
@@ -41,6 +42,7 @@ const STATUS_OPTIONS_CONFIG: Record<
   },
   diagnosing: {
     label: '【2. 故障檢測】',
+    short: '2. 故障檢測',
     bg: 'bg-amber-500/15',
     text: 'text-amber-300',
     border: 'border-amber-500/40',
@@ -49,6 +51,7 @@ const STATUS_OPTIONS_CONFIG: Record<
   },
   repairing: {
     label: '【3. 維修更換】',
+    short: '3. 維修更換',
     bg: 'bg-purple-500/15',
     text: 'text-purple-300',
     border: 'border-purple-500/40',
@@ -57,6 +60,7 @@ const STATUS_OPTIONS_CONFIG: Record<
   },
   completed: {
     label: '【4. 完工待取】',
+    short: '4. 完工待取',
     bg: 'bg-emerald-500/15',
     text: 'text-emerald-300',
     border: 'border-emerald-500/40',
@@ -106,11 +110,11 @@ const StatusDropdown: React.FC<{
           e.stopPropagation();
           setIsOpen((prev) => !prev);
         }}
-        className={`px-2 py-1.5 text-xs font-semibold rounded-lg border flex items-center gap-1 transition-colors cursor-pointer select-none whitespace-nowrap shrink-0 ${current.bg} ${current.text} ${current.border} ${current.hoverBg}`}
+        className={`px-1.5 sm:px-2 py-1 text-[11px] font-semibold rounded-lg border flex items-center gap-1 transition-colors cursor-pointer select-none whitespace-nowrap shrink-0 ${current.bg} ${current.text} ${current.border} ${current.hoverBg}`}
         title="點擊切換維修進度狀態"
       >
-        <span className={`w-2 h-2 rounded-full shrink-0 ${current.dot}`} />
-        <span className="whitespace-nowrap">{current.label}</span>
+        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${current.dot}`} />
+        <span className="whitespace-nowrap">{current.short}</span>
         <ChevronDown className={`w-3 h-3 shrink-0 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -354,14 +358,14 @@ export const CustomerList: React.FC<CustomerListProps> = ({
           <p className="text-slate-500 text-xs mt-1">請嘗試變更搜尋關鍵字或切換狀態篩選條目</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
           {filteredCustomers.map((customer) => {
             const latestRepair = customer.repairs[0];
 
             return (
               <div
                 key={customer.id}
-                className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-sky-500/50 rounded-xl p-4 sm:p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group"
+                className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-sky-500/50 rounded-xl p-3.5 sm:p-4 shadow-lg transition-all duration-200 flex flex-col justify-between group overflow-hidden"
               >
                 <div>
                   {/* Top Bar */}
@@ -489,37 +493,37 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                 </div>
 
                 {/* Bottom Actions - 同一行不換行，影印放在刪除右邊 */}
-                <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-700/50 gap-1.5 sm:gap-2 whitespace-nowrap">
+                <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-slate-700/50 gap-1 w-full whitespace-nowrap">
                   {/* 左側：刪除 + 列印（放在刪除右邊） */}
-                  <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
                     <button
                       type="button"
                       onClick={() => onDeleteCustomer(customer.id)}
-                      className="p-1.5 sm:p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg border border-slate-700/60 hover:border-rose-500/30 transition shrink-0 cursor-pointer"
+                      className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg border border-slate-700/60 hover:border-rose-500/30 transition shrink-0 cursor-pointer"
                       title="刪除客戶資料"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                     {latestRepair && (
                       <button
                         type="button"
                         onClick={() => onPrintCustomer(customer, latestRepair)}
-                        className="p-1.5 sm:p-2 text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg border border-slate-700/60 hover:border-emerald-500/40 transition shrink-0 cursor-pointer"
+                        className="p-1.5 text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg border border-slate-700/60 hover:border-emerald-500/40 transition shrink-0 cursor-pointer"
                         title="列印 A4 雙聯客戶取件收據"
                       >
-                        <Printer className="w-4 h-4" />
+                        <Printer className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
 
                   {/* 右側：編輯 + 狀態選單 + 詳情 */}
-                  <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
                     <button
                       type="button"
                       onClick={() => onEditCustomer(customer)}
-                      className="px-2 sm:px-2.5 py-1.5 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1 transition shrink-0 cursor-pointer"
+                      className="px-2 py-1 text-[11px] font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-0.5 transition shrink-0 cursor-pointer"
                     >
-                      <Edit3 className="w-3.5 h-3.5" /> <span className="hidden xs:inline sm:inline">編輯</span>
+                      <Edit3 className="w-3 h-3" /> <span>編輯</span>
                     </button>
                     {latestRepair && (
                       <StatusDropdown
@@ -532,9 +536,9 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     <button
                       type="button"
                       onClick={() => onSelectCustomer(customer)}
-                      className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 hover:bg-sky-500/30 flex items-center gap-1 transition shrink-0 cursor-pointer"
+                      className="px-2 py-1 text-[11px] font-semibold rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 hover:bg-sky-500/30 flex items-center gap-0.5 transition shrink-0 cursor-pointer"
                     >
-                      <span>詳情</span> <ChevronRight className="w-3.5 h-3.5" />
+                      <span>詳情</span> <ChevronRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
