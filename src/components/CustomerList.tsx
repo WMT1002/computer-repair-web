@@ -59,9 +59,9 @@ export const CustomerList: React.FC<CustomerListProps> = ({
       {/* Search & Filter Toolbar */}
       <form
         onSubmit={handleSearchSubmit}
-        className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between shadow-lg"
+        className="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700/60 flex flex-col xl:flex-row gap-3 sm:gap-4 items-stretch xl:items-center justify-between shadow-lg"
       >
-        <div className="flex flex-col sm:flex-row gap-3 flex-1">
+        <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 flex-1">
           {/* 客戶姓名搜尋 */}
           <div className="relative flex-1">
             <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -70,7 +70,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
               placeholder="搜尋客戶姓名..."
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
+              className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 pr-4 py-2 sm:py-2 text-base sm:text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
             />
           </div>
 
@@ -82,14 +82,14 @@ export const CustomerList: React.FC<CustomerListProps> = ({
               value={searchPhone}
               onChange={(e) => setSearchPhone(e.target.value)}
               placeholder="搜尋聯絡電話..."
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
+              className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 pr-4 py-2 sm:py-2 text-base sm:text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
             />
           </div>
 
           {/* 查詢按鈕 */}
           <button
             type="submit"
-            className="px-4 py-2 bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 border border-sky-500/30 rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer"
+            className="px-4 py-2.5 sm:py-2 bg-sky-500/20 text-sky-400 hover:bg-sky-500/30 border border-sky-500/30 rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer"
           >
             <Search className="w-4 h-4" />
             <span>查詢</span>
@@ -97,13 +97,13 @@ export const CustomerList: React.FC<CustomerListProps> = ({
         </div>
 
         {/* 狀態篩選 */}
-        <div className="flex items-center gap-2 self-start xl:self-auto pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-700/50">
-          <Filter className="w-4 h-4 text-slate-400" />
-          <div className="flex bg-slate-900/80 p-1 rounded-lg border border-slate-700 text-xs">
+        <div className="flex items-center gap-2 self-stretch sm:self-start xl:self-auto pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-700/50">
+          <Filter className="w-4 h-4 text-slate-400 shrink-0" />
+          <div className="grid grid-cols-3 sm:flex flex-1 bg-slate-900/80 p-1 rounded-lg border border-slate-700 text-xs">
             <button
               type="button"
               onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1.5 rounded-md font-medium transition ${
+              className={`px-2 sm:px-3 py-1.5 rounded-md font-medium text-center transition ${
                 statusFilter === 'all'
                   ? 'bg-sky-500/20 text-sky-400 font-semibold'
                   : 'text-slate-400 hover:text-slate-200'
@@ -114,7 +114,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
             <button
               type="button"
               onClick={() => setStatusFilter('pending')}
-              className={`px-3 py-1.5 rounded-md font-medium transition ${
+              className={`px-2 sm:px-3 py-1.5 rounded-md font-medium text-center transition ${
                 statusFilter === 'pending'
                   ? 'bg-amber-500/20 text-amber-400 font-semibold'
                   : 'text-slate-400 hover:text-slate-200'
@@ -125,7 +125,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
             <button
               type="button"
               onClick={() => setStatusFilter('completed')}
-              className={`px-3 py-1.5 rounded-md font-medium transition ${
+              className={`px-2 sm:px-3 py-1.5 rounded-md font-medium text-center transition ${
                 statusFilter === 'completed'
                   ? 'bg-emerald-500/20 text-emerald-400 font-semibold'
                   : 'text-slate-400 hover:text-slate-200'
@@ -282,19 +282,19 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="flex items-center justify-between pt-4 mt-2 border-t border-slate-700/50 gap-2">
+                <div className="flex items-center justify-between pt-3 sm:pt-4 mt-2 border-t border-slate-700/50 gap-2 flex-wrap">
                   <button
                     onClick={() => onDeleteCustomer(customer.id)}
-                    className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition"
+                    className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition shrink-0 cursor-pointer"
                     title="刪除客戶資料"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                     <button
                       onClick={() => onEditCustomer(customer)}
-                      className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1 transition"
+                      className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1 transition cursor-pointer"
                     >
                       <Edit3 className="w-3.5 h-3.5" /> 編輯
                     </button>
@@ -331,7 +331,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                               onTogglePickedUp?.(customer.id, latestRepair.id, false);
                             }
                           }}
-                          className={`px-2 py-1 text-xs font-semibold rounded-lg border cursor-pointer focus:outline-none transition ${
+                          className={`px-2 py-1.5 text-xs font-semibold rounded-lg border cursor-pointer focus:outline-none transition ${
                             latestRepair.status === 'completed'
                               ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/25'
                               : latestRepair.status === 'repairing'
@@ -349,9 +349,10 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                         </select>
                         <button
                           onClick={() => onPrintCustomer(customer, latestRepair)}
-                          className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-700/60 text-slate-200 border border-slate-600 hover:bg-sky-500/20 hover:text-sky-400 hover:border-sky-500/30 flex items-center gap-1 transition"
+                          className="p-1.5 text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg border border-slate-700/80 hover:border-emerald-500/40 transition cursor-pointer"
+                          title="列印 A4 雙聯客戶取件收據"
                         >
-                          <Printer className="w-3.5 h-3.5" /> 列印單據
+                          <Printer className="w-4 h-4" />
                         </button>
                       </>
                     )}

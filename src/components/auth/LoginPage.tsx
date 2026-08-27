@@ -105,12 +105,12 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#0b1329] relative overflow-hidden">
+    <div className="min-h-[100dvh] flex items-center justify-center p-3 sm:p-6 lg:p-8 bg-[#0b1329] relative overflow-x-hidden overflow-y-auto">
       {/* Background Cyber Glow */}
       <div className="pointer-events-none absolute -left-28 -top-28 h-96 w-96 rounded-full bg-sky-500/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-28 -bottom-28 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
 
-      <div className="relative w-full max-w-[1080px] grid lg:grid-cols-[1fr_1.15fr] bg-slate-900/90 backdrop-blur-xl border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-[1080px] my-auto grid lg:grid-cols-[1fr_1.15fr] bg-slate-900/90 backdrop-blur-xl border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden">
         {/* Left Feature Showcase Card */}
         <div className="hidden lg:flex flex-col justify-between p-10 bg-gradient-to-br from-slate-950 via-[#0d1f38] to-[#122847] border-r border-slate-700/60 relative overflow-hidden">
           <div className="relative z-10 flex items-center gap-3.5">
@@ -187,7 +187,7 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
         </div>
 
         {/* Right Form Card */}
-        <div className="flex flex-col justify-center p-6 sm:p-10 lg:p-12 overflow-y-auto">
+        <div className="flex flex-col justify-center p-5 sm:p-8 lg:p-12 overflow-y-auto">
           {resetSent ? (
             /* Reset Link Sent Screen */
             <div className="text-center py-6">
@@ -210,6 +210,20 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
           ) : (
             /* Login or Forgot Password Form */
             <div>
+              {/* Mobile Brand Header */}
+              <div className="flex lg:hidden items-center gap-3 mb-6 pb-4 border-b border-slate-800/80">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 via-teal-400 to-emerald-400 p-2 flex items-center justify-center text-slate-950 shadow-md shadow-sky-500/20 shrink-0">
+                  <FixFlowLogo className="w-full h-full text-slate-950" />
+                </div>
+                <div>
+                  <div className="text-lg font-black tracking-wider text-white flex items-center gap-1">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">FixFlow</span>
+                    <span>智慧維修系統</span>
+                  </div>
+                  <div className="text-[10px] text-sky-300 font-mono">SUPABASE CLOUD SECURED</div>
+                </div>
+              </div>
+
               <div className="mb-6">
                 <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-semibold mb-2">
                   <ShieldCheck className="w-3.5 h-3.5" />
@@ -246,7 +260,7 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@example.com"
-                      className="w-full pl-10 pr-4 py-2.5 bg-slate-800/80 border border-slate-700 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 rounded-xl text-slate-100 text-sm outline-none transition-all font-mono"
+                      className="w-full pl-10 pr-4 py-3 sm:py-2.5 bg-slate-800/80 border border-slate-700 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 rounded-xl text-slate-100 text-base sm:text-sm outline-none transition-all font-mono"
                     />
                   </div>
                 </div>
@@ -264,7 +278,7 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
                           setIsResetMode(true);
                           setErrorMsg('');
                         }}
-                        className="text-xs text-sky-400 hover:text-sky-300 transition-colors cursor-pointer"
+                        className="text-xs text-sky-400 hover:text-sky-300 transition-colors cursor-pointer py-1"
                       >
                         忘記密碼？
                       </button>
@@ -277,12 +291,12 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="請輸入密碼"
-                        className="w-full pl-10 pr-11 py-2.5 bg-slate-800/80 border border-slate-700 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 rounded-xl text-slate-100 text-sm outline-none transition-all font-mono"
+                        className="w-full pl-10 pr-11 py-3 sm:py-2.5 bg-slate-800/80 border border-slate-700 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 rounded-xl text-slate-100 text-base sm:text-sm outline-none transition-all font-mono"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 text-slate-400 hover:text-slate-200 cursor-pointer p-1"
+                        className="absolute right-3 text-slate-400 hover:text-slate-200 cursor-pointer p-1.5"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -294,7 +308,7 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-3 py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="w-full mt-4 py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 active:scale-[0.98] text-slate-950 font-bold text-base sm:text-sm min-h-[48px] shadow-lg shadow-sky-500/20 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   {loading ? (
                     <>

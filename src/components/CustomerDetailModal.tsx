@@ -85,38 +85,41 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
     <div className="modal-overlay">
       <div className="modal-content fade-in flex flex-col">
         {/* Modal Header */}
-        <div className="p-6 border-b border-slate-700 flex items-center justify-between bg-slate-800/90 sticky top-0 z-10 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold font-mono">
+        <div className="p-4 sm:p-6 border-b border-slate-700 flex items-center justify-between bg-slate-800/90 sticky top-0 z-10 backdrop-blur-md gap-2 flex-wrap sm:flex-nowrap">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold font-mono shrink-0">
               {customer.name.slice(0, 1)}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold text-slate-100">{customer.name}</h2>
-                <span className="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-700">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-100 truncate">{customer.name}</h2>
+                <span className="text-[11px] sm:text-xs font-mono text-slate-400 bg-slate-900 px-1.5 sm:px-2 py-0.5 rounded border border-slate-700 shrink-0">
                   {customer.id}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mt-1">
-                <Phone className="w-3.5 h-3.5 text-sky-400" />
-                <span>{customer.phone}</span>
-                <span className="text-slate-600">•</span>
-                <span>建立於 {customer.createdAt}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono text-slate-400 mt-0.5 flex-wrap">
+                <span className="flex items-center gap-1">
+                  <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-400" />
+                  <span>{customer.phone}</span>
+                </span>
+                <span className="text-slate-600 hidden sm:inline">•</span>
+                <span className="hidden sm:inline">建立於 {customer.createdAt}</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={() => onEditCustomer(customer)}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 flex items-center gap-1.5 transition cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 flex items-center gap-1 sm:gap-1.5 transition cursor-pointer"
               title="編輯客戶姓名、電話與最新維修紀錄"
             >
-              <Edit3 className="w-3.5 h-3.5" /> 編輯資料
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>編輯資料</span>
             </button>
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-700 rounded-lg transition cursor-pointer"
+              className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-700 rounded-lg transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -124,7 +127,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-6 overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-mono font-bold tracking-wider text-sky-400 uppercase">
               維修歷史紀錄 ({customer.repairs.length} 筆)
