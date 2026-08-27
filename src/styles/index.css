@@ -392,3 +392,14 @@ body::before {
 .warranty-print-container {
   display: none;
 }
+
+/* Login Page Feature Cards Subtext High Contrast White */
+.login-feature-subtext,
+html.light-mode .login-feature-subtext,
+html.light-mode div.from-slate-950 .login-feature-subtext,
+html.light-mode div.bg-slate-950 .login-feature-subtext,
+div.from-slate-950 .login-feature-subtext {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+

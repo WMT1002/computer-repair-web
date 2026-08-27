@@ -143,31 +143,39 @@ export const LoginPage: React.FC<LoginPageProps> = () => {
 
             <div className="grid grid-cols-2 gap-3.5">
               <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 backdrop-blur-md">
-                <div className="flex items-center gap-2 text-sky-400 text-xs font-bold mb-1">
+                <div className="flex items-center gap-2 !text-sky-400 text-sky-400 text-xs font-bold mb-1">
                   <Cloud className="w-4 h-4" /> 雲端即時同步
                 </div>
-                <div className="text-[11px] text-white">PostgreSQL 雲端自動儲存</div>
+                <div className="text-[11px] font-medium !text-white text-white login-feature-subtext" style={{ color: '#ffffff' }}>
+                  PostgreSQL 雲端自動儲存
+                </div>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 backdrop-blur-md">
-                <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold mb-1">
+                <div className="flex items-center gap-2 !text-emerald-400 text-emerald-400 text-xs font-bold mb-1">
                   <Printer className="w-4 h-4" /> A4 二聯單列印
                 </div>
-                <div className="text-[11px] text-white">顧客聯與店家存根聯</div>
+                <div className="text-[11px] font-medium !text-white text-white login-feature-subtext" style={{ color: '#ffffff' }}>
+                  顧客聯與店家存根聯
+                </div>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 backdrop-blur-md">
-                <div className="flex items-center gap-2 text-amber-400 text-xs font-bold mb-1">
+                <div className="flex items-center gap-2 !text-amber-400 text-amber-400 text-xs font-bold mb-1">
                   <FileSpreadsheet className="w-4 h-4" /> 零件價格表
                 </div>
-                <div className="text-[11px] text-white">快速套用與標準化報價</div>
+                <div className="text-[11px] font-medium !text-white text-white login-feature-subtext" style={{ color: '#ffffff' }}>
+                  快速套用與標準化報價
+                </div>
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 backdrop-blur-md">
-                <div className="flex items-center gap-2 text-purple-400 text-xs font-bold mb-1">
+                <div className="flex items-center gap-2 !text-purple-400 text-purple-400 text-xs font-bold mb-1">
                   <Sparkles className="w-4 h-4" /> 角色權限分流
                 </div>
-                <div className="text-[11px] text-white">管理員與工程師專屬權限</div>
+                <div className="text-[11px] font-medium !text-white text-white login-feature-subtext" style={{ color: '#ffffff' }}>
+                  管理員與工程師專屬權限
+                </div>
               </div>
             </div>
           </div>
