@@ -14,6 +14,7 @@ import {
   Edit3,
   ChevronDown,
   Check,
+  X,
 } from 'lucide-react';
 
 interface CustomerListProps {
@@ -164,9 +165,13 @@ export const CustomerList: React.FC<CustomerListProps> = ({
   const [searchName, setSearchName] = useState('');
   const [searchPhone, setSearchPhone] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'completed'>('all');
+  const [hasQueried, setHasQueried] = useState(false);
 
   const isSearchActive =
-    searchName.trim() !== '' || searchPhone.trim() !== '' || statusFilter !== 'all';
+    searchName.trim() !== '' ||
+    searchPhone.trim() !== '' ||
+    statusFilter !== 'all' ||
+    hasQueried;
 
   const filteredCustomers = customers.filter((customer) => {
     const matchesName =
@@ -191,6 +196,8 @@ export const CustomerList: React.FC<CustomerListProps> = ({
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setHasQueried(true);
+    (document.activeElement as HTMLElement)?.blur();
   };
 
   return (
@@ -207,10 +214,31 @@ export const CustomerList: React.FC<CustomerListProps> = ({
             <input
               type="text"
               value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchName(val);
+                if (!val.trim() && !searchPhone.trim() && statusFilter === 'all') {
+                  setHasQueried(false);
+                }
+              }}
               placeholder="搜尋客戶姓名..."
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 pr-4 py-2 sm:py-2 text-base sm:text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
+              className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 pr-9 py-2 sm:py-2 text-base sm:text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
             />
+            {searchName && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchName('');
+                  if (!searchPhone.trim() && statusFilter === 'all') {
+                    setHasQueried(false);
+                  }
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-200 transition cursor-pointer"
+                title="清除"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           {/* 聯絡電話搜尋 */}
@@ -219,10 +247,31 @@ export const CustomerList: React.FC<CustomerListProps> = ({
             <input
               type="text"
               value={searchPhone}
-              onChange={(e) => setSearchPhone(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchPhone(val);
+                if (!searchName.trim() && !val.trim() && statusFilter === 'all') {
+                  setHasQueried(false);
+                }
+              }}
               placeholder="搜尋聯絡電話..."
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 pr-4 py-2 sm:py-2 text-base sm:text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
+              className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-10 pr-9 py-2 sm:py-2 text-base sm:text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
             />
+            {searchPhone && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchPhone('');
+                  if (!searchName.trim() && statusFilter === 'all') {
+                    setHasQueried(false);
+                  }
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-200 transition cursor-pointer"
+                title="清除"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           {/* 查詢按鈕 */}
@@ -241,9 +290,12 @@ export const CustomerList: React.FC<CustomerListProps> = ({
           <div className="grid grid-cols-3 sm:flex flex-1 bg-slate-900/80 p-1 rounded-lg border border-slate-700 text-xs">
             <button
               type="button"
-              onClick={() => setStatusFilter('all')}
+              onClick={() => {
+                setStatusFilter('all');
+                setHasQueried(true);
+              }}
               className={`px-2 sm:px-3 py-1.5 rounded-md font-medium text-center transition ${
-                statusFilter === 'all'
+                statusFilter === 'all' && isSearchActive
                   ? 'bg-sky-500/20 text-sky-400 font-semibold'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
@@ -252,7 +304,10 @@ export const CustomerList: React.FC<CustomerListProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => setStatusFilter('pending')}
+              onClick={() => {
+                setStatusFilter('pending');
+                setHasQueried(true);
+              }}
               className={`px-2 sm:px-3 py-1.5 rounded-md font-medium text-center transition ${
                 statusFilter === 'pending'
                   ? 'bg-amber-500/20 text-amber-400 font-semibold'
@@ -263,7 +318,10 @@ export const CustomerList: React.FC<CustomerListProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => setStatusFilter('completed')}
+              onClick={() => {
+                setStatusFilter('completed');
+                setHasQueried(true);
+              }}
               className={`px-2 sm:px-3 py-1.5 rounded-md font-medium text-center transition ${
                 statusFilter === 'completed'
                   ? 'bg-emerald-500/20 text-emerald-400 font-semibold'
@@ -277,12 +335,23 @@ export const CustomerList: React.FC<CustomerListProps> = ({
       </form>
 
       {/* Customer Cards Grid or Initial Prompt */}
-      {filteredCustomers.length === 0 ? (
-        <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-12 text-center">
-          <User className="w-12 h-12 text-slate-500 mx-auto mb-3 opacity-50" />
-          <p className="text-slate-400 font-medium">
-            {isSearchActive ? '找不到符合搜尋條件的客戶資料' : '目前尚無客戶資料，請點擊上方「新增客戶紀錄」進行建立'}
+      {!isSearchActive ? (
+        <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-12 text-center fade-in shadow-inner">
+          <div className="w-16 h-16 rounded-full bg-sky-500/10 border border-sky-500/20 flex items-center justify-center mx-auto mb-4 text-sky-400 shadow-inner">
+            <Search className="w-8 h-8" />
+          </div>
+          <h3 className="text-slate-200 font-bold text-lg">請輸入客戶姓名或電話進行搜尋</h3>
+          <p className="text-slate-400 text-xs mt-1.5 max-w-md mx-auto leading-relaxed">
+            為保持畫面整潔，請在上方欄位輸入欲查詢的客戶姓名或聯絡電話，按下 Enter 鍵或點擊「查詢」即可顯示對應的維修紀錄。
           </p>
+        </div>
+      ) : filteredCustomers.length === 0 ? (
+        <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-12 text-center fade-in">
+          <div className="w-16 h-16 rounded-full bg-slate-700/50 flex items-center justify-center mx-auto mb-4 text-slate-400">
+            <Search className="w-8 h-8" />
+          </div>
+          <p className="text-slate-300 font-medium text-lg">查無符合條件的客戶資料</p>
+          <p className="text-slate-500 text-xs mt-1">請嘗試變更搜尋關鍵字或切換狀態篩選條目</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
