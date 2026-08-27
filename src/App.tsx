@@ -16,7 +16,11 @@ import {
   fetchCloudPriceList,
   syncCloudPriceList,
   deleteCloudPriceItem,
+  fetchCloudWarranties,
+  syncCloudWarranties,
+  deleteCloudWarranty,
 } from './utils/storage';
+import { supabase } from './utils/supabaseClient';
 import { Header } from './components/Header';
 import { Navigation, TabType } from './components/Navigation';
 import { CustomerList } from './components/CustomerList';
@@ -93,7 +97,7 @@ export function App() {
     repairId: string;
   } | null>(null);
 
-  // Initialize customers and price list from LocalStorage then sync Supabase Cloud when logged in
+  // Initialize customers, warranties, and price list from LocalStorage then sync Supabase Cloud when logged in
   useEffect(() => {
     if (!user) return;
 
@@ -106,15 +110,45 @@ export function App() {
     const localWarranties = getStoredWarranties();
     setWarranties(localWarranties);
 
-    // Async Cloud Fetch
+    // 1. Fetch Cloud Customers with smart merge (preserve local picked-up status & sync up)
     fetchCloudCustomers().then((cloudCust) => {
       if (cloudCust && cloudCust.length > 0) {
-        setCustomers(cloudCust);
+        let needsSyncToCloud = false;
+        const merged = cloudCust.map((cC) => {
+          const lC = localCust.find((l) => l.id === cC.id);
+          if (!lC) return cC;
+          const mergedRepairs = cC.repairs.map((cR) => {
+            const lR = lC.repairs.find((r) => r.id === cR.id);
+            if (!lR) return cR;
+            const isPickedUp = cR.isPickedUp || Boolean(lR.isPickedUp);
+            const pickedUpDate = cR.pickedUpDate || lR.pickedUpDate;
+            if (isPickedUp !== cR.isPickedUp || pickedUpDate !== cR.pickedUpDate) {
+              needsSyncToCloud = true;
+            }
+            return {
+              ...cR,
+              isPickedUp,
+              pickedUpDate,
+            };
+          });
+          return { ...cC, repairs: mergedRepairs };
+        });
+
+        const cloudIds = new Set(cloudCust.map((c) => c.id));
+        const localOnly = localCust.filter((l) => !cloudIds.has(l.id));
+        const finalCust = [...merged, ...localOnly];
+
+        setCustomers(finalCust);
+        saveCustomers(finalCust);
+        if (needsSyncToCloud || localOnly.length > 0) {
+          syncCloudCustomers(finalCust);
+        }
       } else {
         syncCloudCustomers(localCust);
       }
     });
 
+    // 2. Fetch Cloud Price List
     fetchCloudPriceList().then((cloudPrices) => {
       if (cloudPrices && cloudPrices.length > 0) {
         setPriceItems(cloudPrices);
@@ -122,6 +156,90 @@ export function App() {
         syncCloudPriceList(localPrices);
       }
     });
+
+    // 3. Fetch Cloud Warranties with smart merge
+    fetchCloudWarranties().then((cloudWarranties) => {
+      if (cloudWarranties && cloudWarranties.length > 0) {
+        const cloudIds = new Set(cloudWarranties.map((w) => w.id));
+        const localOnly = localWarranties.filter((w) => !cloudIds.has(w.id));
+        let needsSyncToCloud = localOnly.length > 0;
+
+        const merged = cloudWarranties.map((cW) => {
+          const lW = localWarranties.find((w) => w.id === cW.id);
+          if (!lW) return cW;
+          const startDate = cW.startDate || lW.startDate;
+          if (startDate !== cW.startDate) needsSyncToCloud = true;
+          return {
+            ...cW,
+            startDate,
+          };
+        });
+
+        const finalWarranties = [...merged, ...localOnly];
+        setWarranties(finalWarranties);
+        saveWarranties(finalWarranties);
+        if (needsSyncToCloud) {
+          syncCloudWarranties(finalWarranties);
+        }
+      } else {
+        syncCloudWarranties(localWarranties);
+      }
+    });
+  }, [user]);
+
+  // Realtime multi-device sync & Auto-refresh on Tab Focus / Browser Window change
+  useEffect(() => {
+    if (!user) return;
+
+    const handleRefocus = () => {
+      if (document.visibilityState === 'visible') {
+        fetchCloudCustomers().then((data) => data && setCustomers(data));
+        fetchCloudWarranties().then((data) => data && setWarranties(data));
+        fetchCloudPriceList().then((data) => data && setPriceItems(data));
+      }
+    };
+
+    window.addEventListener('visibilitychange', handleRefocus);
+    window.addEventListener('focus', handleRefocus);
+
+    // Supabase Realtime broadcast listener for all devices
+    const channel = supabase
+      .channel('fixflow_realtime_sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'repair_records' },
+        () => {
+          fetchCloudCustomers().then((data) => data && setCustomers(data));
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'repair_customers' },
+        () => {
+          fetchCloudCustomers().then((data) => data && setCustomers(data));
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'repair_warranties' },
+        () => {
+          fetchCloudWarranties().then((data) => data && setWarranties(data));
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'repair_price_items' },
+        () => {
+          fetchCloudPriceList().then((data) => data && setPriceItems(data));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      window.removeEventListener('visibilitychange', handleRefocus);
+      window.removeEventListener('focus', handleRefocus);
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   // Sync state to local storage and Supabase Cloud
@@ -179,7 +297,7 @@ export function App() {
     updateCustomersState(updated);
     setEditingCustomer(null);
 
-    // Synchronize warranty records start date for this customer's repairs
+    // Synchronize warranty records start date for this customer's repairs & cloud sync
     setWarranties((prev) => {
       let hasChanges = false;
       const updatedWarranties = prev.map((w) => {
@@ -199,6 +317,7 @@ export function App() {
       });
       if (hasChanges) {
         saveWarranties(updatedWarranties);
+        syncCloudWarranties(updatedWarranties);
         return updatedWarranties;
       }
       return prev;
@@ -265,6 +384,7 @@ export function App() {
           return w;
         });
         saveWarranties(updatedWarranties);
+        syncCloudWarranties(updatedWarranties);
         return updatedWarranties;
       });
     }
@@ -288,7 +408,7 @@ export function App() {
     });
     updateCustomersState(updated);
 
-    // Synchronize warranty records start date for this ticket!
+    // Synchronize warranty records start date for this ticket & sync to Supabase!
     setWarranties((prev) => {
       const updatedWarranties = prev.map((w) => {
         if (w.repairId === repairId) {
@@ -300,6 +420,7 @@ export function App() {
         return w;
       });
       saveWarranties(updatedWarranties);
+      syncCloudWarranties(updatedWarranties);
       return updatedWarranties;
     });
   };
@@ -311,6 +432,7 @@ export function App() {
         ? prev.map((w) => (w.id === newRecord.id ? newRecord : w))
         : [newRecord, ...prev];
       saveWarranties(updated);
+      syncCloudWarranties(updated);
       return updated;
     });
   };
@@ -319,6 +441,7 @@ export function App() {
     setWarranties((prev) => {
       const updated = prev.filter((w) => w.id !== warrantyId);
       saveWarranties(updated);
+      deleteCloudWarranty(warrantyId);
       return updated;
     });
   };

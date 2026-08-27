@@ -211,7 +211,9 @@ export async function fetchCloudCustomers(): Promise<Customer[] | null> {
           item: r.item,
           dueDate: r.due_date || '',
           price: Number(r.price) || 0,
-          status: r.status as 'pending' | 'completed',
+          status: r.status as any,
+          isPickedUp: Boolean(r.is_picked_up),
+          pickedUpDate: r.picked_up_date || undefined,
           note: r.note || '',
           hasLeftPanel: Boolean(r.has_left_panel),
           hasRightPanel: Boolean(r.has_right_panel),
@@ -253,6 +255,8 @@ export async function syncCloudCustomers(customers: Customer[]): Promise<void> {
           due_date: r.dueDate,
           price: r.price,
           status: r.status,
+          is_picked_up: Boolean(r.isPickedUp),
+          picked_up_date: r.pickedUpDate || null,
           note: r.note,
           has_left_panel: Boolean(r.hasLeftPanel),
           has_right_panel: Boolean(r.hasRightPanel),
@@ -403,7 +407,9 @@ export async function fetchPublicTrackingData(query: string): Promise<PublicTrac
           item: r.item,
           dueDate: r.due_date || '',
           price: Number(r.price) || 0,
-          status: r.status as 'pending' | 'completed',
+          status: r.status as any,
+          isPickedUp: Boolean(r.is_picked_up),
+          pickedUpDate: r.picked_up_date || undefined,
           note: r.note || '',
           hasLeftPanel: Boolean(r.has_left_panel),
           hasRightPanel: Boolean(r.has_right_panel),
@@ -524,4 +530,71 @@ export const saveWarranties = (warranties: PartWarrantyRecord[]): void => {
     console.error('Failed to save warranties to localStorage:', e);
   }
 };
+
+// Supabase Cloud Sync Operations for Warranties
+export async function fetchCloudWarranties(): Promise<PartWarrantyRecord[] | null> {
+  try {
+    const { data, error } = await supabase
+      .from('repair_warranties')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error || !data) return null;
+
+    const warranties: PartWarrantyRecord[] = data.map((w: any) => ({
+      id: w.id,
+      customerId: w.customer_id || '',
+      customerName: w.customer_name,
+      customerPhone: w.customer_phone,
+      repairId: w.repair_id || undefined,
+      partName: w.part_name,
+      partCategory: w.part_category,
+      serialNumber: w.serial_number,
+      warrantyDays: Number(w.warranty_days) || 30,
+      startDate: w.start_date || undefined,
+      supplier: w.supplier || undefined,
+      note: w.note || undefined,
+      createdAt: w.created_at || new Date().toISOString().split('T')[0],
+    }));
+
+    saveWarranties(warranties);
+    return warranties;
+  } catch (err) {
+    console.error('Failed to fetch warranties from Supabase:', err);
+    return null;
+  }
+}
+
+export async function syncCloudWarranties(warranties: PartWarrantyRecord[]): Promise<void> {
+  try {
+    for (const w of warranties) {
+      await supabase.from('repair_warranties').upsert({
+        id: w.id,
+        customer_id: w.customerId || null,
+        customer_name: w.customerName,
+        customer_phone: w.customerPhone,
+        repair_id: w.repairId || null,
+        part_name: w.partName,
+        part_category: w.partCategory,
+        serial_number: w.serialNumber,
+        warranty_days: w.warrantyDays,
+        start_date: w.startDate || null,
+        supplier: w.supplier || null,
+        note: w.note || null,
+        created_at: w.createdAt,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  } catch (err) {
+    console.error('Failed to sync warranties to Supabase:', err);
+  }
+}
+
+export async function deleteCloudWarranty(id: string): Promise<void> {
+  try {
+    await supabase.from('repair_warranties').delete().eq('id', id);
+  } catch (err) {
+    console.error('Failed to delete warranty from Supabase:', err);
+  }
+}
 
