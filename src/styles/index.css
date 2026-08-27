@@ -91,42 +91,57 @@ html.light-mode nav button:hover {
   background-color: #f1f5f9 !important;
 }
 
-html.light-mode nav button.tab-active,
-html.light-mode nav button.tab-active span {
+html.light-mode nav button.tab-active {
   color: #0369a1 !important;
   background-color: #e0f2fe !important;
   border-color: #7dd3fc !important;
 }
+html.light-mode nav button.tab-active span {
+  color: #0369a1 !important;
+  background-color: transparent !important;
+}
 
-html.light-mode nav button.tab-active.tab-emerald,
-html.light-mode nav button.tab-active.tab-emerald span {
+html.light-mode nav button.tab-active.tab-emerald {
   color: #047857 !important;
   background-color: #d1fae5 !important;
   border-color: #6ee7b7 !important;
 }
+html.light-mode nav button.tab-active.tab-emerald span {
+  color: #047857 !important;
+  background-color: transparent !important;
+}
 
-html.light-mode nav button.tab-active.tab-cyan,
-html.light-mode nav button.tab-active.tab-cyan span {
+html.light-mode nav button.tab-active.tab-cyan {
   color: #0e7490 !important;
   background-color: #cffafe !important;
   border-color: #67e8f9 !important;
 }
+html.light-mode nav button.tab-active.tab-cyan span {
+  color: #0e7490 !important;
+  background-color: transparent !important;
+}
 
 /* Header Action Buttons in Light Mode */
-html.light-mode .btn-account-mgmt,
-html.light-mode .btn-account-mgmt span,
-html.light-mode .btn-account-mgmt svg {
+html.light-mode .btn-account-mgmt {
   color: #6b21a8 !important; /* 深紫色 (Purple 800) */
   border-color: #c084fc !important;
   background-color: rgba(168, 85, 247, 0.15) !important;
 }
+html.light-mode .btn-account-mgmt span,
+html.light-mode .btn-account-mgmt svg {
+  color: #6b21a8 !important;
+  background-color: transparent !important;
+}
 
-html.light-mode .btn-customer-tracking,
-html.light-mode .btn-customer-tracking span,
-html.light-mode .btn-customer-tracking svg {
+html.light-mode .btn-customer-tracking {
   color: #0369a1 !important; /* 深藍色 (Sky 700) */
   border-color: #38bdf8 !important;
   background-color: rgba(14, 165, 233, 0.15) !important;
+}
+html.light-mode .btn-customer-tracking span,
+html.light-mode .btn-customer-tracking svg {
+  color: #0369a1 !important;
+  background-color: transparent !important;
 }
 
 /* Solid Blue Action Buttons */
