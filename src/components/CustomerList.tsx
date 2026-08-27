@@ -1,6 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Customer, RepairRecord, RepairStatus, getStatusLabel } from '../types';
-import { Search, Phone, User, Calendar, CheckCircle2, Clock, Printer, Trash2, ChevronRight, Filter, Edit3 } from 'lucide-react';
+import {
+  Search,
+  Phone,
+  User,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Printer,
+  Trash2,
+  ChevronRight,
+  Filter,
+  Edit3,
+  ChevronDown,
+  Check,
+} from 'lucide-react';
 
 interface CustomerListProps {
   customers: Customer[];
@@ -11,6 +25,132 @@ interface CustomerListProps {
   onTogglePickedUp?: (customerId: string, repairId: string, isPickedUp: boolean) => void;
   onDeleteCustomer: (customerId: string) => void;
 }
+
+const STATUS_OPTIONS_CONFIG: Record<
+  string,
+  { label: string; bg: string; text: string; border: string; dot: string; hoverBg: string }
+> = {
+  received: {
+    label: '【1. 收件建檔】',
+    bg: 'bg-sky-500/15',
+    text: 'text-sky-300',
+    border: 'border-sky-500/40',
+    dot: 'bg-sky-400',
+    hoverBg: 'hover:bg-sky-500/25',
+  },
+  diagnosing: {
+    label: '【2. 故障檢測】',
+    bg: 'bg-amber-500/15',
+    text: 'text-amber-300',
+    border: 'border-amber-500/40',
+    dot: 'bg-amber-400',
+    hoverBg: 'hover:bg-amber-500/25',
+  },
+  repairing: {
+    label: '【3. 維修更換】',
+    bg: 'bg-purple-500/15',
+    text: 'text-purple-300',
+    border: 'border-purple-500/40',
+    dot: 'bg-purple-400',
+    hoverBg: 'hover:bg-purple-500/25',
+  },
+  completed: {
+    label: '【4. 完工待取】',
+    bg: 'bg-emerald-500/15',
+    text: 'text-emerald-300',
+    border: 'border-emerald-500/40',
+    dot: 'bg-emerald-400',
+    hoverBg: 'hover:bg-emerald-500/25',
+  },
+};
+
+const StatusDropdown: React.FC<{
+  status: RepairStatus;
+  onSelect: (status: RepairStatus) => void;
+}> = ({ status, onSelect }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const normalized = status === 'pending' ? 'received' : status;
+  const current = STATUS_OPTIONS_CONFIG[normalized] || STATUS_OPTIONS_CONFIG.received;
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  const items: { key: RepairStatus; label: string }[] = [
+    { key: 'received', label: '【1. 收件建檔】' },
+    { key: 'diagnosing', label: '【2. 故障檢測】' },
+    { key: 'repairing', label: '【3. 維修更換】' },
+    { key: 'completed', label: '【4. 完工待取】' },
+  ];
+
+  return (
+    <div className="relative inline-block" ref={containerRef}>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen((prev) => !prev);
+        }}
+        className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border flex items-center gap-1.5 transition-colors cursor-pointer select-none ${current.bg} ${current.text} ${current.border} ${current.hoverBg}`}
+        title="點擊切換維修進度狀態"
+      >
+        <span className={`w-2 h-2 rounded-full ${current.dot}`} />
+        <span>{current.label}</span>
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div
+          className="absolute bottom-full mb-1.5 right-0 sm:left-0 w-44 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1 z-50 animate-fadeIn"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="text-[10px] font-mono text-slate-400 px-2 py-1 border-b border-slate-800 mb-1">
+            快速切換進度
+          </div>
+          {items.map((item) => {
+            const isSelected = normalized === item.key;
+            const cfg = STATUS_OPTIONS_CONFIG[item.key];
+            return (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => {
+                  onSelect(item.key);
+                  setIsOpen(false);
+                }}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer text-left my-0.5 ${
+                  isSelected
+                    ? `${cfg.bg} ${cfg.text} border ${cfg.border}`
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${cfg.dot}`} />
+                  <span>{item.label}</span>
+                </div>
+                {isSelected && <Check className="w-3.5 h-3.5" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const CustomerList: React.FC<CustomerListProps> = ({
   customers,
@@ -51,7 +191,6 @@ export const CustomerList: React.FC<CustomerListProps> = ({
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    (document.activeElement as HTMLElement)?.blur();
   };
 
   return (
@@ -138,33 +277,22 @@ export const CustomerList: React.FC<CustomerListProps> = ({
       </form>
 
       {/* Customer Cards Grid or Initial Prompt */}
-      {!isSearchActive ? (
-        <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-12 text-center fade-in">
-          <div className="w-16 h-16 rounded-full bg-sky-500/10 border border-sky-500/20 flex items-center justify-center mx-auto mb-4 text-sky-400 shadow-inner">
-            <Search className="w-8 h-8" />
-          </div>
-          <h3 className="text-slate-200 font-bold text-lg">請輸入客戶姓名或電話進行搜尋</h3>
-          <p className="text-slate-400 text-xs mt-1.5 max-w-md mx-auto">
-            為保持首頁畫面整潔，請在上方欄位輸入欲查詢的客戶姓名或聯絡電話，按下 Enter 鍵或點擊「查詢」即可顯示對應的維修紀錄。
+      {filteredCustomers.length === 0 ? (
+        <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-12 text-center">
+          <User className="w-12 h-12 text-slate-500 mx-auto mb-3 opacity-50" />
+          <p className="text-slate-400 font-medium">
+            {isSearchActive ? '找不到符合搜尋條件的客戶資料' : '目前尚無客戶資料，請點擊上方「新增客戶紀錄」進行建立'}
           </p>
         </div>
-      ) : filteredCustomers.length === 0 ? (
-        <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-12 text-center fade-in">
-          <div className="w-16 h-16 rounded-full bg-slate-700/50 flex items-center justify-center mx-auto mb-4 text-slate-400">
-            <Search className="w-8 h-8" />
-          </div>
-          <p className="text-slate-300 font-medium text-lg">查無符合條件的客戶資料</p>
-          <p className="text-slate-500 text-xs mt-1">請嘗試變更搜尋關鍵字或切換狀態篩選條目</p>
-        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCustomers.map((customer) => {
-            const latestRepair = customer.repairs[customer.repairs.length - 1];
+            const latestRepair = customer.repairs[0];
 
             return (
               <div
                 key={customer.id}
-                className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-sky-500/50 rounded-xl p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group"
+                className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-sky-500/50 rounded-xl p-4 sm:p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group"
               >
                 <div>
                   {/* Top Bar */}
@@ -300,31 +428,12 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     </button>
                     {latestRepair && (
                       <>
-                        <select
-                          value={latestRepair.status === 'pending' ? 'received' : latestRepair.status}
-                          onChange={(e) => {
-                            const newStatus = e.target.value as RepairStatus;
+                        <StatusDropdown
+                          status={latestRepair.status}
+                          onSelect={(newStatus) => {
                             onToggleStatus(customer.id, latestRepair.id, newStatus);
-                            if (newStatus !== 'completed' && latestRepair.isPickedUp) {
-                              onTogglePickedUp?.(customer.id, latestRepair.id, false);
-                            }
                           }}
-                          className={`px-2 py-1.5 text-xs font-semibold rounded-lg border cursor-pointer focus:outline-none transition ${
-                            latestRepair.status === 'completed'
-                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/25'
-                              : latestRepair.status === 'repairing'
-                              ? 'bg-purple-500/15 text-purple-300 border-purple-500/40 hover:bg-purple-500/25'
-                              : latestRepair.status === 'diagnosing'
-                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/40 hover:bg-amber-500/25'
-                              : 'bg-sky-500/15 text-sky-300 border-sky-500/40 hover:bg-sky-500/25'
-                          }`}
-                          title="快速切換維修進度狀態"
-                        >
-                          <option value="received" className="bg-slate-900 text-slate-100">【1. 收件建檔】</option>
-                          <option value="diagnosing" className="bg-slate-900 text-slate-100">【2. 故障檢測】</option>
-                          <option value="repairing" className="bg-slate-900 text-slate-100">【3. 維修更換】</option>
-                          <option value="completed" className="bg-slate-900 text-slate-100">【4. 完工待取】</option>
-                        </select>
+                        />
                         <button
                           onClick={() => onPrintCustomer(customer, latestRepair)}
                           className="p-1.5 text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg border border-slate-700/80 hover:border-emerald-500/40 transition cursor-pointer"
@@ -336,7 +445,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     )}
                     <button
                       onClick={() => onSelectCustomer(customer)}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 hover:bg-sky-500/30 flex items-center gap-1 transition"
+                      className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 hover:bg-sky-500/30 flex items-center gap-1 transition cursor-pointer"
                     >
                       詳情 <ChevronRight className="w-3.5 h-3.5" />
                     </button>

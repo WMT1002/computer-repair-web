@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Customer, RepairRecord, RepairStatus, ShopInfo, PriceItem, PartWarrantyRecord } from './types';
 import {
   getStoredCustomers,
@@ -11,6 +11,7 @@ import {
   saveWarranties,
   fetchCloudCustomers,
   syncCloudCustomers,
+  syncSingleCloudRepairRecord,
   deleteCloudCustomer,
   deleteCloudRepairRecord,
   fetchCloudPriceList,
@@ -43,6 +44,7 @@ export function App() {
   const { user, isLoading } = useAuth();
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const lastLocalActionTime = useRef<number>(0);
 
   // Check URL query parameters for public tracking
   const getInitialTrackId = () => {
@@ -202,29 +204,35 @@ export function App() {
     window.addEventListener('visibilitychange', handleRefocus);
     window.addEventListener('focus', handleRefocus);
 
+    // Debounced realtime broadcast fetch to prevent flickering loops
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    const triggerDebouncedFetch = () => {
+      if (Date.now() - lastLocalActionTime.current < 2500) return;
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (Date.now() - lastLocalActionTime.current < 2500) return;
+        fetchCloudCustomers().then((data) => data && setCustomers(data));
+        fetchCloudWarranties().then((data) => data && setWarranties(data));
+      }, 600);
+    };
+
     // Supabase Realtime broadcast listener for all devices
     const channel = supabase
       .channel('fixflow_realtime_sync')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'repair_records' },
-        () => {
-          fetchCloudCustomers().then((data) => data && setCustomers(data));
-        }
+        triggerDebouncedFetch
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'repair_customers' },
-        () => {
-          fetchCloudCustomers().then((data) => data && setCustomers(data));
-        }
+        triggerDebouncedFetch
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'repair_warranties' },
-        () => {
-          fetchCloudWarranties().then((data) => data && setWarranties(data));
-        }
+        triggerDebouncedFetch
       )
       .on(
         'postgres_changes',
@@ -238,15 +246,19 @@ export function App() {
     return () => {
       window.removeEventListener('visibilitychange', handleRefocus);
       window.removeEventListener('focus', handleRefocus);
+      if (debounceTimer) clearTimeout(debounceTimer);
       supabase.removeChannel(channel);
     };
   }, [user]);
 
   // Sync state to local storage and Supabase Cloud
-  const updateCustomersState = (updated: Customer[]) => {
+  const updateCustomersState = (updated: Customer[], syncCloud = true) => {
+    lastLocalActionTime.current = Date.now();
     setCustomers(updated);
     saveCustomers(updated);
-    syncCloudCustomers(updated);
+    if (syncCloud) {
+      syncCloudCustomers(updated);
+    }
 
     if (selectedCustomer) {
       const refreshed = updated.find((c) => c.id === selectedCustomer.id);
@@ -255,6 +267,7 @@ export function App() {
   };
 
   const updatePriceItemsState = (updated: PriceItem[]) => {
+    lastLocalActionTime.current = Date.now();
     setPriceItems(updated);
     savePriceList(updated);
     syncCloudPriceList(updated);
@@ -292,6 +305,7 @@ export function App() {
   };
 
   const handleSaveCustomer = (updatedCustomer: Customer) => {
+    lastLocalActionTime.current = Date.now();
     const todayStr = new Date().toISOString().split('T')[0];
     const updated = customers.map((c) => (c.id === updatedCustomer.id ? updatedCustomer : c));
     updateCustomersState(updated);
@@ -325,6 +339,7 @@ export function App() {
   };
 
   const handleDeleteCustomer = (customerId: string) => {
+    lastLocalActionTime.current = Date.now();
     if (!window.confirm('確定要刪除此客戶的整筆資料與維修歷史嗎？此操作無法復原。')) return;
     const updated = customers.filter((c) => c.id !== customerId);
     updateCustomersState(updated);
@@ -332,10 +347,12 @@ export function App() {
   };
 
   const handleToggleStatus = (customerId: string, repairId: string, specificStatus?: RepairStatus) => {
+    lastLocalActionTime.current = Date.now();
     const todayStr = new Date().toISOString().split('T')[0];
     let shouldSyncWarranties = false;
     let newIsPickedUp = false;
 
+    let targetUpdatedRepair: RepairRecord | null = null;
     const updated = customers.map((c) => {
       if (c.id !== customerId) return c;
       return {
@@ -361,16 +378,22 @@ export function App() {
             newIsPickedUp = isPickedUp;
           }
 
-          return {
+          const modRepair: RepairRecord = {
             ...r,
             status: nextStatus,
             isPickedUp,
             pickedUpDate: isPickedUp ? (r.pickedUpDate || todayStr) : undefined,
           };
+          targetUpdatedRepair = modRepair;
+          return modRepair;
         }),
       };
     });
-    updateCustomersState(updated);
+
+    updateCustomersState(updated, false);
+    if (targetUpdatedRepair) {
+      syncSingleCloudRepairRecord(customerId, targetUpdatedRepair);
+    }
 
     if (shouldSyncWarranties) {
       setWarranties((prev) => {
@@ -391,22 +414,30 @@ export function App() {
   };
 
   const handleTogglePickedUp = (customerId: string, repairId: string, isPickedUp: boolean) => {
+    lastLocalActionTime.current = Date.now();
     const todayStr = new Date().toISOString().split('T')[0];
+    let targetUpdatedRepair: RepairRecord | null = null;
     const updated = customers.map((c) => {
       if (c.id !== customerId) return c;
       return {
         ...c,
         repairs: c.repairs.map((r) => {
           if (r.id !== repairId) return r;
-          return {
+          const modRepair: RepairRecord = {
             ...r,
             isPickedUp,
             pickedUpDate: isPickedUp ? todayStr : undefined,
           };
+          targetUpdatedRepair = modRepair;
+          return modRepair;
         }),
       };
     });
-    updateCustomersState(updated);
+
+    updateCustomersState(updated, false);
+    if (targetUpdatedRepair) {
+      syncSingleCloudRepairRecord(customerId, targetUpdatedRepair);
+    }
 
     // Synchronize warranty records start date for this ticket & sync to Supabase!
     setWarranties((prev) => {
@@ -426,6 +457,7 @@ export function App() {
   };
 
   const handleSaveWarranty = (newRecord: PartWarrantyRecord) => {
+    lastLocalActionTime.current = Date.now();
     setWarranties((prev) => {
       const exists = prev.some((w) => w.id === newRecord.id);
       const updated = exists
@@ -438,6 +470,7 @@ export function App() {
   };
 
   const handleDeleteWarranty = (warrantyId: string) => {
+    lastLocalActionTime.current = Date.now();
     setWarranties((prev) => {
       const updated = prev.filter((w) => w.id !== warrantyId);
       saveWarranties(updated);

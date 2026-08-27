@@ -269,6 +269,31 @@ export async function syncCloudCustomers(customers: Customer[]): Promise<void> {
   }
 }
 
+export async function syncSingleCloudRepairRecord(
+  customerId: string,
+  repair: RepairRecord
+): Promise<void> {
+  try {
+    await supabase.from('repair_records').upsert({
+      id: repair.id,
+      customer_id: customerId,
+      date: repair.date,
+      item: repair.item,
+      due_date: repair.dueDate,
+      price: repair.price,
+      status: repair.status,
+      is_picked_up: Boolean(repair.isPickedUp),
+      picked_up_date: repair.pickedUpDate || null,
+      note: repair.note,
+      has_left_panel: Boolean(repair.hasLeftPanel),
+      has_right_panel: Boolean(repair.hasRightPanel),
+      photos: repair.photos || [],
+    });
+  } catch (err) {
+    console.error('Failed to sync single repair record to Supabase:', err);
+  }
+}
+
 export async function fetchCloudPriceList(): Promise<PriceItem[] | null> {
   try {
     const { data, error } = await supabase
