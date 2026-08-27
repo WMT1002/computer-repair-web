@@ -99,24 +99,24 @@ const StatusDropdown: React.FC<{
   ];
 
   return (
-    <div className="relative inline-block" ref={containerRef}>
+    <div className="relative inline-block shrink-0" ref={containerRef}>
       <button
         type="button"
         onClick={(e) => {
           e.stopPropagation();
           setIsOpen((prev) => !prev);
         }}
-        className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border flex items-center gap-1.5 transition-colors cursor-pointer select-none ${current.bg} ${current.text} ${current.border} ${current.hoverBg}`}
+        className={`px-2 py-1.5 text-xs font-semibold rounded-lg border flex items-center gap-1 transition-colors cursor-pointer select-none whitespace-nowrap shrink-0 ${current.bg} ${current.text} ${current.border} ${current.hoverBg}`}
         title="點擊切換維修進度狀態"
       >
-        <span className={`w-2 h-2 rounded-full ${current.dot}`} />
-        <span>{current.label}</span>
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
+        <span className={`w-2 h-2 rounded-full shrink-0 ${current.dot}`} />
+        <span className="whitespace-nowrap">{current.label}</span>
+        <ChevronDown className={`w-3 h-3 shrink-0 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
         <div
-          className="absolute bottom-full mb-1.5 right-0 sm:left-0 w-44 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1 z-50 animate-fadeIn"
+          className="absolute bottom-full mb-1.5 right-0 w-44 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1 z-50 animate-fadeIn"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="text-[10px] font-mono text-slate-400 px-2 py-1 border-b border-slate-800 mb-1">
@@ -354,7 +354,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
           <p className="text-slate-500 text-xs mt-1">請嘗試變更搜尋關鍵字或切換狀態篩選條目</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filteredCustomers.map((customer) => {
             const latestRepair = customer.repairs[0];
 
@@ -365,27 +365,37 @@ export const CustomerList: React.FC<CustomerListProps> = ({
               >
                 <div>
                   {/* Top Bar */}
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-bold text-slate-100 group-hover:text-sky-400 transition">
-                          {customer.name}
-                        </h3>
-                        <span className="text-xs font-mono text-slate-400 bg-slate-900/60 px-2 py-0.5 rounded border border-slate-700/50">
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    {/* 左側：姓名 -> 顧客編號 -> 聯絡電話 */}
+                    <div className="min-w-0 flex-1">
+                      {/* 姓名：不換行 */}
+                      <h3
+                        className="text-lg font-bold text-slate-100 group-hover:text-sky-400 transition whitespace-nowrap truncate"
+                        title={customer.name}
+                      >
+                        {customer.name}
+                      </h3>
+
+                      {/* 顧客編號：放在電話上方 */}
+                      <div className="mt-1">
+                        <span className="inline-block text-[11px] font-mono text-slate-400 bg-slate-900/60 px-2 py-0.5 rounded border border-slate-700/50 whitespace-nowrap">
                           {customer.id}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1 font-mono">
-                        <Phone className="w-3.5 h-3.5 text-sky-400" />
+
+                      {/* 聯絡電話 */}
+                      <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1 font-mono whitespace-nowrap">
+                        <Phone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                         <span>{customer.phone}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    {/* 右側：已取件勾選 + 進度狀態（不換行） */}
+                    <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
                       {/* 只有設定成「完工待取」的時候，在右上角完工待取的左邊出現「已取件」勾選小區塊 */}
                       {latestRepair && latestRepair.status === 'completed' && (
                         <label
-                          className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border cursor-pointer select-none transition-all duration-150 animate-fadeIn ${
+                          className={`flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-lg border cursor-pointer select-none transition-all duration-150 shrink-0 whitespace-nowrap animate-fadeIn ${
                             latestRepair.isPickedUp
                               ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-xs'
                               : 'bg-amber-500/10 text-amber-300 border-amber-500/40 hover:bg-amber-500/20'
@@ -408,7 +418,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
 
                       {latestRepair ? (
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border shadow-sm ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full border shadow-sm shrink-0 whitespace-nowrap ${
                             latestRepair.status === 'completed'
                               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                               : latestRepair.status === 'repairing'
@@ -419,14 +429,14 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                           }`}
                         >
                           {latestRepair.status === 'completed' ? (
-                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                           ) : (
-                            <Clock className="w-3.5 h-3.5 animate-pulse" />
+                            <Clock className="w-3.5 h-3.5 shrink-0 animate-pulse" />
                           )}
-                          {getStatusLabel(latestRepair.status)}
+                          <span className="whitespace-nowrap">{getStatusLabel(latestRepair.status)}</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700 shrink-0 whitespace-nowrap">
                           無工單
                         </span>
                       )}
@@ -437,10 +447,10 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                   {latestRepair && (
                     <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700/40 my-3 text-xs">
                       <div className="flex items-center justify-between text-slate-400 font-mono mb-1">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" /> {latestRepair.date}
+                        <span className="flex items-center gap-1 whitespace-nowrap">
+                          <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" /> {latestRepair.date}
                         </span>
-                        <span className="text-sky-400 font-semibold font-mono text-sm">
+                        <span className="text-sky-400 font-semibold font-mono text-sm whitespace-nowrap">
                           NT$ {latestRepair.price.toLocaleString()}
                         </span>
                       </div>
@@ -452,12 +462,12 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                       {(latestRepair.hasLeftPanel || latestRepair.hasRightPanel) && (
                         <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                           {latestRepair.hasLeftPanel && (
-                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono">
+                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono whitespace-nowrap">
                               ✓ 左側板
                             </span>
                           )}
                           {latestRepair.hasRightPanel && (
-                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono">
+                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono whitespace-nowrap">
                               ✓ 右側板
                             </span>
                           )}
@@ -478,45 +488,53 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                   </div>
                 </div>
 
-                {/* Bottom Actions */}
-                <div className="flex items-center justify-between pt-3 sm:pt-4 mt-2 border-t border-slate-700/50 gap-2 flex-wrap">
-                  <button
-                    onClick={() => onDeleteCustomer(customer.id)}
-                    className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition shrink-0 cursor-pointer"
-                    title="刪除客戶資料"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                {/* Bottom Actions - 同一行不換行，影印放在刪除右邊 */}
+                <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-700/50 gap-1.5 sm:gap-2 whitespace-nowrap">
+                  {/* 左側：刪除 + 列印（放在刪除右邊） */}
+                  <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                     <button
-                      onClick={() => onEditCustomer(customer)}
-                      className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1 transition cursor-pointer"
+                      type="button"
+                      onClick={() => onDeleteCustomer(customer.id)}
+                      className="p-1.5 sm:p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg border border-slate-700/60 hover:border-rose-500/30 transition shrink-0 cursor-pointer"
+                      title="刪除客戶資料"
                     >
-                      <Edit3 className="w-3.5 h-3.5" /> 編輯
+                      <Trash2 className="w-4 h-4" />
                     </button>
                     {latestRepair && (
-                      <>
-                        <StatusDropdown
-                          status={latestRepair.status}
-                          onSelect={(newStatus) => {
-                            onToggleStatus(customer.id, latestRepair.id, newStatus);
-                          }}
-                        />
-                        <button
-                          onClick={() => onPrintCustomer(customer, latestRepair)}
-                          className="p-1.5 text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg border border-slate-700/80 hover:border-emerald-500/40 transition cursor-pointer"
-                          title="列印 A4 雙聯客戶取件收據"
-                        >
-                          <Printer className="w-4 h-4" />
-                        </button>
-                      </>
+                      <button
+                        type="button"
+                        onClick={() => onPrintCustomer(customer, latestRepair)}
+                        className="p-1.5 sm:p-2 text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg border border-slate-700/60 hover:border-emerald-500/40 transition shrink-0 cursor-pointer"
+                        title="列印 A4 雙聯客戶取件收據"
+                      >
+                        <Printer className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* 右側：編輯 + 狀態選單 + 詳情 */}
+                  <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => onEditCustomer(customer)}
+                      className="px-2 sm:px-2.5 py-1.5 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1 transition shrink-0 cursor-pointer"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" /> <span className="hidden xs:inline sm:inline">編輯</span>
+                    </button>
+                    {latestRepair && (
+                      <StatusDropdown
+                        status={latestRepair.status}
+                        onSelect={(newStatus) => {
+                          onToggleStatus(customer.id, latestRepair.id, newStatus);
+                        }}
+                      />
                     )}
                     <button
+                      type="button"
                       onClick={() => onSelectCustomer(customer)}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 hover:bg-sky-500/30 flex items-center gap-1 transition cursor-pointer"
+                      className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 hover:bg-sky-500/30 flex items-center gap-1 transition shrink-0 cursor-pointer"
                     >
-                      詳情 <ChevronRight className="w-3.5 h-3.5" />
+                      <span>詳情</span> <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
