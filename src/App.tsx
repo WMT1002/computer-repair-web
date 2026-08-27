@@ -402,20 +402,12 @@ export function App() {
     );
   }
 
-  // 3. Unauthenticated View (Login / Register)
+  // 3. Unauthenticated View (Login)
   if (!user) {
     if (authView === 'register') {
       return <RegisterPage onSwitchToLogin={() => setAuthView('login')} />;
     }
-    return (
-      <LoginPage
-        onSwitchToRegister={() => setAuthView('register')}
-        onGoToTracking={() => {
-          setTrackingOrderId('');
-          setIsTrackingMode(true);
-        }}
-      />
-    );
+    return <LoginPage />;
   }
 
   // 4. Authenticated Repair System View

@@ -12,15 +12,11 @@ import {
   Printer,
   Cloud,
   FileSpreadsheet,
-  Search,
 } from 'lucide-react';
 import { FixFlowLogo } from '../common/FixFlowLogo';
 import { supabase } from '../../utils/supabaseClient';
 
-interface LoginPageProps {
-  onSwitchToRegister: () => void;
-  onGoToTracking?: () => void;
-}
+interface LoginPageProps {}
 
 function authErrorMessage(message: string) {
   const lower = message.toLowerCase();
@@ -40,7 +36,7 @@ function validateEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister, onGoToTracking }) => {
+export const LoginPage: React.FC<LoginPageProps> = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -316,33 +312,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToRegister, onGoTo
                 )}
               </form>
 
-              {/* Switch to Register */}
+              {/* Account Provision Notice */}
               {!isResetMode && (
-                <div className="mt-6 pt-5 border-t border-slate-800 text-center space-y-4">
-                  <p className="text-xs text-slate-400">
-                    還沒有工程師或管理員帳號？{' '}
-                    <button
-                      type="button"
-                      onClick={onSwitchToRegister}
-                      className="text-sky-400 hover:text-sky-300 font-bold underline ml-1 cursor-pointer"
-                    >
-                      立即前往註冊
-                    </button>
+                <div className="mt-8 pt-5 border-t border-slate-800 text-center">
+                  <p className="text-xs text-slate-500">
+                    如需開通或新增後台帳號，請聯繫系統管理員
                   </p>
-
-                  {/* Customer Tracking Portal Shortcut */}
-                  {onGoToTracking && (
-                    <div className="pt-2">
-                      <button
-                        type="button"
-                        onClick={onGoToTracking}
-                        className="w-full py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-sky-400 hover:text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer shadow-md"
-                      >
-                        <Search className="w-3.5 h-3.5" />
-                        <span>我是送修客戶：即時查詢維修進度與照片</span>
-                      </button>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
