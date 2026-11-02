@@ -537,24 +537,27 @@ html, body {
   .customer-panel-badges span { font-size: calc(11px * var(--ui-text-scale)); padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); background: var(--surface); }
   .customer-repair-note { color: var(--muted); font-size: calc(12px * var(--ui-text-scale)); margin-top: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .customer-card-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding: 14px 0; color: var(--muted); font-size: calc(11px * var(--ui-text-scale)); }
-  .customer-card-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding-top: 14px; border-top: 1px solid var(--border); }
-  .customer-utility-actions, .customer-primary-actions { display: flex; align-items: center; gap: 6px; }
+  .customer-card-actions { display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center; gap: 6px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .customer-utility-actions, .customer-primary-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
   .customer-primary-actions { margin-left: auto; }
   .customer-icon-button, .customer-edit-button, .customer-detail-button { display: inline-flex; justify-content: center; align-items: center; gap: 5px; min-height: 36px; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border); color: var(--muted); background: transparent; font-size: calc(12px * var(--ui-text-scale)); font-weight: 500; cursor: pointer; transition: background-color .15s, color .15s; white-space: nowrap; }
-  .customer-icon-button { width: 34px; padding: 7px; border-color: transparent; }
+  .customer-icon-button { width: 28px; padding: 5px; border-color: transparent; }
+  .customer-utility-actions { gap: 2px; }
+  .customer-edit-button, .customer-detail-button { padding-inline: 6px; }
   .customer-icon-button:hover, .customer-edit-button:hover { color: var(--text); background: var(--subtle); }
   .customer-delete-button:hover { color: var(--danger); background: #b54d4d12; }
   .customer-detail-button { background: var(--primary); border-color: var(--primary); color: #fff; }
   .customer-detail-button:hover { background: var(--primary-hover); }
-  .customer-card .status-control { min-height: 36px; padding: 7px 9px; border-radius: 6px; font-size: calc(11px * var(--ui-text-scale)); gap: 5px; }
+  .customer-card .status-control { min-height: 36px; padding: 7px 6px; border-radius: 6px; font-size: calc(11px * var(--ui-text-scale)); gap: 4px; }
   .customer-card .status-menu { width: 208px; padding: 6px; box-shadow: 0 8px 24px #182b4020; }
   @container (max-width: 340px) {
     .customer-card-header { gap: 10px; }
     .customer-status-summary > span { padding: 4px 6px; font-size: calc(10px * var(--ui-text-scale)); }
-    .customer-card-actions { gap: 8px; }
-    .customer-primary-actions { gap: 4px; }
-    .customer-card .status-control { padding-inline: 6px; }
-    .customer-edit-button, .customer-detail-button { padding-inline: 8px; }
+    .customer-card-actions { gap: 2px; }
+    .customer-icon-button { width: 24px; padding-inline: 3px; }
+    .customer-primary-actions { gap: 3px; }
+    .customer-card .status-control { padding-inline: 4px; gap: 2px; }
+    .customer-edit-button, .customer-detail-button { padding-inline: 4px; gap: 3px; }
     .customer-repair-main { flex-direction: column; gap: 6px; }
   }
   @media (max-width: 480px) { .customer-card { padding: 16px; } }
