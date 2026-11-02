@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Customer, RepairRecord, RepairStatus, PriceItem, RepairPhoto, PartWarrantyRecord } from '../types';
-import { X, Plus, Printer, Trash2, Calendar, Phone, DollarSign, Tag, Edit3, Camera, ShieldCheck, Barcode } from 'lucide-react';
+import { X, Plus, Printer, Trash2, Calendar, DollarSign, Tag, Edit3, Camera, ShieldCheck, Barcode } from 'lucide-react';
 import { PhotoUploader } from './common/PhotoUploader';
 import { ImageLightbox } from './common/ImageLightbox';
 
@@ -91,16 +91,15 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
               {customer.name.slice(0, 1)}
             </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
                 <h2 className="text-lg sm:text-xl font-bold text-slate-100 truncate">{customer.name}</h2>
-                <span className="text-[calc(11px*var(--ui-text-scale))] sm:text-xs font-mono text-slate-400 bg-slate-900 px-1.5 sm:px-2 py-0.5 rounded border border-slate-700 shrink-0">
-                  {customer.id}
+                <span className="text-[calc(11px*var(--ui-text-scale))] sm:text-xs font-mono text-slate-400 whitespace-nowrap">
+                  {customer.phone}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2 text-[calc(11px*var(--ui-text-scale))] sm:text-xs font-mono text-slate-400 mt-0.5 flex-wrap">
-                <span className="flex items-center gap-1">
-                  <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-400" />
-                  <span>{customer.phone}</span>
+                <span className="bg-slate-900 px-1.5 sm:px-2 py-0.5 rounded border border-slate-700 shrink-0">
+                  {customer.id}
                 </span>
                 <span className="text-slate-600 hidden sm:inline">•</span>
                 <span className="hidden sm:inline">建立於 {customer.createdAt}</span>
