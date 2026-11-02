@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --ui-text-scale: 1;
+  --system-text-scale: 1;
+  --ui-text-scale: var(--system-text-scale);
   color-scheme: dark;
   --bg: #14181f; --surface: #1c222b; --card: #1c222b; --border: #35404e;
   --accent: #93b4d4; --accent-glow: transparent;
@@ -234,7 +235,7 @@ html, body {
 
 
 @media screen {
-  :root { --ui-text-scale: 1.1; }
+  :root { --system-text-scale: 1.1; }
   body { font-size: calc(1rem * var(--ui-text-scale)); }
   html.light-mode .bg-amber-100 { background-color: #faf3e6 !important; }
   html.light-mode .bg-amber-200\/90 { background-color: #faf3e6 !important; }
@@ -515,13 +516,13 @@ html, body {
 
 @media screen {
   .customer-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 370px), 1fr)); gap: 20px; align-items: stretch; zoom: .85; }
-  .customer-card { position: relative; container-type: inline-size; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text); transition: border-color .15s; }
+  .customer-card { --ui-text-scale: calc(var(--system-text-scale) * 1.38); position: relative; container-type: inline-size; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text); transition: border-color .15s; }
   .customer-card:hover { border-color: #a5b8ca; }
   .customer-card:focus-within { z-index: 2; }
   .customer-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
   .customer-identity { min-width: 0; flex: 1; }
   .customer-name-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
-  .customer-name { font-size: calc(20px * var(--ui-text-scale)); font-weight: 600; letter-spacing: -.02em; line-height: 1.4; overflow-wrap: anywhere; }
+  .customer-name { font-size: calc(20px * var(--system-text-scale)); font-weight: 600; letter-spacing: -.02em; line-height: 1.4; overflow-wrap: anywhere; }
   .customer-reference { margin-top: 3px; color: var(--muted); font-size: calc(11px * var(--ui-text-scale)); letter-spacing: .025em; }
   .customer-phone { color: var(--muted); font-size: calc(13px * var(--ui-text-scale)); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .customer-status-summary { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; gap: 8px; padding-top: 2px; }
@@ -531,7 +532,7 @@ html, body {
   .customer-repair-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; color: var(--muted); font-size: calc(11px * var(--ui-text-scale)); margin-bottom: 12px; }
   .customer-repair-main { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
   .customer-repair-item { font-size: calc(14px * var(--ui-text-scale)); font-weight: 500; line-height: 1.7; overflow-wrap: anywhere; min-width: 0; }
-  .customer-repair-price { flex-shrink: 0; font-size: calc(18px * var(--ui-text-scale)); font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .customer-repair-price { flex-shrink: 0; font-size: calc(18px * var(--system-text-scale)); font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .customer-panel-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
   .customer-panel-badges span { font-size: calc(11px * var(--ui-text-scale)); padding: 2px 6px; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); background: var(--surface); }
   .customer-repair-note { color: var(--muted); font-size: calc(12px * var(--ui-text-scale)); margin-top: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
