@@ -516,7 +516,7 @@ html, body {
 
 @media screen {
   .customer-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 370px), 1fr)); gap: 20px; align-items: stretch; zoom: .85; }
-  .customer-card { --ui-text-scale: calc(var(--system-text-scale) * 1.38); position: relative; container-type: inline-size; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text); transition: border-color .15s; }
+  .customer-card { --ui-text-scale: calc(var(--system-text-scale) * 1.2696); position: relative; container-type: inline-size; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text); transition: border-color .15s; }
   .customer-card:hover { border-color: #a5b8ca; }
   .customer-card:focus-within { z-index: 2; }
   .customer-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
