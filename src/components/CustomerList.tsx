@@ -447,7 +447,6 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                   {latestRepair && (
                     <div className="customer-repair-preview">
                       <div className="customer-repair-heading">
-                        <span>最近維修</span>
                         <span className="flex items-center gap-1.5 whitespace-nowrap">
                           <Calendar className="w-3.5 h-3.5 shrink-0" /> {latestRepair.date}
                         </span>
