@@ -91,14 +91,14 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
               {customer.name.slice(0, 1)}
             </div>
             <div className="min-w-0">
-              <div className="flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-100 truncate">{customer.name}</h2>
-                <span className="text-[calc(11px*var(--ui-text-scale))] sm:text-xs font-mono text-slate-400 whitespace-nowrap">
+              <div className="detail-customer-name-row">
+                <h2 className="detail-customer-name">{customer.name}</h2>
+                <span className="detail-customer-phone">
                   {customer.phone}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2 text-[calc(11px*var(--ui-text-scale))] sm:text-xs font-mono text-slate-400 mt-0.5 flex-wrap">
-                <span className="bg-slate-900 px-1.5 sm:px-2 py-0.5 rounded border border-slate-700 shrink-0">
+              <div className="detail-customer-reference-row">
+                <span className="detail-customer-reference">
                   {customer.id}
                 </span>
                 <span className="text-slate-600 hidden sm:inline">•</span>

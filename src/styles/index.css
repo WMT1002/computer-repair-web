@@ -520,6 +520,11 @@ html, body {
   .customer-card:hover { border-color: #a5b8ca; }
   .customer-card:focus-within { z-index: 2; }
   .customer-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .detail-customer-name-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+  .detail-customer-name { color: var(--text); font-size: 20px; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+  .detail-customer-phone { color: var(--muted); font-size: 18px; font-weight: 400; line-height: 1.4; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .detail-customer-reference-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .detail-customer-reference { font-size: 14px; font-weight: 400; letter-spacing: .01em; }
   .customer-identity { min-width: 0; flex: 1; }
   .customer-name-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
   .customer-name { font-size: calc(20px * var(--system-text-scale)); font-weight: 600; letter-spacing: -.02em; line-height: 1.4; overflow-wrap: anywhere; }
