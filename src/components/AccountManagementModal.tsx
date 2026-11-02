@@ -154,7 +154,7 @@ export const AccountManagementModal: React.FC<AccountManagementModalProps> = ({ 
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content !max-w-4xl max-h-[90vh] flex flex-col p-6 bg-slate-900 border border-slate-700 shadow-2xl rounded-2xl">
+      <div className="modal-content !max-w-4xl max-h-[90vh] flex flex-col p-6 bg-slate-900 border border-slate-700 shadow-sm rounded-xl">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-700/80 mb-4 shrink-0">
           <div className="flex items-center gap-3">
@@ -184,20 +184,20 @@ export const AccountManagementModal: React.FC<AccountManagementModalProps> = ({ 
         {/* Status / Role Counts Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 shrink-0">
           <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
-            <div className="text-[11px] text-slate-400">總註冊帳號</div>
-            <div className="text-lg font-black text-slate-100 font-mono">{roleCounts.total} 位</div>
+            <div className="text-[calc(11px*var(--ui-text-scale))] text-slate-400">總註冊帳號</div>
+            <div className="text-lg font-semibold text-slate-100 font-mono">{roleCounts.total} 位</div>
           </div>
           <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-            <div className="text-[11px] text-purple-300">系統管理員</div>
-            <div className="text-lg font-black text-purple-400 font-mono">{roleCounts.admin} 位</div>
+            <div className="text-[calc(11px*var(--ui-text-scale))] text-purple-300">系統管理員</div>
+            <div className="text-lg font-semibold text-purple-400 font-mono">{roleCounts.admin} 位</div>
           </div>
           <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20">
-            <div className="text-[11px] text-teal-300">維修主管</div>
-            <div className="text-lg font-black text-teal-400 font-mono">{roleCounts.manager} 位</div>
+            <div className="text-[calc(11px*var(--ui-text-scale))] text-teal-300">維修主管</div>
+            <div className="text-lg font-semibold text-teal-400 font-mono">{roleCounts.manager} 位</div>
           </div>
           <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20">
-            <div className="text-[11px] text-sky-300">一般工程師</div>
-            <div className="text-lg font-black text-sky-400 font-mono">{roleCounts.staff} 位</div>
+            <div className="text-[calc(11px*var(--ui-text-scale))] text-sky-300">一般工程師</div>
+            <div className="text-lg font-semibold text-sky-400 font-mono">{roleCounts.staff} 位</div>
           </div>
         </div>
 
@@ -266,7 +266,7 @@ export const AccountManagementModal: React.FC<AccountManagementModalProps> = ({ 
                     {/* User Info */}
                     <div className="flex items-start gap-3.5">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black shrink-0 shadow-md"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold shrink-0 shadow-md"
                         style={{ background: style.bg, color: style.color, border: `1px solid ${style.border}` }}
                       >
                         {account.name.slice(0, 1)}
@@ -275,7 +275,7 @@ export const AccountManagementModal: React.FC<AccountManagementModalProps> = ({ 
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-bold text-slate-100 text-sm">{account.name}</span>
                           {isCurrent && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+                            <span className="text-[calc(10px*var(--ui-text-scale))] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
                               目前登入中
                             </span>
                           )}

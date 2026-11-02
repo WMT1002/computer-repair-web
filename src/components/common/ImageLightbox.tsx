@@ -29,7 +29,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({ photo, onClose }) 
         </button>
 
         {/* Action Bar */}
-        <div className="absolute top-3 right-3 flex items-center gap-2 bg-slate-950/70 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-xs text-slate-200 shadow-lg">
+        <div className="absolute top-3 right-3 flex items-center gap-2 bg-slate-950/70 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-xs text-slate-200 shadow-sm">
           {photo.caption && (
             <span className="font-semibold text-sky-400 mr-2 flex items-center gap-1">
               <ZoomIn className="w-3.5 h-3.5" /> {photo.caption}
@@ -49,7 +49,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({ photo, onClose }) 
         <img
           src={photo.url}
           alt={photo.caption || '維修存證照片'}
-          className="max-w-full max-h-[80vh] rounded-xl object-contain shadow-2xl border border-slate-700/50"
+          className="max-w-full max-h-[80vh] rounded-xl object-contain shadow-sm border border-slate-700/50"
         />
 
         {/* Caption bottom bar */}

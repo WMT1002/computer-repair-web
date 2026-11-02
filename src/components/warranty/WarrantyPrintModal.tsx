@@ -41,7 +41,7 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
               <button
                 type="button"
                 onClick={handlePrint}
-                className="px-4 py-2 text-xs font-bold rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white flex items-center gap-1.5 shadow-md shadow-cyan-500/20 transition cursor-pointer"
+                className="primary-button px-4 py-2 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
                 <span>立即列印</span>
@@ -139,7 +139,7 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
                     <div className="flex items-center gap-2">
                       <Barcode className="w-5 h-5 text-slate-700" />
                       <div>
-                        <span className="text-[10px] text-slate-500 uppercase tracking-wider font-mono">
+                        <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-500 uppercase tracking-wider font-mono">
                           原廠零件序號 (S/N)
                         </span>
                         <p className="text-sm font-mono font-black text-slate-950 tracking-wider">
@@ -147,19 +147,19 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
                         </p>
                       </div>
                     </div>
-                    <span className="text-[11px] font-mono text-cyan-800 font-bold px-2 py-0.5 bg-cyan-100/80 rounded border border-cyan-400">
+                    <span className="text-[calc(11px*var(--ui-text-scale))] font-mono text-cyan-800 font-bold px-2 py-0.5 bg-cyan-100/80 rounded border border-cyan-400">
                       ✓ 原廠條碼存檔
                     </span>
                   </div>
 
                   {warranty.note && (
-                    <p className="text-[11px] text-slate-600 italic">備註：{warranty.note}</p>
+                    <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-600 italic">備註：{warranty.note}</p>
                   )}
                 </div>
               </div>
 
               {/* Terms & Stamp */}
-              <div className="grid grid-cols-12 gap-3 items-end pt-3 text-[10px] text-slate-600 font-mono border-t border-slate-300">
+              <div className="grid grid-cols-12 gap-3 items-end pt-3 text-[calc(10px*var(--ui-text-scale))] text-slate-600 font-mono border-t border-slate-300">
                 <div className="col-span-12 sm:col-span-8 space-y-1">
                   <p className="font-bold text-slate-800">保固條款須知：</p>
                   <p>1. 本保固自取件日起算，憑本證明或原序號條碼享有保固服務。</p>
@@ -168,7 +168,7 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
                 </div>
 
                 <div className="col-span-12 sm:col-span-4 border-2 border-slate-400 border-dashed rounded h-16 flex flex-col items-center justify-center text-slate-400">
-                  <span className="text-[9px]">【 店家蓋章處 】</span>
+                  <span className="text-[calc(9px*var(--ui-text-scale))]">【 店家蓋章處 】</span>
                 </div>
               </div>
             </div>
@@ -243,7 +243,7 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
               {/* S/N Highlight */}
               <div className="p-2 border-2 border-black flex items-center justify-between rounded">
                 <div>
-                  <span className="text-[10px] uppercase tracking-wider font-mono text-slate-700">
+                  <span className="text-[calc(10px*var(--ui-text-scale))] uppercase tracking-wider font-mono text-slate-700">
                     原廠零件序號 (S/N)
                   </span>
                   <p className="text-base font-mono font-black tracking-wider text-black">
@@ -256,13 +256,13 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
               </div>
 
               {warranty.note && (
-                <p className="text-[11px] text-slate-700 italic">備註：{warranty.note}</p>
+                <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-700 italic">備註：{warranty.note}</p>
               )}
             </div>
           </div>
 
           {/* Terms & Stamp */}
-          <div className="grid grid-cols-12 gap-3 items-end pt-2 text-[10px] font-mono border-t border-black">
+          <div className="grid grid-cols-12 gap-3 items-end pt-2 text-[calc(10px*var(--ui-text-scale))] font-mono border-t border-black">
             <div className="col-span-8 space-y-1">
               <p className="font-bold text-black">保固條款須知：</p>
               <p>1. 本保固自顧客到店取件日起算，憑本證明或原序號條碼享有保固服務。</p>
@@ -271,7 +271,7 @@ export const WarrantyPrintModal: React.FC<WarrantyPrintModalProps> = ({
             </div>
 
             <div className="col-span-4 border-2 border-black border-dashed rounded h-16 flex flex-col items-center justify-center">
-              <span className="text-[9px]">【 店家經手章 / 店章 】</span>
+              <span className="text-[calc(9px*var(--ui-text-scale))]">【 店家經手章 / 店章 】</span>
             </div>
           </div>
         </div>

@@ -90,14 +90,14 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
           <span className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
             {title} ({photos.length}/{maxPhotos})
           </span>
-          <span className="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">
+          <span className="text-[calc(11px*var(--ui-text-scale))] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">
             選填 • 自動智慧壓縮
           </span>
         </div>
 
         {/* Quick Tag Selector */}
         <div className="flex items-center gap-1 text-xs">
-          <span className="text-slate-400 text-[11px] font-mono">預設標籤:</span>
+          <span className="text-slate-400 text-[calc(11px*var(--ui-text-scale))] font-mono">預設標籤:</span>
           <select
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}
@@ -123,17 +123,17 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({
               <img
                 src={photo.url}
                 alt={photo.caption || '存證照片'}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-300 group-"
               />
 
               {/* Tag overlay */}
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-1.5 pt-4">
+              <div className="absolute inset-x-0 bottom-0 bg-slate-800 p-1.5 pt-4">
                 <input
                   type="text"
                   value={photo.caption || ''}
                   onChange={(e) => handleUpdateCaption(photo.id, e.target.value)}
                   placeholder="標註說明"
-                  className="w-full bg-transparent text-[11px] font-medium text-slate-200 hover:text-white focus:outline-none focus:bg-black/60 px-1 rounded truncate"
+                  className="w-full bg-transparent text-[calc(11px*var(--ui-text-scale))] font-medium text-slate-200 hover:text-white focus:outline-none focus:bg-black/60 px-1 rounded truncate"
                   title="點擊修改照片標註"
                 />
               </div>

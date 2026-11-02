@@ -71,7 +71,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/20 to-slate-100 text-slate-800 flex flex-col selection:bg-sky-500/20">
+    <div className="tracking-page min-h-screen bg-slate-50 text-slate-800 flex flex-col selection:bg-sky-500/20">
       {/* Top Navbar (Light Clean) */}
       <header className="border-b border-slate-200/90 bg-white/95 backdrop-blur-md sticky top-0 z-30 px-4 py-3 shadow-xs">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -79,14 +79,14 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
             <FixFlowLogo size={36} />
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-base tracking-tight bg-gradient-to-r from-sky-600 via-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                <span className="font-semibold text-base tracking-tight text-sky-700">
                   FixFlow
                 </span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 border border-sky-200 font-bold">
+                <span className="text-[calc(10px*var(--ui-text-scale))] uppercase font-mono px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 border border-sky-200 font-bold">
                   顧客進度卡
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 font-medium">智慧電腦維修進度即時追蹤</p>
+              <p className="text-[calc(10px*var(--ui-text-scale))] text-slate-500 font-medium">智慧電腦維修進度即時追蹤</p>
             </div>
           </div>
 
@@ -104,15 +104,15 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
       {/* Main Container */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6 sm:py-8 space-y-6">
         {/* Search Header Banner (Light Style) */}
-        <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xl shadow-slate-200/60 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-sky-100/60 via-emerald-50/40 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-white rounded-xl p-6 sm:p-7 border border-slate-200 shadow-xl shadow-slate-200/60 relative overflow-hidden">
+
           
           <div className="relative z-10 space-y-4 text-center sm:text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-sky-500" /> 4 階段即時動態追蹤 • 隨時掌握愛機現況
             </div>
             
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight">
               維修工單進度即時查詢
             </h1>
             
@@ -135,7 +135,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-bold text-sm hover:from-sky-600 hover:to-emerald-600 transition shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="primary-button px-6 py-3 rounded-xl bg-slate-800 text-white font-bold text-sm transition shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isLoading ? (
                   <>
@@ -156,7 +156,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
         {/* Search Results Loading */}
         {isLoading && (
           <div className="py-16 text-center space-y-3">
-            <div className="w-12 h-12 mx-auto rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center border border-sky-200 animate-pulse shadow-sm">
+            <div className="w-12 h-12 mx-auto rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center border border-sky-200 shadow-sm">
               <RefreshCcw className="w-6 h-6 animate-spin" />
             </div>
             <p className="text-sm text-slate-600 font-mono font-medium">正在調閱雲端維修資料庫…</p>
@@ -165,7 +165,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
 
         {/* No Results Alert */}
         {!isLoading && hasSearched && (!trackingResults || trackingResults.length === 0) && (
-          <div className="bg-white border border-rose-200 rounded-2xl p-8 text-center space-y-3 shadow-md">
+          <div className="bg-white border border-rose-200 rounded-xl p-8 text-center space-y-3 shadow-md">
             <div className="w-12 h-12 mx-auto rounded-full bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-200">
               <Info className="w-6 h-6" />
             </div>
@@ -188,8 +188,8 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
               const getBannerStyle = () => {
                 if (currentStage === 4) {
                   return {
-                    bg: 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-emerald-200 text-emerald-900',
-                    iconBg: 'bg-emerald-500 text-white shadow-emerald-500/30',
+                    bg: 'bg-slate-50 border-emerald-200 text-emerald-900',
+                    iconBg: 'bg-emerald-500 text-white ',
                     title: res.repair.isPickedUp
                       ? '✨ 您的電腦已於門市順利完成取件，感謝您的支持！'
                       : '🎉 您的電腦已修復完工，歡迎於營業時間至門市取件！',
@@ -198,23 +198,23 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                 }
                 if (currentStage === 3) {
                   return {
-                    bg: 'bg-gradient-to-r from-purple-50 via-indigo-50 to-purple-50 border-purple-200 text-purple-900',
-                    iconBg: 'bg-purple-500 text-white shadow-purple-500/30',
+                    bg: 'bg-slate-50 border-purple-200 text-purple-900',
+                    iconBg: 'bg-purple-500 text-white ',
                     title: '⚙️ 工程師正在為您的電腦進行零件更換與燒機測試',
                     badge: '【3. 維修更換】',
                   };
                 }
                 if (currentStage === 2) {
                   return {
-                    bg: 'bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 border-amber-200 text-amber-900',
+                    bg: 'bg-slate-50 border-amber-200 text-amber-900',
                     iconBg: 'bg-amber-500 text-white shadow-amber-500/30',
                     title: '🔍 工程師正在進行硬體深度排查與故障檢測中',
                     badge: '【2. 故障檢測】',
                   };
                 }
                 return {
-                  bg: 'bg-gradient-to-r from-sky-50 via-blue-50 to-sky-50 border-sky-200 text-sky-900',
-                  iconBg: 'bg-sky-500 text-white shadow-sky-500/30',
+                  bg: 'bg-slate-50 border-sky-200 text-sky-900',
+                  iconBg: 'bg-sky-500 text-white ',
                   title: '📥 門市已完成收件登記，排程準備進入檢測階段',
                   badge: '【1. 收件建檔】',
                 };
@@ -228,7 +228,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
               return (
                 <div
                   key={res.repair.id || index}
-                  className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xl shadow-slate-200/70 transition-all"
+                  className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xl shadow-slate-200/70 transition-all"
                 >
                   {/* Status Banner */}
                   <div className={`p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b ${banner.bg}`}>
@@ -237,7 +237,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                         {isCompleted ? (
                           <CheckCircle2 className="w-6 h-6" />
                         ) : (
-                          <Clock className="w-6 h-6 animate-pulse" />
+                          <Clock className="w-6 h-6" />
                         )}
                       </div>
                       <div>
@@ -250,7 +250,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                             {statusText}
                           </span>
                         </div>
-                        <h2 className="text-sm sm:text-base font-black tracking-tight mt-1 text-slate-900">
+                        <h2 className="text-sm sm:text-base font-semibold tracking-tight mt-1 text-slate-900">
                           {banner.title}
                         </h2>
                       </div>
@@ -280,7 +280,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                     {/* Progress Fill Track */}
                     <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden shadow-inner">
                       <div
-                        className="h-full bg-gradient-to-r from-sky-500 via-teal-400 to-emerald-500 rounded-full transition-all duration-700 ease-out shadow-sm"
+                        className="h-full bg-sky-600 rounded-full transition-all duration-700 ease-out shadow-sm"
                         style={{ width: `${progressPercentage}%` }}
                       />
                     </div>
@@ -301,14 +301,14 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                           {currentStage > 1 ? (
                             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                           ) : (
-                            <span className="w-4 h-4 rounded-full bg-sky-500 text-white flex items-center justify-center text-[10px] font-black">
+                            <span className="w-4 h-4 rounded-full bg-sky-500 text-white flex items-center justify-center text-[calc(10px*var(--ui-text-scale))] font-semibold">
                               1
                             </span>
                           )}
                           <span>1. 收件建檔</span>
                         </div>
-                        <p className="text-[11px] text-slate-600 font-mono">{res.repair.date}</p>
-                        <p className={`text-[10px] font-medium mt-0.5 ${currentStage >= 1 ? 'text-sky-700' : 'text-slate-400'}`}>
+                        <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-600 font-mono">{res.repair.date}</p>
+                        <p className={`text-[calc(10px*var(--ui-text-scale))] font-medium mt-0.5 ${currentStage >= 1 ? 'text-sky-700' : 'text-slate-400'}`}>
                           {currentStage > 1 ? '已建檔完成' : '門市收件中'}
                         </p>
                       </div>
@@ -329,14 +329,14 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                           ) : currentStage === 2 ? (
                             <Clock className="w-4 h-4 text-amber-600 animate-spin" />
                           ) : (
-                            <span className="w-4 h-4 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[10px] font-black">
+                            <span className="w-4 h-4 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[calc(10px*var(--ui-text-scale))] font-semibold">
                               2
                             </span>
                           )}
                           <span>2. 故障檢測</span>
                         </div>
-                        <p className="text-[11px] text-slate-600 font-mono">軟硬體深度排查</p>
-                        <p className={`text-[10px] font-medium mt-0.5 ${currentStage >= 2 ? (currentStage === 2 ? 'text-amber-700 font-bold' : 'text-emerald-700') : 'text-slate-400'}`}>
+                        <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-600 font-mono">軟硬體深度排查</p>
+                        <p className={`text-[calc(10px*var(--ui-text-scale))] font-medium mt-0.5 ${currentStage >= 2 ? (currentStage === 2 ? 'text-amber-700 font-bold' : 'text-emerald-700') : 'text-slate-400'}`}>
                           {currentStage > 2 ? '檢測完成' : currentStage === 2 ? '檢測分析中' : '等待檢測'}
                         </p>
                       </div>
@@ -355,16 +355,16 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                           {currentStage > 3 ? (
                             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                           ) : currentStage === 3 ? (
-                            <Wrench className="w-4 h-4 text-purple-600 animate-pulse" />
+                            <Wrench className="w-4 h-4 text-purple-600" />
                           ) : (
-                            <span className="w-4 h-4 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[10px] font-black">
+                            <span className="w-4 h-4 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[calc(10px*var(--ui-text-scale))] font-semibold">
                               3
                             </span>
                           )}
                           <span>3. 維修更換</span>
                         </div>
-                        <p className="text-[11px] text-slate-600 font-mono">更換/燒機測試</p>
-                        <p className={`text-[10px] font-medium mt-0.5 ${currentStage >= 3 ? (currentStage === 3 ? 'text-purple-700 font-bold' : 'text-emerald-700') : 'text-slate-400'}`}>
+                        <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-600 font-mono">更換/燒機測試</p>
+                        <p className={`text-[calc(10px*var(--ui-text-scale))] font-medium mt-0.5 ${currentStage >= 3 ? (currentStage === 3 ? 'text-purple-700 font-bold' : 'text-emerald-700') : 'text-slate-400'}`}>
                           {currentStage > 3 ? '測試通過' : currentStage === 3 ? '進行維修與燒機' : '尚未開始'}
                         </p>
                       </div>
@@ -381,16 +381,16 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                           {currentStage === 4 ? (
                             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                           ) : (
-                            <span className="w-4 h-4 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[10px] font-black">
+                            <span className="w-4 h-4 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[calc(10px*var(--ui-text-scale))] font-semibold">
                               4
                             </span>
                           )}
                           <span>4. 完工待取</span>
                         </div>
-                        <p className="text-[11px] text-slate-600 font-mono">
+                        <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-600 font-mono">
                           {isCompleted ? '可至門市取件' : '等待修復'}
                         </p>
-                        <p className={`text-[10px] font-medium mt-0.5 ${currentStage === 4 ? 'text-emerald-700 font-bold' : 'text-slate-400'}`}>
+                        <p className={`text-[calc(10px*var(--ui-text-scale))] font-medium mt-0.5 ${currentStage === 4 ? 'text-emerald-700 font-bold' : 'text-slate-400'}`}>
                           預計: {res.repair.dueDate || '現場通知'}
                         </p>
                       </div>
@@ -478,7 +478,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                             )}
                             <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
                               <span className="text-xs font-mono font-medium text-slate-500">預估費用 (NT$)</span>
-                              <span className="text-2xl font-black font-mono text-emerald-600">
+                              <span className="text-2xl font-semibold font-mono text-emerald-600">
                                 NT$ {res.repair.price.toLocaleString()}
                               </span>
                             </div>
@@ -497,7 +497,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                               門市收件與維修存證照片 ({res.repair.photos.length} 張)
                             </h4>
                           </div>
-                          <span className="text-[11px] text-slate-500 font-medium">點擊照片可放大檢視</span>
+                          <span className="text-[calc(11px*var(--ui-text-scale))] text-slate-500 font-medium">點擊照片可放大檢視</span>
                         </div>
 
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-1">
@@ -510,9 +510,9 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                               <img
                                 src={photo.url}
                                 alt={photo.caption || '存證照片'}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-full object-cover group- transition-transform duration-300"
                               />
-                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-2 text-[11px] font-medium text-white truncate">
+                              <div className="absolute inset-x-0 bottom-0 bg-slate-800 p-2 text-[calc(11px*var(--ui-text-scale))] font-medium text-white truncate">
                                 {photo.caption || '存證照片'}
                               </div>
                             </div>
@@ -528,15 +528,15 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                       if (linkedWarranties.length === 0) return null;
 
                       return (
-                        <div className="space-y-3 bg-gradient-to-br from-cyan-50/70 via-white to-blue-50/70 p-5 rounded-2xl border border-cyan-200 shadow-xs">
+                        <div className="space-y-3 bg-slate-50 p-5 rounded-xl border border-cyan-200 shadow-xs">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <ShieldCheck className="w-5 h-5 text-cyan-600" />
-                              <h4 className="text-sm font-black text-slate-900">
+                              <h4 className="text-sm font-semibold text-slate-900">
                                 本次維修更換零件與原廠保固履歷 ({linkedWarranties.length} 件)
                               </h4>
                             </div>
-                            <span className="text-[11px] font-mono font-bold text-cyan-700 bg-cyan-100/80 px-2.5 py-0.5 rounded-full border border-cyan-300">
+                            <span className="text-[calc(11px*var(--ui-text-scale))] font-mono font-bold text-cyan-700 bg-cyan-100/80 px-2.5 py-0.5 rounded-full border border-cyan-300">
                               原廠序號存證
                             </span>
                           </div>
@@ -561,7 +561,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                                 >
                                   <div className="flex items-start justify-between gap-2">
                                     <div>
-                                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-bold">
+                                      <span className="text-[calc(10px*var(--ui-text-scale))] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-bold">
                                         {w.partCategory}
                                       </span>
                                       <h5 className="text-xs font-bold text-slate-900 mt-1">
@@ -570,16 +570,16 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                                     </div>
                                     {isPickedUp ? (
                                       daysRemaining > 0 ? (
-                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">
+                                        <span className="px-2 py-0.5 rounded-full text-[calc(10px*var(--ui-text-scale))] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">
                                           保固中 剩 {daysRemaining} 天
                                         </span>
                                       ) : (
-                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-100 text-rose-800 border border-rose-300 shrink-0">
+                                        <span className="px-2 py-0.5 rounded-full text-[calc(10px*var(--ui-text-scale))] font-mono font-bold bg-rose-100 text-rose-800 border border-rose-300 shrink-0">
                                           已過保
                                         </span>
                                       )
                                     ) : (
-                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-100 text-amber-800 border border-amber-300 shrink-0">
+                                      <span className="px-2 py-0.5 rounded-full text-[calc(10px*var(--ui-text-scale))] font-mono font-bold bg-amber-100 text-amber-800 border border-amber-300 shrink-0">
                                         待取件後起算
                                       </span>
                                     )}
@@ -590,10 +590,10 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                                       <Barcode className="w-4 h-4 text-cyan-600" />
                                       <span className="font-bold">{w.serialNumber}</span>
                                     </div>
-                                    <span className="text-[10px] text-slate-500">{w.supplier || '原廠正品'}</span>
+                                    <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-500">{w.supplier || '原廠正品'}</span>
                                   </div>
 
-                                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-1 border-t border-slate-100">
+                                  <div className="flex items-center justify-between text-[calc(11px*var(--ui-text-scale))] font-mono text-slate-500 pt-1 border-t border-slate-100">
                                     <span>保固期限：{w.warrantyDays} 天</span>
                                     {isPickedUp && <span>保固截止：{endDateStr}</span>}
                                   </div>
@@ -606,7 +606,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                     })()}
 
                     {/* Store Contact & Navigation Card */}
-                    <div className="bg-gradient-to-r from-slate-50 via-sky-50/50 to-slate-50 p-5 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
+                    <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
                       <div className="space-y-1">
                         <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                           <span>{res.shopInfo.name || 'FixFlow 智慧電腦維修'}</span>
@@ -616,7 +616,7 @@ export const CustomerTrackingPage: React.FC<CustomerTrackingPageProps> = ({
                           <span>{res.shopInfo.address || '門市地址'}</span>
                         </p>
                         {res.shopInfo.notice && (
-                          <p className="text-[11px] text-slate-500 mt-1 max-w-xl">
+                          <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-500 mt-1 max-w-xl">
                             ℹ️ 取件須知：{res.shopInfo.notice}
                           </p>
                         )}

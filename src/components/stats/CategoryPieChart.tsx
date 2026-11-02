@@ -22,13 +22,13 @@ interface CategoryItem {
 }
 
 const CATEGORY_COLORS = [
-  { color: '#38bdf8', gradient: ['#38bdf8', '#0284c7'] as [string, string] }, // Sky
-  { color: '#34d399', gradient: ['#34d399', '#059669'] as [string, string] }, // Emerald
-  { color: '#fbbf24', gradient: ['#fbbf24', '#d97706'] as [string, string] }, // Amber
-  { color: '#c084fc', gradient: ['#c084fc', '#9333ea'] as [string, string] }, // Purple
-  { color: '#f43f5e', gradient: ['#f43f5e', '#e11d48'] as [string, string] }, // Rose
-  { color: '#2dd4bf', gradient: ['#2dd4bf', '#0d9488'] as [string, string] }, // Teal
-  { color: '#94a3b8', gradient: ['#94a3b8', '#64748b'] as [string, string] }, // Slate
+  { color: '#567c9f', gradient: ['#567c9f', '#567c9f'] as [string, string] },
+  { color: '#849b88', gradient: ['#849b88', '#849b88'] as [string, string] },
+  { color: '#b09b78', gradient: ['#b09b78', '#b09b78'] as [string, string] },
+  { color: '#8d8a9f', gradient: ['#8d8a9f', '#8d8a9f'] as [string, string] },
+  { color: '#aa8585', gradient: ['#aa8585', '#aa8585'] as [string, string] },
+  { color: '#789b9c', gradient: ['#789b9c', '#789b9c'] as [string, string] },
+  { color: '#929aa5', gradient: ['#929aa5', '#929aa5'] as [string, string] },
 ];
 
 // Smart Category Classifier
@@ -238,7 +238,7 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ repairs }) =
   }, [hoveredSlice, categoriesData]);
 
   return (
-    <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-lg flex flex-col justify-between relative overflow-hidden">
+    <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-sm flex flex-col justify-between relative overflow-hidden">
       {/* Header & Toggle */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-700/60 mb-2">
         <div className="flex items-center gap-2">
@@ -248,11 +248,11 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ repairs }) =
           <div>
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
               <span>維修項目故障分類圓餅圖</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 font-normal">
+              <span className="text-[calc(10px*var(--ui-text-scale))] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 font-normal">
                 共 {totalCount} 筆工單
               </span>
             </h3>
-            <p className="text-[11px] text-slate-400 font-mono">
+            <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-400 font-mono">
               自動分析維修類型佔比與營收貢獻
             </p>
           </div>
@@ -291,7 +291,7 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ repairs }) =
           <div className="md:col-span-5 flex flex-col items-center justify-center relative select-none">
             <svg
               viewBox={`0 0 ${size} ${size}`}
-              className="w-48 h-48 sm:w-52 sm:h-52 overflow-visible drop-shadow-md"
+              className="w-48 h-48 sm:w-52 sm:h-52 overflow-visible"
             >
               <defs>
                 {slices.map((s, idx) => (
@@ -323,7 +323,6 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ repairs }) =
                     style={{
                       transformOrigin: `${center}px ${center}px`,
                       transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-                      filter: isHovered ? 'drop-shadow(0 0 8px rgba(56, 189, 248, 0.6))' : 'none',
                     }}
                     onMouseEnter={() => setHoveredSlice(slice.name)}
                     onMouseLeave={() => setHoveredSlice(null)}
@@ -336,23 +335,23 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ repairs }) =
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
               {activeItem ? (
                 <div className="space-y-0.5 fade-in px-3">
-                  <span className="text-[10px] text-slate-400 font-mono block truncate max-w-[90px]">
+                  <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-400 font-mono block truncate max-w-[90px]">
                     {activeItem.name}
                   </span>
-                  <span className="text-xl font-black font-mono" style={{ color: activeItem.color }}>
+                  <span className="text-xl font-semibold font-mono" style={{ color: activeItem.color }}>
                     {activeItem.percentage}%
                   </span>
-                  <span className="text-[10px] font-mono text-slate-300 block">
+                  <span className="text-[calc(10px*var(--ui-text-scale))] font-mono text-slate-300 block">
                     {activeItem.count} 筆
                   </span>
                 </div>
               ) : (
-                <div className="space-y-0.5">
-                  <span className="text-[10px] text-slate-400 font-mono">維修總數</span>
-                  <span className="text-2xl font-black font-mono text-slate-100">
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-400 font-mono">維修總數</span>
+                  <span className="text-2xl font-semibold font-mono text-slate-100">
                     {totalCount}
                   </span>
-                  <span className="text-[10px] text-emerald-400 font-mono">100%</span>
+                  <span className="text-[calc(10px*var(--ui-text-scale))] text-emerald-400 font-mono">100%</span>
                 </div>
               )}
             </div>
@@ -383,11 +382,11 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ repairs }) =
                     </div>
 
                     <div className="flex items-center gap-2.5 shrink-0 text-right">
-                      <span className="text-slate-400 text-[11px]">{cat.count} 筆</span>
+                      <span className="text-slate-400 text-[calc(11px*var(--ui-text-scale))]">{cat.count} 筆</span>
                       <span className="font-bold text-slate-100 w-12 text-right">
                         {cat.percentage}%
                       </span>
-                      <span className="text-emerald-400 font-bold text-[11px] w-20 text-right">
+                      <span className="text-emerald-400 font-bold text-[calc(11px*var(--ui-text-scale))] w-20 text-right">
                         NT$ {cat.revenue.toLocaleString()}
                       </span>
                     </div>
@@ -411,7 +410,7 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ repairs }) =
       )}
 
       {/* Footer hint */}
-      <div className="pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+      <div className="pt-3 border-t border-slate-700/60 flex items-center justify-between text-[calc(11px*var(--ui-text-scale))] text-slate-400 font-mono">
         <span className="flex items-center gap-1">
           <Sparkles className="w-3 h-3 text-sky-400" />
           <span>懸停扇區或列表可檢視對應佔比與營收分析</span>

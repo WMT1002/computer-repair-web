@@ -195,7 +195,7 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
   const yTicks = [0, maxRevenue * 0.33, maxRevenue * 0.66, maxRevenue];
 
   return (
-    <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-lg flex flex-col justify-between relative overflow-hidden">
+    <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-sm flex flex-col justify-between relative overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-700/60 mb-2">
         <div className="flex items-center gap-2">
@@ -205,11 +205,11 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
           <div>
             <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
               <span>營收走勢趨勢圖</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-normal">
+              <span className="text-[calc(10px*var(--ui-text-scale))] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-normal">
                 時段總額: NT$ {totalPeriodRevenue.toLocaleString()}
               </span>
             </h3>
-            <p className="text-[11px] text-slate-400 font-mono">
+            <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-400 font-mono">
               折線呈現營業額起伏 • 滑鼠懸停可檢視節點明細
             </p>
           </div>
@@ -217,7 +217,7 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
 
         {peakPoint && peakPoint.revenue > 0 && (
           <div className="flex items-center gap-2 text-xs font-mono bg-slate-900/60 px-2.5 py-1.5 rounded-lg border border-slate-700 text-slate-300">
-            <Activity className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+            <Activity className="w-3.5 h-3.5 text-amber-400" />
             <span>
               單期最高峰: <strong className="text-amber-300">NT$ {peakPoint.revenue.toLocaleString()}</strong> ({peakPoint.fullDate})
             </span>
@@ -237,21 +237,21 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
           <defs>
             {/* Area Fill Gradient */}
             <linearGradient id="revenue-area-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.38" />
-              <stop offset="60%" stopColor="#10b981" stopOpacity="0.12" />
+              <stop offset="0%" stopColor="#789cbd" stopOpacity="0.38" />
+              <stop offset="60%" stopColor="#789cbd" stopOpacity="0.12" />
               <stop offset="100%" stopColor="#0f172a" stopOpacity="0.0" />
             </linearGradient>
 
             {/* Line Stroke Gradient */}
             <linearGradient id="revenue-line-grad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#38bdf8" />
-              <stop offset="50%" stopColor="#2dd4bf" />
-              <stop offset="100%" stopColor="#34d399" />
+              <stop offset="0%" stopColor="#789cbd" />
+              <stop offset="50%" stopColor="#789cbd" />
+              <stop offset="100%" stopColor="#789cbd" />
             </linearGradient>
 
             {/* Drop Shadow Glow */}
             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#38bdf8" floodOpacity="0.4" />
+              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#789cbd" floodOpacity="0" />
             </filter>
           </defs>
 
@@ -274,7 +274,7 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
                   x={paddingLeft - 8}
                   y={y + 3}
                   textAnchor="end"
-                  fontSize="10"
+                  fontSize="calc(10px * var(--ui-text-scale))"
                   fill="#94a3b8"
                   fontFamily="monospace"
                 >
@@ -316,7 +316,7 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
                 x={p.x}
                 y={height - 8}
                 textAnchor="middle"
-                fontSize="10"
+                fontSize="calc(10px * var(--ui-text-scale))"
                 fill="#94a3b8"
                 fontFamily="monospace"
                 fontWeight="500"
@@ -347,7 +347,7 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
                   cx={p.x}
                   cy={p.y}
                   r={isHovered ? 6.5 : isZero ? 2.5 : 4}
-                  fill={isHovered ? '#38bdf8' : isZero ? '#64748b' : '#34d399'}
+                  fill={isHovered ? '#789cbd' : isZero ? '#64748b' : '#789cbd'}
                   stroke={isHovered ? '#ffffff' : '#0f172a'}
                   strokeWidth={isHovered ? 2.5 : 1.5}
                   className="transition-all duration-200"
@@ -359,7 +359,7 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
                     cy={p.y}
                     r={10}
                     fill="none"
-                    stroke="#38bdf8"
+                    stroke="#789cbd"
                     strokeWidth="1.5"
                     opacity="0.75"
                     className="animate-ping"
@@ -373,13 +373,13 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
         {/* Hover Tooltip Overlay */}
         {hoveredPoint && hoveredPoint.x !== undefined && hoveredPoint.y !== undefined && (
           <div
-            className="absolute z-20 pointer-events-none bg-slate-900/95 border border-sky-500/50 rounded-xl p-3 shadow-2xl backdrop-blur-md text-xs font-mono space-y-1 transform -translate-x-1/2 -translate-y-full transition-all"
+            className="absolute z-20 pointer-events-none bg-slate-900/95 border border-sky-500/50 rounded-xl p-3 shadow-sm backdrop-blur-md text-xs font-mono space-y-1 transform -translate-x-1/2 -translate-y-full transition-all"
             style={{
               left: `${(hoveredPoint.x / width) * 100}%`,
               top: `${(hoveredPoint.y / height) * 100 - 6}%`,
             }}
           >
-            <div className="flex items-center gap-1.5 text-slate-400 text-[11px] pb-1 border-b border-slate-700/80">
+            <div className="flex items-center gap-1.5 text-slate-400 text-[calc(11px*var(--ui-text-scale))] pb-1 border-b border-slate-700/80">
               <Calendar className="w-3 h-3 text-sky-400" />
               <span>{hoveredPoint.fullDate}</span>
             </div>
@@ -389,7 +389,7 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
                 NT$ {hoveredPoint.revenue.toLocaleString()}
               </span>
             </div>
-            <div className="flex items-center justify-between gap-4 text-slate-400 text-[11px]">
+            <div className="flex items-center justify-between gap-4 text-slate-400 text-[calc(11px*var(--ui-text-scale))]">
               <span>完成工單：</span>
               <span className="text-sky-300 font-semibold">{hoveredPoint.count} 筆</span>
             </div>
@@ -400,17 +400,17 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ repairs, f
       {/* Footer Metrics Indicator */}
       <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-700/60 text-center text-xs font-mono">
         <div className="bg-slate-900/40 p-2 rounded-lg border border-slate-700/40">
-          <span className="text-[10px] text-slate-400 block">時段累計營收</span>
+          <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-400 block">時段累計營收</span>
           <span className="font-bold text-slate-200">NT$ {totalPeriodRevenue.toLocaleString()}</span>
         </div>
         <div className="bg-slate-900/40 p-2 rounded-lg border border-slate-700/40">
-          <span className="text-[10px] text-slate-400 block">活躍單點次數</span>
+          <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-400 block">活躍單點次數</span>
           <span className="font-bold text-sky-400">
             {chartData.filter((d) => d.count > 0).length} 個時段
           </span>
         </div>
         <div className="bg-slate-900/40 p-2 rounded-lg border border-slate-700/40">
-          <span className="text-[10px] text-slate-400 block">平均每筆工單</span>
+          <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-400 block">平均每筆工單</span>
           <span className="font-bold text-emerald-400">
             NT${' '}
             {repairs.length > 0 ? Math.round(totalPeriodRevenue / repairs.length).toLocaleString() : 0}

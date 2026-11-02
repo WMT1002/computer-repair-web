@@ -125,7 +125,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                         onChange={(e) => setIsPickedUp(e.target.checked)}
                         className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
                       />
-                      <span className="font-mono text-[11px]">{isPickedUp ? '✓ 已取件' : '已取件'}</span>
+                      <span className="font-mono text-[calc(11px*var(--ui-text-scale))]">{isPickedUp ? '✓ 已取件' : '已取件'}</span>
                     </label>
                   )}
                   <select
@@ -212,7 +212,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                   />
                   <div className="flex items-center justify-between flex-1 text-xs">
                     <span className="font-semibold">左側板</span>
-                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${
+                    <span className={`text-[calc(11px*var(--ui-text-scale))] px-1.5 py-0.5 rounded border ${
                       hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
                     }`}>
                       {hasLeftPanel ? '✓ 已勾選 (有留存)' : '未勾選 (無)'}
@@ -231,7 +231,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                   />
                   <div className="flex items-center justify-between flex-1 text-xs">
                     <span className="font-semibold">右側板</span>
-                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${
+                    <span className={`text-[calc(11px*var(--ui-text-scale))] px-1.5 py-0.5 rounded border ${
                       hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
                     }`}>
                       {hasRightPanel ? '✓ 已勾選 (有留存)' : '未勾選 (無)'}
@@ -322,7 +322,7 @@ export const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 text-sm font-bold rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 flex items-center gap-1.5 shadow-lg shadow-sky-500/20 hover:brightness-110 cursor-pointer"
+              className="primary-button px-5 py-2 text-sm font-bold rounded-lg bg-slate-800 text-slate-100 flex items-center gap-1.5 shadow-sm hover:brightness-110 cursor-pointer"
             >
               <Save className="w-4 h-4" /> 儲存修改
             </button>

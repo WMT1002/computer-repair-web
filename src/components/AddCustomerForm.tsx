@@ -108,7 +108,7 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
                     onChange={(e) => setIsPickedUp(e.target.checked)}
                     className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
                   />
-                  <span className="font-mono text-[11px]">{isPickedUp ? '✓ 已取件' : '已取件'}</span>
+                  <span className="font-mono text-[calc(11px*var(--ui-text-scale))]">{isPickedUp ? '✓ 已取件' : '已取件'}</span>
                 </label>
               )}
               <select
@@ -365,7 +365,7 @@ export const AddCustomerForm: React.FC<AddCustomerFormProps> = ({ onAddCustomer,
           </button>
           <button
             type="submit"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-bold text-sm hover:brightness-110 shadow-lg shadow-sky-500/20 transition cursor-pointer"
+            className="primary-button w-full sm:w-auto px-6 py-2.5 rounded-lg bg-slate-800 text-slate-100 font-bold text-sm hover:brightness-110 shadow-sm transition cursor-pointer"
           >
             儲存客戶與維修資料
           </button>

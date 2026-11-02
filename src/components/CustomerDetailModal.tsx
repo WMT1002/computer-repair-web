@@ -93,11 +93,11 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <h2 className="text-lg sm:text-xl font-bold text-slate-100 truncate">{customer.name}</h2>
-                <span className="text-[11px] sm:text-xs font-mono text-slate-400 bg-slate-900 px-1.5 sm:px-2 py-0.5 rounded border border-slate-700 shrink-0">
+                <span className="text-[calc(11px*var(--ui-text-scale))] sm:text-xs font-mono text-slate-400 bg-slate-900 px-1.5 sm:px-2 py-0.5 rounded border border-slate-700 shrink-0">
                   {customer.id}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono text-slate-400 mt-0.5 flex-wrap">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[calc(11px*var(--ui-text-scale))] sm:text-xs font-mono text-slate-400 mt-0.5 flex-wrap">
                 <span className="flex items-center gap-1">
                   <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-400" />
                   <span>{customer.phone}</span>
@@ -154,7 +154,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   <div className="flex items-center gap-1.5">
                     <span className="text-slate-300 font-normal">狀態:</span>
                     {status === 'completed' && (
-                      <label className={`flex items-center gap-1 px-2 py-0.5 rounded border text-[11px] font-semibold cursor-pointer select-none transition ${
+                      <label className={`flex items-center gap-1 px-2 py-0.5 rounded border text-[calc(11px*var(--ui-text-scale))] font-semibold cursor-pointer select-none transition ${
                         isPickedUp 
                           ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-xs' 
                           : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200'
@@ -243,7 +243,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   />
                   <div className="flex items-center justify-between flex-1">
                     <span>左側板</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
+                    <span className={`text-[calc(10px*var(--ui-text-scale))] px-1.5 py-0.5 rounded border ${
                       hasLeftPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
                     }`}>
                       {hasLeftPanel ? '✓ 已留存' : '無'}
@@ -262,7 +262,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   />
                   <div className="flex items-center justify-between flex-1">
                     <span>右側板</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${
+                    <span className={`text-[calc(10px*var(--ui-text-scale))] px-1.5 py-0.5 rounded border ${
                       hasRightPanel ? 'bg-slate-800 text-slate-200 border-slate-600 font-bold' : 'text-slate-500 border-slate-800'
                     }`}>
                       {hasRightPanel ? '✓ 已留存' : '無'}
@@ -327,7 +327,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 text-xs font-semibold bg-sky-500 text-slate-950 rounded-lg hover:bg-sky-400"
+                  className="px-4 py-1.5 text-xs font-semibold bg-sky-500 text-slate-100 rounded-lg hover:bg-sky-400"
                 >
                   確認新增紀錄
                 </button>
@@ -372,7 +372,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                           }
                           className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
                         />
-                        <span className="whitespace-nowrap font-mono text-[11px]">
+                        <span className="whitespace-nowrap font-mono text-[calc(11px*var(--ui-text-scale))]">
                           {repair.isPickedUp ? '✓ 已取件' : '勾選已取件'}
                         </span>
                       </label>
@@ -411,7 +411,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   
                   {/* Side panels badges */}
                   {(repair.hasLeftPanel || repair.hasRightPanel) && (
-                    <div className="flex items-center gap-1.5 mt-2 flex-wrap text-[11px]">
+                    <div className="flex items-center gap-1.5 mt-2 flex-wrap text-[calc(11px*var(--ui-text-scale))]">
                       {repair.hasLeftPanel && (
                         <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 font-mono">
                           ✓ 左側板
@@ -432,10 +432,10 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   {/* Photo Evidence Gallery */}
                   {repair.photos && repair.photos.length > 0 && (
                     <div className="pt-2.5 mt-2.5 border-t border-slate-800/80">
-                      <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 mb-2">
+                      <div className="flex items-center gap-1.5 text-[calc(11px*var(--ui-text-scale))] font-mono text-slate-400 mb-2">
                         <Camera className="w-3.5 h-3.5 text-sky-400" />
                         <span>存證照片 ({repair.photos.length} 張)：</span>
-                        <span className="text-[10px] text-slate-500">(點擊放大)</span>
+                        <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-500">(點擊放大)</span>
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">
                         {repair.photos.map((p) => (
@@ -447,7 +447,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                           >
                             <img src={p.url} alt={p.caption || '存證照片'} className="w-full h-full object-cover group-hover/photo:scale-110 transition-transform duration-300" />
                             {p.caption && (
-                              <div className="absolute inset-x-0 bottom-0 bg-black/85 text-[9px] text-slate-300 text-center truncate px-0.5 font-sans">
+                              <div className="absolute inset-x-0 bottom-0 bg-black/85 text-[calc(9px*var(--ui-text-scale))] text-slate-300 text-center truncate px-0.5 font-sans">
                                 {p.caption}
                               </div>
                             )}
@@ -462,7 +462,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                     const linked = (warranties || []).filter((w) => w.repairId === repair.id);
                     return (
                       <div className="pt-2.5 mt-2.5 border-t border-slate-800/80">
-                        <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-1.5">
+                        <div className="flex items-center justify-between text-[calc(11px*var(--ui-text-scale))] font-mono text-slate-400 mb-1.5">
                           <div className="flex items-center gap-1.5">
                             <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
                             <span className="text-slate-300 font-bold">更換零件保固 ({linked.length} 件)：</span>
@@ -471,7 +471,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                             <button
                               type="button"
                               onClick={() => onAddWarranty(customer.id, repair.id)}
-                              className="text-[10px] text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-0.5 cursor-pointer font-sans"
+                              className="text-[calc(10px*var(--ui-text-scale))] text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-0.5 cursor-pointer font-sans"
                             >
                               <Plus className="w-3 h-3" /> 新增此單零件保固
                             </button>
@@ -496,8 +496,8 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                                   className="p-2 rounded-lg bg-slate-950/70 border border-slate-700/60 flex items-center justify-between text-xs font-mono"
                                 >
                                   <div className="overflow-hidden pr-2">
-                                    <div className="text-slate-200 font-bold text-[11px] truncate font-sans">{w.partName}</div>
-                                    <div className="text-[10px] text-cyan-300 font-mono tracking-wider flex items-center gap-1 mt-0.5">
+                                    <div className="text-slate-200 font-bold text-[calc(11px*var(--ui-text-scale))] truncate font-sans">{w.partName}</div>
+                                    <div className="text-[calc(10px*var(--ui-text-scale))] text-cyan-300 font-mono tracking-wider flex items-center gap-1 mt-0.5">
                                       <Barcode className="w-3 h-3 text-cyan-400 shrink-0" />
                                       <span className="truncate">{w.serialNumber}</span>
                                     </div>
@@ -505,33 +505,33 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                                   <div className="shrink-0 text-right">
                                     {isPickedUp ? (
                                       daysRemaining > 0 ? (
-                                        <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                                        <span className="px-1.5 py-0.5 rounded text-[calc(10px*var(--ui-text-scale))] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
                                           剩 {daysRemaining} 天
                                         </span>
                                       ) : (
-                                        <span className="px-1.5 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">
+                                        <span className="px-1.5 py-0.5 rounded text-[calc(10px*var(--ui-text-scale))] bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">
                                           已過保
                                         </span>
                                       )
                                     ) : (
-                                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
+                                      <span className="px-1.5 py-0.5 rounded text-[calc(10px*var(--ui-text-scale))] bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
                                         待取件起算
                                       </span>
                                     )}
-                                    <div className="text-[9px] text-slate-500 mt-0.5">共 {w.warrantyDays} 天</div>
+                                    <div className="text-[calc(9px*var(--ui-text-scale))] text-slate-500 mt-0.5">共 {w.warrantyDays} 天</div>
                                   </div>
                                 </div>
                               );
                             })}
                           </div>
                         ) : (
-                          <div className="text-[11px] text-slate-500 italic flex items-center justify-between py-0.5">
+                          <div className="text-[calc(11px*var(--ui-text-scale))] text-slate-500 italic flex items-center justify-between py-0.5">
                             <span>此單尚未新增零件序號保固</span>
                             {onAddWarranty && (
                               <button
                                 type="button"
                                 onClick={() => onAddWarranty(customer.id, repair.id)}
-                                className="text-[10px] text-slate-400 hover:text-cyan-300 underline cursor-pointer"
+                                className="text-[calc(10px*var(--ui-text-scale))] text-slate-400 hover:text-cyan-300 underline cursor-pointer"
                               >
                                 + 新增零件保固
                               </button>

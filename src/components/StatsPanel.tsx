@@ -83,7 +83,7 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
   return (
     <div className="space-y-6 fade-in">
       {/* Time Filter Tabs */}
-      <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-sky-400" />
           <h2 className="text-base font-bold text-slate-100">統計時段切換</h2>
@@ -105,7 +105,7 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
               onClick={() => setFilter(item.key)}
               className={`px-3 py-1.5 rounded-md font-medium transition ${
                 filter === item.key
-                  ? 'bg-gradient-to-r from-sky-500/30 to-emerald-500/20 text-sky-300 font-semibold border border-sky-500/40 shadow-sm'
+                  ? 'bg-sky-500/15 text-sky-300 font-semibold border border-sky-500/40 shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -118,13 +118,13 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Customers */}
-        <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-lg flex items-center justify-between text-white">
+        <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-sm flex items-center justify-between text-white">
           <div>
             <p className="text-xs font-mono text-slate-200 font-semibold">累積總客戶數</p>
-            <h3 className="text-2xl font-black font-mono text-white mt-1">
+            <h3 className="text-2xl font-semibold font-mono text-white mt-1">
               {customers.length} <span className="text-xs font-normal text-slate-200">位</span>
             </h3>
-            <p className="text-[11px] text-slate-300 font-mono mt-1">
+            <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-300 font-mono mt-1">
               時段活躍：{activeCustomerIds.size} 位
             </p>
           </div>
@@ -134,15 +134,15 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
         </div>
 
         {/* Repairs Count */}
-        <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-lg flex items-center justify-between text-white">
+        <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-sm flex items-center justify-between text-white">
           <div>
             <p className="text-xs font-mono text-slate-200 font-semibold">指定時段維修次數</p>
-            <h3 className="text-2xl font-black font-mono text-white mt-1">
+            <h3 className="text-2xl font-semibold font-mono text-white mt-1">
               {allFilteredRepairs.length} <span className="text-xs font-normal text-slate-200">次</span>
             </h3>
-            <div className="flex items-center gap-2 text-[11px] font-mono mt-1">
-              <span className="text-emerald-300 font-semibold">✅ {completedCount} 完成</span>
-              <span className="text-amber-300 font-semibold">⏳ {pendingCount} 待取</span>
+            <div className="flex items-center gap-2 text-[calc(11px*var(--ui-text-scale))] font-mono mt-1">
+              <span className="text-emerald-300 font-semibold">{completedCount} 完成</span>
+              <span className="text-amber-300 font-semibold">{pendingCount} 待取</span>
             </div>
           </div>
           <div className="w-12 h-12 rounded-xl bg-emerald-500/15 text-emerald-300 flex items-center justify-center border border-emerald-500/30">
@@ -151,20 +151,20 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
         </div>
 
         {/* Total Revenue */}
-        <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-lg flex items-center justify-between col-span-1 sm:col-span-2 lg:col-span-2 text-white">
+        <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-sm flex items-center justify-between col-span-1 sm:col-span-2 lg:col-span-2 text-white">
           <div>
             <p className="text-xs font-mono text-slate-200 font-semibold">指定時段營業額</p>
-            <h3 className="text-3xl font-black font-mono text-emerald-400 mt-1">
+            <h3 className="text-3xl font-semibold font-mono text-slate-100 mt-1">
               NT$ {totalRevenue.toLocaleString()}
             </h3>
-            <p className="text-[11px] text-slate-200 font-mono mt-1">
+            <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-200 font-mono mt-1">
               平均單筆金額：NT${' '}
               {allFilteredRepairs.length > 0
                 ? Math.round(totalRevenue / allFilteredRepairs.length).toLocaleString()
                 : 0}
             </p>
           </div>
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-sky-500/20 text-emerald-300 flex items-center justify-center border border-emerald-500/40 shadow-inner">
+          <div className="w-14 h-14 rounded-xl bg-sky-500/15 text-emerald-300 flex items-center justify-center border border-emerald-500/40 shadow-inner">
             <TrendingUp className="w-8 h-8" />
           </div>
         </div>
@@ -177,7 +177,7 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
       </div>
 
       {/* Repairs Table Breakdown */}
-      <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-6 shadow-lg text-white">
+      <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-6 shadow-sm text-white">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <h3 className="text-sm font-mono font-bold tracking-wider text-sky-400 uppercase flex items-center gap-2">
             <DollarSign className="w-4 h-4" /> 該時段維修明細列表 ({allFilteredRepairs.length} 筆)
@@ -224,19 +224,19 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ customers, onSelectCusto
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       {item.repair.status === 'completed' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[calc(11px*var(--ui-text-scale))] rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
                           <CheckCircle2 className="w-3 h-3" /> 4. 完工待取{item.repair.isPickedUp ? ' (已取件)' : ''}
                         </span>
                       ) : item.repair.status === 'repairing' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-semibold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[calc(11px*var(--ui-text-scale))] rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-semibold">
                           <Clock className="w-3 h-3" /> 3. 維修更換
                         </span>
                       ) : item.repair.status === 'diagnosing' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[calc(11px*var(--ui-text-scale))] rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">
                           <Clock className="w-3 h-3" /> 2. 故障檢測
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded bg-sky-500/10 text-sky-400 border border-sky-500/20 font-semibold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[calc(11px*var(--ui-text-scale))] rounded bg-sky-500/10 text-sky-400 border border-sky-500/20 font-semibold">
                           <Clock className="w-3 h-3" /> 1. 收件建檔
                         </span>
                       )}

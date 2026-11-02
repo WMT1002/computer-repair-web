@@ -68,7 +68,7 @@ export const PrintReceiptModal: React.FC<PrintReceiptModalProps> = ({
               </button>
               <button
                 onClick={handleTriggerPrint}
-                className="px-4 py-1.5 text-xs font-bold rounded-lg bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 flex items-center gap-1.5 shadow-lg shadow-sky-500/20 hover:brightness-110 cursor-pointer"
+                className="primary-button px-4 py-1.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-4 h-4" /> 一鍵列印 A4 單據
               </button>
@@ -317,10 +317,10 @@ const ReceiptSlip: React.FC<ReceiptSlipProps> = ({ title, customer, repair, shop
               size={52}
               level="M"
             />
-            <div className="text-[10px] leading-tight text-slate-700 font-mono flex flex-col justify-center">
+            <div className="text-[calc(10px*var(--ui-text-scale))] leading-tight text-slate-700 font-mono flex flex-col justify-center">
               <span className="font-bold text-slate-950 flex items-center gap-0.5">📱 手機掃碼</span>
               <span className="font-semibold text-sky-700">即時追蹤進度</span>
-              <span className="text-[9px] text-slate-500">免登入查詢</span>
+              <span className="text-[calc(9px*var(--ui-text-scale))] text-slate-500">免登入查詢</span>
             </div>
           </div>
         )}

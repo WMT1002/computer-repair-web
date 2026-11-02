@@ -110,7 +110,7 @@ const StatusDropdown: React.FC<{
           e.stopPropagation();
           setIsOpen((prev) => !prev);
         }}
-        className={`px-1.5 sm:px-2 py-1 text-[11px] font-semibold rounded-lg border flex items-center gap-1 transition-colors cursor-pointer select-none whitespace-nowrap shrink-0 ${current.bg} ${current.text} ${current.border} ${current.hoverBg}`}
+        className={`status-control px-1.5 sm:px-2 py-1 text-[calc(11px*var(--ui-text-scale))] font-semibold rounded-lg border flex items-center gap-1 transition-colors cursor-pointer select-none whitespace-nowrap shrink-0 ${current.bg} ${current.text} ${current.border} ${current.hoverBg}`}
         title="點擊切換維修進度狀態"
       >
         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${current.dot}`} />
@@ -120,10 +120,10 @@ const StatusDropdown: React.FC<{
 
       {isOpen && (
         <div
-          className="absolute bottom-full mb-1.5 right-0 w-44 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1 z-50 animate-fadeIn"
+          className="status-menu absolute bottom-full mb-1.5 right-0 w-44 bg-slate-900 border border-slate-700 rounded-xl shadow-sm p-1 z-50 animate-fadeIn"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="text-[10px] font-mono text-slate-400 px-2 py-1 border-b border-slate-800 mb-1">
+          <div className="text-[calc(10px*var(--ui-text-scale))] font-mono text-slate-400 px-2 py-1 border-b border-slate-800 mb-1">
             快速切換進度
           </div>
           {items.map((item) => {
@@ -137,10 +137,10 @@ const StatusDropdown: React.FC<{
                   onSelect(item.key);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer text-left my-0.5 ${
+                className={`status-option w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer text-left my-0.5 ${
                   isSelected
                     ? `${cfg.bg} ${cfg.text} border ${cfg.border}`
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    : 'text-slate-300'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
       {/* Search & Filter Toolbar */}
       <form
         onSubmit={handleSearchSubmit}
-        className="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700/60 flex flex-col xl:flex-row gap-3 sm:gap-4 items-stretch xl:items-center justify-between shadow-lg"
+        className="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700/60 flex flex-col xl:flex-row gap-3 sm:gap-4 items-stretch xl:items-center justify-between shadow-sm"
       >
         <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 flex-1">
           {/* 客戶姓名搜尋 */}
@@ -358,44 +358,40 @@ export const CustomerList: React.FC<CustomerListProps> = ({
           <p className="text-slate-500 text-xs mt-1">請嘗試變更搜尋關鍵字或切換狀態篩選條目</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+        <div className="customer-cards-grid">
           {filteredCustomers.map((customer) => {
             const latestRepair = customer.repairs[0];
 
             return (
               <div
                 key={customer.id}
-                className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-sky-500/50 rounded-xl p-3.5 sm:p-4 shadow-lg transition-all duration-200 flex flex-col justify-between group overflow-hidden"
+                className="customer-card"
               >
                 <div>
                   {/* Top Bar */}
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    {/* 左側：姓名 -> 顧客編號 -> 聯絡電話 */}
-                    <div className="min-w-0 flex-1">
-                      {/* 姓名：不換行 */}
-                      <h3
-                        className="text-lg font-bold text-slate-100 group-hover:text-sky-400 transition whitespace-nowrap truncate"
-                        title={customer.name}
-                      >
-                        {customer.name}
-                      </h3>
-
-                      {/* 顧客編號：放在電話上方 */}
-                      <div className="mt-1">
-                        <span className="inline-block text-[11px] font-mono text-slate-400 bg-slate-900/60 px-2 py-0.5 rounded border border-slate-700/50 whitespace-nowrap">
-                          {customer.id}
-                        </span>
+                  <div className="customer-card-header">
+                    {/* 左側：姓名與電話，編號在下方 */}
+                    <div className="customer-identity">
+                      <div className="customer-name-row">
+                        <h3
+                          className="customer-name"
+                          title={customer.name}
+                        >
+                          {customer.name}
+                        </h3>
+                        <span className="customer-phone">{customer.phone}</span>
                       </div>
 
-                      {/* 聯絡電話 */}
-                      <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1 font-mono whitespace-nowrap">
-                        <Phone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                        <span>{customer.phone}</span>
+                      {/* 顧客編號 */}
+                      <div className="customer-reference">
+                        <span>
+                          {customer.id}
+                        </span>
                       </div>
                     </div>
 
                     {/* 右側：已取件勾選 + 進度狀態（不換行） */}
-                    <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
+                    <div className="customer-status-summary">
                       {/* 只有設定成「完工待取」的時候，在右上角完工待取的左邊出現「已取件」勾選小區塊 */}
                       {latestRepair && latestRepair.status === 'completed' && (
                         <label
@@ -414,7 +410,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                             }
                             className="w-3.5 h-3.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 cursor-pointer accent-emerald-500"
                           />
-                          <span className="whitespace-nowrap font-mono text-[11px]">
+                          <span className="whitespace-nowrap font-mono text-[calc(11px*var(--ui-text-scale))]">
                             {latestRepair.isPickedUp ? '✓ 已取件' : '勾選已取件'}
                           </span>
                         </label>
@@ -435,7 +431,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                           {latestRepair.status === 'completed' ? (
                             <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                           ) : (
-                            <Clock className="w-3.5 h-3.5 shrink-0 animate-pulse" />
+                            <Clock className="w-3.5 h-3.5 shrink-0" />
                           )}
                           <span className="whitespace-nowrap">{getStatusLabel(latestRepair.status)}</span>
                         </span>
@@ -449,29 +445,32 @@ export const CustomerList: React.FC<CustomerListProps> = ({
 
                   {/* Latest Repair Preview */}
                   {latestRepair && (
-                    <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700/40 my-3 text-xs">
-                      <div className="flex items-center justify-between text-slate-400 font-mono mb-1">
-                        <span className="flex items-center gap-1 whitespace-nowrap">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" /> {latestRepair.date}
+                    <div className="customer-repair-preview">
+                      <div className="customer-repair-heading">
+                        <span>最近維修</span>
+                        <span className="flex items-center gap-1.5 whitespace-nowrap">
+                          <Calendar className="w-3.5 h-3.5 shrink-0" /> {latestRepair.date}
                         </span>
-                        <span className="text-sky-400 font-semibold font-mono text-sm whitespace-nowrap">
+                      </div>
+                      <div className="customer-repair-main">
+                        <p className="customer-repair-item">
+                          {latestRepair.item}
+                        </p>
+                        <span className="customer-repair-price">
                           NT$ {latestRepair.price.toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-slate-200 line-clamp-2 font-medium">
-                        {latestRepair.item}
-                      </p>
 
                       {/* Side Panel badges */}
                       {(latestRepair.hasLeftPanel || latestRepair.hasRightPanel) && (
-                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                        <div className="customer-panel-badges">
                           {latestRepair.hasLeftPanel && (
-                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono whitespace-nowrap">
+                            <span>
                               ✓ 左側板
                             </span>
                           )}
                           {latestRepair.hasRightPanel && (
-                            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-600 text-[10px] font-mono whitespace-nowrap">
+                            <span>
                               ✓ 右側板
                             </span>
                           )}
@@ -479,27 +478,27 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                       )}
 
                       {latestRepair.note && (
-                        <p className="text-slate-400 text-[11px] mt-1 italic truncate">
+                        <p className="customer-repair-note" title={latestRepair.note}>
                           備註：{latestRepair.note}
                         </p>
                       )}
                     </div>
                   )}
 
-                  <div className="text-[11px] text-slate-500 font-mono flex items-center justify-between">
+                  <div className="customer-card-meta">
                     <span>歷史紀錄：{customer.repairs.length} 筆維修</span>
                     <span>建立於 {customer.createdAt}</span>
                   </div>
                 </div>
 
                 {/* Bottom Actions - 同一行不換行，影印放在刪除右邊 */}
-                <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-slate-700/50 gap-1 w-full whitespace-nowrap">
+                <div className="customer-card-actions">
                   {/* 左側：刪除 + 列印（放在刪除右邊） */}
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="customer-utility-actions">
                     <button
                       type="button"
                       onClick={() => onDeleteCustomer(customer.id)}
-                      className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg border border-slate-700/60 hover:border-rose-500/30 transition shrink-0 cursor-pointer"
+                      className="customer-icon-button customer-delete-button"
                       title="刪除客戶資料"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -508,7 +507,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                       <button
                         type="button"
                         onClick={() => onPrintCustomer(customer, latestRepair)}
-                        className="p-1.5 text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg border border-slate-700/60 hover:border-emerald-500/40 transition shrink-0 cursor-pointer"
+                        className="customer-icon-button"
                         title="列印 A4 雙聯客戶取件收據"
                       >
                         <Printer className="w-3.5 h-3.5" />
@@ -517,11 +516,11 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                   </div>
 
                   {/* 右側：編輯 + 狀態選單 + 詳情 */}
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="customer-primary-actions">
                     <button
                       type="button"
                       onClick={() => onEditCustomer(customer)}
-                      className="px-2 py-1 text-[11px] font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-0.5 transition shrink-0 cursor-pointer"
+                      className="customer-edit-button"
                     >
                       <Edit3 className="w-3 h-3" /> <span>編輯</span>
                     </button>
@@ -536,7 +535,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     <button
                       type="button"
                       onClick={() => onSelectCustomer(customer)}
-                      className="px-2 py-1 text-[11px] font-semibold rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30 hover:bg-sky-500/30 flex items-center gap-0.5 transition shrink-0 cursor-pointer"
+                      className="customer-detail-button"
                     >
                       <span>詳情</span> <ChevronRight className="w-3 h-3" />
                     </button>

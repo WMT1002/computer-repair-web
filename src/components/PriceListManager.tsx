@@ -127,14 +127,14 @@ export const PriceListManager: React.FC<PriceListManagerProps> = ({
 
         <button
           onClick={openAddModal}
-          className="px-4 py-2.5 bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-semibold text-sm rounded-lg hover:brightness-110 flex items-center justify-center gap-2 shadow-lg transition shrink-0 cursor-pointer"
+          className="primary-button px-4 py-2.5 bg-slate-800 text-slate-100 font-semibold text-sm rounded-lg hover:brightness-110 flex items-center justify-center gap-2 shadow-sm transition shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4" /> 新增價目項目
         </button>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between shadow-lg">
+      <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between shadow-sm">
         {/* Search */}
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -190,7 +190,7 @@ export const PriceListManager: React.FC<PriceListManagerProps> = ({
           {filteredItems.map((item) => (
             <div
               key={item.id}
-              className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/50 rounded-xl p-5 shadow-lg transition-all duration-200 flex flex-col justify-between group"
+              className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/50 rounded-xl p-5 shadow-sm transition-all duration-200 flex flex-col justify-between group"
             >
               <div>
                 {/* Category & Actions Header */}
@@ -377,7 +377,7 @@ export const PriceListManager: React.FC<PriceListManagerProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-semibold rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow-md transition"
+                  className="px-5 py-2 text-xs font-semibold rounded-lg bg-emerald-500 text-slate-100 hover:bg-emerald-400 shadow-md transition"
                 >
                   {editingItem ? '儲存變更' : '確認新增'}
                 </button>

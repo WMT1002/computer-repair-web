@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Clock,
-  ShieldCheck,
-  Cloud,
   Sun,
   Moon,
   LogOut,
@@ -50,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const handleSignOut = async () => {
-    if (window.confirm('確定要登出 FixFlow 智慧電腦維修管理系統嗎？')) {
+    if (window.confirm('確定要登出 FixFlow 電腦維修管理系統嗎？')) {
       await signOut();
     }
   };
@@ -61,30 +59,25 @@ export const Header: React.FC<HeaderProps> = ({
   const userIsAdmin = isAdmin(profile?.role_code);
 
   return (
-    <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 sm:pb-6 mb-4 sm:mb-6 border-b border-[#334155] gap-3 sm:gap-4">
+    <header className="workspace-header flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 sm:pb-6 mb-4 sm:mb-6 border-b border-[#334155] gap-3 sm:gap-4">
       {/* Brand Section */}
       <div className="flex items-center gap-3 sm:gap-4 w-full lg:w-auto justify-between lg:justify-start">
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-sky-400 via-teal-400 to-emerald-400 p-2 sm:p-2.5 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-sky-500/25 shrink-0 transition-transform hover:scale-105">
-            <FixFlowLogo className="w-full h-full text-slate-950" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-xl bg-slate-800 p-2 sm:p-2.5 flex items-center justify-center text-slate-100 font-bold shadow-sm shrink-0 transition-transform">
+            <FixFlowLogo className="w-full h-full text-slate-100" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <h1 className="text-lg sm:text-xl md:text-2xl font-black tracking-wider text-slate-100 flex items-center gap-1.5 sm:gap-2">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-emerald-400 font-extrabold tracking-normal">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-wider text-slate-100 flex items-center gap-1.5 sm:gap-2">
+                <span className="text-slate-100 font-semibold tracking-normal">
                   FixFlow
                 </span>
-                <span className="truncate">智慧電腦維修管理系統</span>
+                <span className="truncate">電腦維修管理系統</span>
               </h1>
-              <span className="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1 shrink-0">
-                <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> 正式版
-              </span>
-              <span className="hidden md:flex px-2 py-0.5 text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded-full items-center gap-1 shrink-0">
-                <Cloud className="w-3.5 h-3.5 text-sky-400" /> Supabase 雲端已同步
-              </span>
+
             </div>
             <p className="hidden sm:block text-xs text-slate-400 font-mono mt-0.5">
-              FIXFLOW PRO • VITE + REACT + TYPESCRIPT + SUPABASE AUTH & CLOUD
+              客戶、維修與門市營運
             </p>
           </div>
         </div>
@@ -96,7 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-2 sm:gap-3 w-full lg:w-auto justify-end">
           {/* 時間區塊 */}
           <div className="flex items-center gap-1.5 sm:gap-2 text-xs font-mono text-sky-400 bg-slate-800/90 px-3 py-1.5 sm:py-2 rounded-xl border border-slate-700/80 shadow-md whitespace-nowrap">
-            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400 animate-pulse shrink-0" />
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400 shrink-0" />
             <span>{timeStr}</span>
           </div>
 
@@ -104,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
           {user && (
             <div className="flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-800/90 border border-slate-700/80 shadow-md shrink-0">
               <div
-                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black shrink-0"
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-semibold shrink-0"
                 style={{
                   background: roleStyle.bg,
                   color: roleStyle.color,
@@ -119,12 +112,12 @@ export const Header: React.FC<HeaderProps> = ({
                     {displayName}
                   </span>
                   <span
-                    className={`text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-md font-semibold border whitespace-nowrap ${roleStyle.badgeClass}`}
+                    className={`text-[calc(9px*var(--ui-text-scale))] sm:text-[calc(10px*var(--ui-text-scale))] px-1.5 py-0.5 rounded-md font-semibold border whitespace-nowrap ${roleStyle.badgeClass}`}
                   >
                     {roleName}
                   </span>
                 </div>
-                <span className="text-[10px] sm:text-[11px] text-slate-400 font-mono truncate max-w-[120px] sm:max-w-[180px] whitespace-nowrap">
+                <span className="text-[calc(10px*var(--ui-text-scale))] sm:text-[calc(11px*var(--ui-text-scale))] text-slate-400 font-mono truncate max-w-[120px] sm:max-w-[180px] whitespace-nowrap">
                   {user.email}
                 </span>
               </div>
@@ -169,17 +162,17 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-slate-800/90 text-amber-400 border-amber-500/40 hover:bg-slate-700/90 hover:border-amber-400'
                 : 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200/90'
             }`}
-            title="切換「黑暗風」或「明亮風」風格"
+            title="切換淺色或深色模式"
           >
             {themeMode === 'dark' ? (
               <>
                 <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
-                <span>明亮風 ☀️</span>
+                <span>淺色模式</span>
               </>
             ) : (
               <>
                 <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700 shrink-0" />
-                <span>黑暗風 🌙</span>
+                <span>深色模式</span>
               </>
             )}
           </button>

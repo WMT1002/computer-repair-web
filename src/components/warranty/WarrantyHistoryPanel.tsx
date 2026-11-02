@@ -201,16 +201,16 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
   return (
     <div className="space-y-6 fade-in">
       {/* Header Banner */}
-      <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute right-0 top-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-4">
-            <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 text-slate-950 flex items-center justify-center shadow-lg shadow-cyan-500/25 shrink-0">
+            <div className="w-13 h-13 rounded-xl bg-slate-800 text-slate-100 flex items-center justify-center shadow-sm shrink-0">
               <ShieldCheck className="w-7 h-7 stroke-[2.5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-semibold text-slate-100 tracking-tight">
                   零件保固履歷庫
                 </h1>
                 <span className="px-2.5 py-0.5 text-xs font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
@@ -228,7 +228,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
               setEditingRecord(null);
               setIsAddModalOpen(true);
             }}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-200 cursor-pointer shrink-0"
+            className="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-200 cursor-pointer shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>新增零件保固</span>
@@ -252,7 +252,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
               <span>全部保固零件</span>
               <ShieldCheck className="w-4 h-4 text-cyan-400" />
             </div>
-            <div className="text-2xl font-black text-slate-100 font-mono mt-1">
+            <div className="text-2xl font-semibold text-slate-100 font-mono mt-1">
               {stats.total}
               <span className="text-xs text-slate-400 ml-1 font-sans font-medium">件</span>
             </div>
@@ -273,7 +273,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
               <span>🟢 保固中</span>
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
             </div>
-            <div className="text-2xl font-black text-emerald-500 font-mono mt-1">
+            <div className="text-2xl font-semibold text-emerald-500 font-mono mt-1">
               {stats.active}
               <span className="text-xs text-slate-400 ml-1 font-sans font-medium">件</span>
             </div>
@@ -294,7 +294,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
               <span>⏳ 待取件起算</span>
               <Clock className="w-4 h-4 text-amber-500" />
             </div>
-            <div className="text-2xl font-black text-amber-500 font-mono mt-1">
+            <div className="text-2xl font-semibold text-amber-500 font-mono mt-1">
               {stats.pendingPickup}
               <span className="text-xs text-slate-400 ml-1 font-sans font-medium">件</span>
             </div>
@@ -315,7 +315,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
               <span>🔴 已過保固</span>
               <XCircle className="w-4 h-4 text-rose-500" />
             </div>
-            <div className="text-2xl font-black text-rose-500 font-mono mt-1">
+            <div className="text-2xl font-semibold text-rose-500 font-mono mt-1">
               {stats.expired}
               <span className="text-xs text-slate-400 ml-1 font-sans font-medium">件</span>
             </div>
@@ -324,7 +324,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
       </div>
 
       {/* Toolbar: Search by Name & Order ID, View Switcher */}
-      <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-4 shadow-lg">
+      <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-4 shadow-sm">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -367,7 +367,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
             {/* 查詢按鈕 */}
             <button
               type="submit"
-              className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer shadow-md"
+              className="primary-button px-5 py-2 bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer shadow-md"
             >
               <Search className="w-4 h-4" />
               <span>查詢</span>
@@ -423,8 +423,8 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
 
       {/* 1. Initial State (尚未進行搜尋時，下方不先顯示資料) */}
       {!isSearchActive && (
-        <div className="bg-slate-850/60 border border-slate-700/80 border-dashed rounded-2xl p-10 sm:p-14 text-center space-y-4 shadow-sm">
-          <div className="w-14 h-14 rounded-2xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center mx-auto border border-cyan-500/30 shadow-inner">
+        <div className="bg-slate-850/60 border border-slate-700/80 border-dashed rounded-xl p-10 sm:p-14 text-center space-y-4 shadow-sm">
+          <div className="w-14 h-14 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center mx-auto border border-cyan-500/30 shadow-inner">
             <Search className="w-7 h-7" />
           </div>
           <div className="space-y-1.5">
@@ -448,7 +448,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
 
       {/* 2. Empty State (已搜尋但查無符合紀錄) */}
       {isSearchActive && filteredList.length === 0 && (
-        <div className="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-12 text-center space-y-4">
+        <div className="bg-slate-800/50 border border-slate-700/60 rounded-xl p-12 text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center mx-auto border border-slate-700">
             <ShieldCheck className="w-8 h-8" />
           </div>
@@ -485,7 +485,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                 ? {
                     bg: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40',
                     text: `🟢 保固中 (剩餘 ${item.daysRemaining} 天)`,
-                    bar: 'bg-gradient-to-r from-emerald-500 to-teal-400',
+                    bar: 'bg-slate-800',
                   }
                 : item.statusType === 'expired'
                 ? {
@@ -502,7 +502,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
             return (
               <div
                 key={item.id}
-                className="bg-slate-850/95 border border-slate-700/80 rounded-xl p-4 shadow-lg hover:border-cyan-500/50 transition-all flex flex-col justify-between group"
+                className="bg-slate-850/95 border border-slate-700/80 rounded-xl p-4 shadow-sm hover:border-cyan-500/50 transition-all flex flex-col justify-between group"
               >
                 {/* Top Header */}
                 <div>
@@ -513,7 +513,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                       {badgeConfig.text}
                     </span>
 
-                    <span className="text-[11px] font-mono text-slate-400 font-semibold">
+                    <span className="text-[calc(11px*var(--ui-text-scale))] font-mono text-slate-400 font-semibold">
                       {item.partCategory}
                     </span>
                   </div>
@@ -528,7 +528,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                         {item.partName}
                       </h3>
                       {item.supplier && (
-                        <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+                        <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-400 font-mono mt-0.5">
                           通路：{item.supplier}
                         </p>
                       )}
@@ -559,7 +559,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                   {/* Countdown Progress Bar (if active) */}
                   {item.isPickedUp && item.statusType !== 'expired' && (
                     <div className="mb-3 space-y-1">
-                      <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 font-medium">
+                      <div className="flex items-center justify-between text-[calc(10px*var(--ui-text-scale))] font-mono text-slate-400 font-medium">
                         <span>保固進度 ({item.progressPercent}%)</span>
                         <span>起: {item.effectiveStartDate} ➔ 訖: {item.endDateStr}</span>
                       </div>
@@ -582,7 +582,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                       <span className="text-slate-300 font-semibold">{item.customerPhone}</span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px]">
+                    <div className="flex items-center justify-between text-[calc(11px*var(--ui-text-scale))]">
                       <span className="text-slate-400">工單單號：</span>
                       {item.customer && onSelectCustomer ? (
                         <button
@@ -597,7 +597,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                     </div>
 
                     {item.note && (
-                      <p className="text-[11px] text-slate-400 italic truncate pt-0.5">
+                      <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-400 italic truncate pt-0.5">
                         備註：{item.note}
                       </p>
                     )}
@@ -666,15 +666,15 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                   <tr key={item.id} className="hover:bg-slate-800/60 transition">
                     <td className="py-3 px-4 whitespace-nowrap">
                       {item.statusType === 'active' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-bold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[calc(11px*var(--ui-text-scale))] font-bold">
                           <CheckCircle2 className="w-3 h-3" /> 剩餘 {item.daysRemaining} 天
                         </span>
                       ) : item.statusType === 'expired' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[11px] font-bold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[calc(11px*var(--ui-text-scale))] font-bold">
                           <XCircle className="w-3 h-3" /> 已過保
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[11px] font-bold">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[calc(11px*var(--ui-text-scale))] font-bold">
                           <Clock className="w-3 h-3" /> 待取件起算
                         </span>
                       )}
@@ -682,7 +682,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
 
                     <td className="py-3 px-4 font-sans font-bold text-slate-100">
                       <div>{item.partName}</div>
-                      <span className="text-[10px] text-slate-400 font-mono font-normal">
+                      <span className="text-[calc(10px*var(--ui-text-scale))] text-slate-400 font-mono font-normal">
                         [{item.partCategory}] {item.supplier ? `· ${item.supplier}` : ''}
                       </span>
                     </td>
@@ -706,7 +706,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
 
                     <td className="py-3 px-4 font-sans text-slate-100 whitespace-nowrap">
                       <div className="font-bold text-slate-100">{item.customerName}</div>
-                      <div className="text-[11px] text-slate-400 font-mono font-semibold">{item.customerPhone}</div>
+                      <div className="text-[calc(11px*var(--ui-text-scale))] text-slate-400 font-mono font-semibold">{item.customerPhone}</div>
                     </td>
 
                     <td className="py-3 px-4 text-cyan-400 font-bold whitespace-nowrap">
@@ -722,7 +722,7 @@ export const WarrantyHistoryPanel: React.FC<WarrantyHistoryPanelProps> = ({
                       )}
                     </td>
 
-                    <td className="py-3 px-4 text-slate-300 whitespace-nowrap text-[11px]">
+                    <td className="py-3 px-4 text-slate-300 whitespace-nowrap text-[calc(11px*var(--ui-text-scale))]">
                       <div className="font-bold text-slate-100">{item.warrantyDays} 天</div>
                       <div className="text-slate-400">訖: {item.endDateStr}</div>
                     </td>

@@ -172,19 +172,19 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#0b1329] relative overflow-hidden">
       {/* Background Cyber Accents */}
-      <div className="pointer-events-none absolute -left-28 -top-28 h-96 w-96 rounded-full bg-sky-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute -right-28 -bottom-28 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
 
-      <div className="relative w-full max-w-[1080px] grid lg:grid-cols-[1fr_1.15fr] bg-slate-900/90 backdrop-blur-xl border border-slate-700/80 rounded-3xl shadow-2xl overflow-hidden">
+
+
+      <div className="relative w-full max-w-[1080px] grid lg:grid-cols-[1fr_1.15fr] bg-slate-900/90 backdrop-blur-xl border border-slate-700/80 rounded-xl shadow-sm overflow-hidden">
         {/* Left Visual Card */}
-        <div className="hidden lg:flex flex-col justify-between p-10 bg-gradient-to-br from-slate-950 via-[#0d1f38] to-[#122847] border-r border-slate-700/60 relative overflow-hidden">
+        <div className="hidden lg:flex flex-col justify-between p-10 bg-slate-800 border-r border-slate-700/60 relative overflow-hidden">
           <div className="relative z-10 flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 via-teal-400 to-emerald-400 p-2.5 flex items-center justify-center text-slate-950 shadow-lg shadow-sky-500/25">
-              <FixFlowLogo className="w-full h-full text-slate-950" />
+            <div className="w-12 h-12 rounded-xl bg-slate-800 p-2.5 flex items-center justify-center text-slate-100 shadow-sm">
+              <FixFlowLogo className="w-full h-full text-slate-100" />
             </div>
             <div>
-              <div className="text-xl font-black tracking-wider text-white flex items-center gap-1.5">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">FixFlow</span>
+              <div className="text-xl font-semibold tracking-wider text-white flex items-center gap-1.5">
+                <span className="text-slate-100">FixFlow</span>
                 <span>智慧維修系統</span>
               </div>
               <div className="text-xs text-sky-300 font-mono">REPAIR CLOUD AUTH PLATFORM</div>
@@ -195,10 +195,10 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/25 text-sky-300 text-xs font-semibold mb-4">
               <Sparkles className="w-3.5 h-3.5" /> 建立新工程師 / 管理員帳號
             </div>
-            <h1 className="text-3xl font-black text-white leading-tight mb-4">
+            <h1 className="text-3xl font-semibold text-white leading-tight mb-4">
               加入維修管理平台
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">
+              <span className="text-slate-100">
                 掌握維修單、客戶與報價
               </span>
             </h1>
@@ -223,11 +223,11 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
             </div>
           </div>
 
-          <div className="relative z-10 p-4 rounded-2xl bg-slate-950/60 border border-slate-800 backdrop-blur-md">
+          <div className="relative z-10 p-4 rounded-xl bg-slate-950/60 border border-slate-800 backdrop-blur-md">
             <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-emerald-400">
               <ShieldCheck className="w-4 h-4" /> 權限安全防護
             </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <p className="text-[calc(11px*var(--ui-text-scale))] text-slate-400 leading-relaxed">
               公開註冊預設為「一般工程師」權限；高階「系統管理員」或「維修主管」角色由後台專用面板審核指派。
             </p>
           </div>
@@ -238,10 +238,10 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
           {registeredEmail ? (
             /* Registration Success View */
             <div className="text-center py-4">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h2 className="text-2xl font-black text-slate-100 mb-2">註冊信已送出</h2>
+              <h2 className="text-2xl font-semibold text-slate-100 mb-2">註冊信已送出</h2>
               <p className="text-sm text-slate-300 leading-relaxed max-w-md mx-auto mb-6">
                 我們已請 Supabase Auth 寄送驗證信至{' '}
                 <strong className="text-sky-400 font-mono">{registeredEmail}</strong>。
@@ -277,7 +277,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
                 <button
                   type="button"
                   onClick={onSwitchToLogin}
-                  className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 text-sm font-bold shadow-lg shadow-sky-500/20 transition-all cursor-pointer"
+                  className="primary-button flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-800 text-slate-100 text-sm font-bold shadow-sm transition-all cursor-pointer"
                 >
                   前往登入
                   <ArrowRight className="w-4 h-4 stroke-[2.5]" />
@@ -291,7 +291,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
                 <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-semibold mb-2">
                   <ShieldCheck className="w-3.5 h-3.5" /> 建立新使用者帳號
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-100 mb-1">
+                <h2 className="text-2xl sm:text-3xl font-semibold text-slate-100 mb-1">
                   註冊維修系統帳號
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-400">
@@ -350,7 +350,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
                       設定密碼 <span className="text-red-400">*</span>
                     </label>
                     {form.password && (
-                      <span className="text-[11px] font-semibold text-slate-400">
+                      <span className="text-[calc(11px*var(--ui-text-scale))] font-semibold text-slate-400">
                         {strengthLabels[strength]}
                       </span>
                     )}
@@ -389,7 +389,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
                   )}
 
                   {/* Password Checklist */}
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px]">
+                  <div className="mt-2 flex flex-wrap gap-2 text-[calc(11px*var(--ui-text-scale))]">
                     <span
                       className={`flex items-center gap-1 px-2 py-0.5 rounded-md border ${
                         form.password.length >= 8
@@ -444,7 +444,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
                     </button>
                   </div>
                   {form.confirm && form.password !== form.confirm && (
-                    <p className="text-[11px] text-red-400 mt-1">兩次輸入的密碼不相符</p>
+                    <p className="text-[calc(11px*var(--ui-text-scale))] text-red-400 mt-1">兩次輸入的密碼不相符</p>
                   )}
                 </div>
 
@@ -452,7 +452,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onSwitchToLogin }) =
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/20 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="primary-button w-full mt-2 py-3 px-4 rounded-xl bg-slate-800 text-slate-100 font-bold text-sm shadow-sm transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {loading ? (
                     <>

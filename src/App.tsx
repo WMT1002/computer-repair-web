@@ -68,7 +68,7 @@ export function App() {
   // Theme Mode State ('dark' | 'light')
   const [themeMode, setThemeMode] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('repair_shop_theme');
-    return (saved as 'dark' | 'light') || 'dark';
+    return (saved as 'dark' | 'light') || 'light';
   });
 
   useEffect(() => {
@@ -526,7 +526,7 @@ export function App() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#0b1329] text-slate-100 gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-400 to-emerald-400 flex items-center justify-center text-slate-950 shadow-xl shadow-sky-500/30 animate-pulse">
+        <div className="w-14 h-14 rounded-xl bg-slate-800 flex items-center justify-center text-slate-100 shadow-xl">
           <Wrench className="w-7 h-7 stroke-[2.5]" />
         </div>
         <div className="flex items-center gap-2 text-sm font-semibold text-sky-400">
