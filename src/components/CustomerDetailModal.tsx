@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Customer, RepairRecord, RepairStatus, PriceItem, RepairPhoto, PartWarrantyRecord } from '../types';
-import { X, Plus, Printer, Trash2, Calendar, DollarSign, Tag, Edit3, Camera, ShieldCheck, Barcode } from 'lucide-react';
+import { X, Plus, Printer, Trash2, Calendar, Tag, Edit3, Camera, ShieldCheck, Barcode } from 'lucide-react';
 import { PhotoUploader } from './common/PhotoUploader';
 import { ImageLightbox } from './common/ImageLightbox';
 
@@ -127,8 +127,8 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
 
         {/* Modal Body */}
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-mono font-bold tracking-wider text-sky-400 uppercase">
+          <div className="repair-history-heading">
+            <h3 className="text-sm font-semibold text-slate-100">
               維修歷史紀錄 ({customer.repairs.length} 筆)
             </h3>
             {!showAddForm && (
@@ -339,20 +339,20 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
             {customer.repairs.map((repair, idx) => (
               <div
                 key={repair.id}
-                className="bg-slate-900/60 border border-slate-700/60 rounded-xl p-4 space-y-3 relative group"
+                className="repair-detail-card"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
-                  <div className="flex items-center gap-2">
+                <div className="repair-detail-header">
+                  <div className="repair-detail-reference">
                     <span className="text-xs font-mono text-slate-400 font-bold">
                       #{customer.repairs.length - idx}
                     </span>
-                    <span className="text-xs font-mono text-slate-500">[{repair.id}]</span>
-                    <span className="flex items-center gap-1 text-xs text-slate-400 font-mono">
+                    <span className="text-xs font-mono text-slate-500">{repair.id}</span>
+                    <span className="repair-detail-date">
                       <Calendar className="w-3.5 h-3.5 text-slate-400" /> {repair.date}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="repair-detail-status">
                     {/* 只有設定成「完工待取」的時候，在他（狀態選單）的左邊出現一個已取件的勾選小區塊 */}
                     {repair.status === 'completed' && (
                       <label
@@ -386,7 +386,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                           onTogglePickedUp?.(customer.id, repair.id, false);
                         }
                       }}
-                      className={`px-2.5 py-1 text-xs font-semibold rounded-full border cursor-pointer focus:outline-none transition shadow-sm ${
+                      className={`repair-detail-status-select px-2.5 py-1 text-xs font-semibold rounded-lg border cursor-pointer transition ${
                         repair.status === 'completed'
                           ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
                           : repair.status === 'repairing'
@@ -405,8 +405,8 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="text-sm font-semibold text-slate-100">{repair.item}</h4>
+                <div className="repair-detail-body">
+                  <h4 className="repair-detail-item">{repair.item}</h4>
                   
                   {/* Side panels badges */}
                   {(repair.hasLeftPanel || repair.hasRightPanel) && (
@@ -425,7 +425,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   )}
 
                   {repair.note && (
-                    <p className="text-xs text-slate-400 italic mt-1.5">備註：{repair.note}</p>
+                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">備註：{repair.note}</p>
                   )}
 
                   {/* Photo Evidence Gallery */}
@@ -460,19 +460,19 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   {(() => {
                     const linked = (warranties || []).filter((w) => w.repairId === repair.id);
                     return (
-                      <div className="pt-2.5 mt-2.5 border-t border-slate-800/80">
-                        <div className="flex items-center justify-between text-[calc(11px*var(--ui-text-scale))] font-mono text-slate-400 mb-1.5">
+                      <div className="repair-detail-warranty">
+                        <div className="repair-detail-warranty-heading">
                           <div className="flex items-center gap-1.5">
                             <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
-                            <span className="text-slate-300 font-bold">更換零件保固 ({linked.length} 件)：</span>
+                            <span className="text-slate-300 font-semibold">零件保固 ({linked.length} 件)</span>
                           </div>
                           {onAddWarranty && (
                             <button
                               type="button"
                               onClick={() => onAddWarranty(customer.id, repair.id)}
-                              className="text-[calc(10px*var(--ui-text-scale))] text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-0.5 cursor-pointer font-sans"
+                              className="repair-detail-warranty-add"
                             >
-                              <Plus className="w-3 h-3" /> 新增此單零件保固
+                              <Plus className="w-3.5 h-3.5" /> 新增保固
                             </button>
                           )}
                         </div>
@@ -524,17 +524,8 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                             })}
                           </div>
                         ) : (
-                          <div className="text-[calc(11px*var(--ui-text-scale))] text-slate-500 italic flex items-center justify-between py-0.5">
+                          <div className="repair-detail-warranty-empty">
                             <span>此單尚未新增零件序號保固</span>
-                            {onAddWarranty && (
-                              <button
-                                type="button"
-                                onClick={() => onAddWarranty(customer.id, repair.id)}
-                                className="text-[calc(10px*var(--ui-text-scale))] text-slate-400 hover:text-cyan-300 underline cursor-pointer"
-                              >
-                                + 新增零件保固
-                              </button>
-                            )}
                           </div>
                         )}
                       </div>
@@ -542,20 +533,20 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                   })()}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between pt-2 border-t border-slate-800 text-xs">
-                  <div className="flex items-center gap-4 text-slate-400 font-mono">
-                    <span className="flex items-center gap-1">
-                      預計取件: <span className="text-slate-200">{repair.dueDate?.trim() ? repair.dueDate : '未指定 (列印可手寫)'}</span>
+                <div className="repair-detail-footer">
+                  <div className="repair-detail-summary">
+                    <span className="repair-detail-due">
+                      <span>預計取件</span><span>{repair.dueDate?.trim() ? repair.dueDate : '未指定 (列印可手寫)'}</span>
                     </span>
-                    <span className="flex items-center gap-1 text-sky-400 font-bold text-sm">
-                      <DollarSign className="w-4 h-4" /> NT$ {repair.price.toLocaleString()}
+                    <span className="repair-detail-price">
+                      NT$ {repair.price.toLocaleString()}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="repair-detail-actions">
                     <button
                       onClick={() => onEditCustomer(customer, repair.id)}
-                      className="px-2.5 py-1 text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg hover:bg-amber-500/20 flex items-center gap-1 transition cursor-pointer"
+                      className="repair-detail-edit"
                       title="編輯此筆維修單項目、金額與側板設定"
                     >
                       <Edit3 className="w-3.5 h-3.5" /> 編輯
@@ -571,7 +562,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                     )}
                     <button
                       onClick={() => onPrintRepair(customer, repair)}
-                      className="px-3 py-1 text-xs font-semibold bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg hover:bg-sky-500/30 flex items-center gap-1 transition cursor-pointer"
+                      className="repair-detail-print"
                     >
                       <Printer className="w-3.5 h-3.5" /> 列印此單據
                     </button>
