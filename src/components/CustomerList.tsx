@@ -452,6 +452,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                           <Calendar className="w-3.5 h-3.5 shrink-0" /> {latestRepair.date}
                         </span>
                       </div>
+                      <p className="repair-item-label">維修項目</p>
                       <div className="customer-repair-main">
                         <p className="customer-repair-item">
                           {latestRepair.item}

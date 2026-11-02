@@ -406,6 +406,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 </div>
 
                 <div className="repair-detail-body">
+                  <p className="repair-item-label">維修項目</p>
                   <h4 className="repair-detail-item">{repair.item}</h4>
                   
                   {/* Side panels badges */}

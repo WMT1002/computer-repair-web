@@ -533,6 +533,7 @@ html, body {
   .repair-detail-status { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
   .repair-detail-status-select { min-height: 34px; }
   .repair-detail-body { padding: 18px; }
+  .repair-item-label { margin-bottom: 5px; color: var(--muted); font-size: calc(11px * var(--ui-text-scale)); line-height: 1.5; }
   .repair-detail-item { color: var(--text); font-size: calc(16px * var(--ui-text-scale)); font-weight: 600; line-height: 1.65; overflow-wrap: anywhere; }
   .repair-detail-warranty { margin-top: 18px; padding: 12px 14px; background: var(--subtle); border-radius: 7px; }
   html.light-mode .repair-detail-warranty { background: #f6f8fa; }
