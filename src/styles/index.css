@@ -541,7 +541,7 @@ html, body {
   .customer-utility-actions, .customer-primary-actions { display: flex; align-items: center; gap: 4.8px; flex-shrink: 0; }
   .customer-primary-actions { margin-left: auto; }
   .customer-icon-button, .customer-edit-button, .customer-detail-button { display: inline-flex; justify-content: center; align-items: center; gap: 5px; min-height: 36px; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--border); color: var(--muted); background: transparent; font-size: calc(12px * var(--ui-text-scale)); font-weight: 500; cursor: pointer; transition: background-color .15s, color .15s; white-space: nowrap; }
-  .customer-icon-button { width: 28px; padding: 5px; border-color: transparent; }
+  .customer-icon-button { width: 36px; min-height: 40px; padding: 5px; border-color: transparent; }
   .customer-icon-button svg { width: 18.2px; height: 18.2px; flex-shrink: 0; }
   .customer-utility-actions { gap: 8px; }
   .customer-edit-button, .customer-detail-button { padding-inline: 6px; }
@@ -555,7 +555,7 @@ html, body {
     .customer-card-header { gap: 10px; }
     .customer-status-summary > span { padding: 4px 6px; font-size: calc(10px * var(--ui-text-scale)); }
     .customer-card-actions { gap: 2px; }
-    .customer-icon-button { width: 24px; padding-inline: 3px; }
+    .customer-icon-button { width: 32px; padding-inline: 3px; }
     .customer-primary-actions { gap: 3.6px; }
     .customer-card .status-control { padding-inline: 4px; gap: 2px; }
     .customer-edit-button, .customer-detail-button { padding-inline: 4px; gap: 3px; }
